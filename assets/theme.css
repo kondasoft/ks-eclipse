@@ -1,0 +1,145 @@
+/*
+  Body
+*/
+body {
+  font-family: var(--font-body-family);
+  font-weight: var(--font-body-weight);
+  color: rgb(var(--color-foreground));
+  background-color: rgb(var(--color-background));
+  letter-spacing: var(--letter-spacing);
+  margin: 0;
+}
+
+/*
+  Accessibility
+*/
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  border-bottom-right-radius: var(--border-radius);
+  padding: .5rem 1rem;
+  z-index: 100;
+  transform: translateY(-100%);
+  transition: transform .3s ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+
+/*
+  Container
+*/
+.container {
+  max-width: var(--container-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+
+/*
+  Headings
+*/
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-headings-family);
+  font-weight: var(--font-headings-weight);
+}
+
+
+/*
+  Various
+*/
+p {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.rte p:last-child {
+  margin-bottom: 0;
+}
+
+
+/*
+  Utility classes
+*/
+.fs-sm { font-size: .875rem }
+.fs-md { font-size: 1rem }
+.fs-lg { font-size: 1.125rem }
+
+.text-left { text-align: left }
+.text-center { text-align: center }
+.text-right { text-align: right }
+
+
+/*
+  Header
+*/
+#header {
+  background-color: rgb(var(--color-background));
+  background-image: var(--color-background-gradient);
+  color: rgb(var(--color-foreground));
+  padding-top: var(--pt);
+  padding-bottom: var(--pb);
+}
+
+#header[data-border-bottom="true"] {
+  border-bottom: 1px solid rgb(var(--color-foreground) / .15);
+}
+
+#header[data-box-shadow="true"] {
+  box-shadow: 0 .25rem .375rem rgb(var(--color-foreground) / .075);
+} 
+
+@media (min-width: 1200px) {
+  #header {
+    padding-top: calc(var(--pt) * 1.25);
+    padding-bottom: calc(var(--pb) * 1.25);
+  }
+}
+
+
+/*
+  Announcement bar
+*/
+.announcement-bar {
+  background-color: rgb(var(--color-background));
+  background-image: var(--color-background-gradient);
+  color: rgb(var(--color-foreground));
+  text-align: center;
+  padding-top: var(--pt);
+  padding-bottom: var(--pb);
+}
+
+.announcement-bar[data-border-bottom="true"] {
+  border-bottom: 1px solid rgb(var(--color-foreground) / var(--border-opacity));
+}
+
+.announcement-bar a {
+  color: currentColor;
+  text-decoration: underline;
+}
+
+@media (min-width: 1200px) {
+  .announcement-bar {
+    padding-top: calc(var(--pt) * 1.25);
+    padding-bottom: calc(var(--pb) * 1.25);
+  }
+}

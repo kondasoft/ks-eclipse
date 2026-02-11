@@ -1,0 +1,77 @@
+<div
+  id="header"
+  class="{{ section.settings.color_scheme | prepend: 'color-' }}"
+  style="
+    --pt: {{ section.settings.pt | append: 'rem' }};
+    --pb: {{ section.settings.pb | append: 'rem' }};
+  "
+  data-border-bottom="{{ section.settings.border_bottom }}"
+  data-box-shadow="{{ section.settings.box_shadow }}"
+>
+  <div class="container">
+    Header
+    <color-theme-toggle>
+      <button data-theme="light">Light</button>
+      <button data-theme="dark">Dark</button>
+      <button data-theme="system">System</button>
+    </color-theme-toggle>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Header",
+  "tag": "header",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+     {
+      "type": "checkbox",
+      "id": "border_bottom",
+      "label": "Border bottom",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "box_shadow",
+      "label": "Box shadow",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pt",
+      "label": "Top",
+      "min": 0,
+      "max": 2,
+      "step": 0.1,
+      "default": 0,
+      "unit": "rem"
+    },
+    {
+      "type": "range",
+      "id": "pb",
+      "label": "Bottom",
+      "min": 0,
+      "max": 2,
+      "step": 0.1,
+      "default": 0,
+      "unit": "rem"
+    }
+  ],
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "presets": [
+    { "name": "Header" }
+  ]
+}
+{% endschema %}

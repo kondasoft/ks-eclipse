@@ -1,0 +1,16 @@
+{
+  "search.exclude": {
+  },
+  "task.allowAutomaticTasks": "on",
+  "files.associations": {
+    "*.css.liquid": "plaintext",
+    "*.js.liquid": "plaintext"
+  },
+  "[plaintext]": {
+    "editor.formatOnSave": false
+  },
+  "emmet.includeLanguages": {
+    "liquid": "html"
+  },
+  "eslint.validate": ["javascript", "liquid"]
+}

@@ -1,0 +1,189 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "ks_eclipse",
+    "theme_version": "1.0.0",
+    "theme_author": "KondaSoft",
+    "theme_documentation_url": "https:\/\/forum.kondasoft.com\/",
+    "theme_support_url": "https:\/\/forum.kondasoft.com\/"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color_scheme_group",
+        "id": "color_schemes",
+        "definition": [
+          {
+            "type": "header",
+            "content": "Light theme"
+          },
+          {
+            "type": "color",
+            "id": "light_background",
+            "label": "Background",
+            "default": "#FFFFFF"
+          },
+          {
+            "type": "color_background",
+            "id": "light_background_gradient",
+            "label": "Background gradient",
+            "info": "Background gradient replaces background where possible."
+          },
+          {
+            "type": "color",
+            "id": "light_foreground",
+            "label": "Text",
+            "default": "#121212"
+          },
+          {
+            "type": "color",
+            "id": "light_accent",
+            "label": "Accent",
+            "default": "#0069A9"
+          },
+          {
+            "type": "header",
+            "content": "Dark theme"
+          },
+          {
+            "type": "color",
+            "id": "dark_background",
+            "label": "Background",
+            "default": "#121212"
+          },
+          {
+            "type": "color_background",
+            "id": "dark_background_gradient",
+            "label": "Background gradient",
+            "info": "Background gradient replaces background where possible."
+          },
+          {
+            "type": "color",
+            "id": "dark_foreground",
+            "label": "Text",
+            "default": "#FFFFFF"
+          },
+          {
+            "type": "color",
+            "id": "dark_accent",
+            "label": "Accent",
+            "default": "#0069A9"
+          }
+        ],
+        "role": {
+          "background": {
+            "solid": "light_background",
+            "gradient": "light_background_gradient"
+          },
+          "text": "light_foreground",
+          "links": "light_foreground",
+          "icons": "light_foreground",
+          "primary_button": "light_accent",
+          "on_primary_button": "light_background",
+          "primary_button_border": "light_accent",
+          "secondary_button": "light_background",
+          "on_secondary_button": "light_foreground",
+          "secondary_button_border": "light_foreground"
+        }
+      },
+      {
+        "type": "select",
+        "id": "default_theme",
+        "label": "Default theme",
+        "default": "light",
+        "options": [
+          { "value": "light", "label": "Light" },
+          { "value": "dark", "label": "Dark" }
+        ]
+      },
+    ]
+  },
+  {
+    "name": "General",
+    "settings": [
+      {
+        "type": "range",
+        "id": "container_max_width",
+        "label": "Container max-width",
+        "min": 1200,
+        "max": 2000,
+        "default": 1400,
+        "step": 50,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "border_radius",
+        "label": "Border radius",
+        "unit": "rem",
+        "min": 0,
+        "max": 2,
+        "step": 0.1,
+        "default": 0.3
+      },
+      {
+        "type": "range",
+        "id": "border_opacity",
+        "label": "Border opacity",
+        "default": 15,
+        "min": 10,
+        "max": 100,
+        "step": 5,
+        "unit": "%"
+      },
+      {
+        "type": "select",
+        "id": "cart_icon",
+        "label": "Cart icon",
+        "default": "cart",
+        "options": [
+          { "value": "cart", "label": "Cart" }, 
+          { "value": "bag", "label": "Bag" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "font_headings",
+        "label": "Headings font",
+        "default": "sans-serif"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Body font",
+        "default": "sans-serif"
+      },
+      {
+        "type": "range",
+        "id": "letter_spacing",
+        "label": "Letter spacing",
+        "default": 0,
+        "min": 0,
+        "max": 10,
+        "step": 1
+      }
+    ]
+  },
+  {
+    "name": "Logo",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon image",
+        "info": "A small square version of your logo that is used by browsers. Upload a large image as it will crop automatically."
+      }
+    ]
+  },
+]

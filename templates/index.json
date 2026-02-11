@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "hero-slideshow": {
+      "type": "hero-slideshow",
+      "settings": {
+        "title": "Welcome"
+      }
+    }
+  },
+  "order": ["hero-slideshow"]
+} 

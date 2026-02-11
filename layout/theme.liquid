@@ -1,0 +1,36 @@
+<!doctype html>
+<html 
+  lang="{{ request.locale.iso_code }}"
+  data-theme="{{ settings.default_theme }}"
+  data-design-mode="{{ request.design_mode }}">
+  <head>
+    {% render 'theme-head' %}
+    {{ content_for_header }}
+    {% render 'theme-style-script' %}
+    <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}">
+    <link rel="stylesheet" href="{{ 'sections.css' | asset_url }}" media="print" onload="this.media='all'">
+    <script src="{{ 'theme.js' | asset_url }}" defer></script>
+  </head>
+
+  <body
+    data-page-type="{{ request.page_type }}"
+    data-template-name="{{ template.name }}"
+    data-template-suffix="{{ template.suffix }}"
+  >
+    <a class="skip-link" href="#main">
+      {{ 'accessibility.skip_to_content' | t }}
+    </a>
+
+    <div id="header-group">
+      {% sections 'header-group' %}
+    </div>
+
+    <main id="main">
+      {{ content_for_layout }}
+    </main>
+
+    <div id="footer-group">
+      {% sections 'footer-group' %}
+    </div>
+  </body>
+</html>

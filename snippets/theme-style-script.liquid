@@ -1,0 +1,88 @@
+{% style %}
+  {{ settings.font_headings | font_face: font_display: 'swap' }}
+  {% unless settings.font_body.system %}
+    {{ settings.font_body | font_face: font_display: 'swap' }}
+  {% endunless %}
+
+  :root[data-theme="light"] {
+    {%- for scheme in settings.color_schemes -%}
+      {% if forloop.first %}
+        --color-background: {{ scheme.settings.light_background.red }} {{ scheme.settings.light_background.green }} {{ scheme.settings.light_background.blue }};
+        {% if scheme.settings.light_background_gradient != empty -%}
+          --color-background-gradient: {{ scheme.settings.light_background_gradient }};
+        {%- endif -%}
+        --color-foreground: {{ scheme.settings.light_foreground.red }} {{ scheme.settings.light_foreground.green }} {{ scheme.settings.light_foreground.blue }};
+        --color-accent: {{ scheme.settings.light_accent.red }} {{ scheme.settings.light_accent.green }} {{ scheme.settings.light_accent.blue }};
+      {%- endif %}
+    {%- endfor -%}
+  }
+
+  :root[data-theme="dark"] {
+    {%- for scheme in settings.color_schemes -%}
+      {% if forloop.first %}
+        --color-background: {{ scheme.settings.dark_background.red }} {{ scheme.settings.dark_background.green }} {{ scheme.settings.dark_background.blue }};
+        {% if scheme.settings.dark_background_gradient != empty -%}
+          --color-background-gradient: {{ scheme.settings.dark_background_gradient }};
+        {%- endif -%}
+        --color-foreground: {{ scheme.settings.dark_foreground.red }} {{ scheme.settings.dark_foreground.green }} {{ scheme.settings.dark_foreground.blue }};
+        --color-accent: {{ scheme.settings.dark_accent.red }} {{ scheme.settings.dark_accent.green }} {{ scheme.settings.dark_accent.blue }};
+      {%- endif %}
+    {%- endfor -%}
+  }
+
+  {% for scheme in settings.color_schemes %}
+    [data-theme="light"] .color-{{ scheme.id }} {
+        --color-background: {{ scheme.settings.light_background.red }} {{ scheme.settings.light_background.green }} {{ scheme.settings.light_background.blue }};
+      {% if scheme.settings.light_background_gradient != empty -%}
+        --color-background-gradient: {{ scheme.settings.light_background_gradient }};
+      {%- endif -%}
+      --color-foreground: {{ scheme.settings.light_foreground.red }} {{ scheme.settings.light_foreground.green }} {{ scheme.settings.light_foreground.blue }};
+      --color-accent: {{ scheme.settings.light_accent.red }} {{ scheme.settings.light_accent.green }} {{ scheme.settings.light_accent.blue }};
+    }
+    [data-theme="dark"] .color-{{ scheme.id }} {
+        --color-background: {{ scheme.settings.dark_background.red }} {{ scheme.settings.dark_background.green }} {{ scheme.settings.dark_background.blue }};
+      {% if scheme.settings.dark_background_gradient != empty -%}
+        --color-background-gradient: {{ scheme.settings.dark_background_gradient }};
+      {%- endif -%}
+      --color-foreground: {{ scheme.settings.dark_foreground.red }} {{ scheme.settings.dark_foreground.green }} {{ scheme.settings.dark_foreground.blue }};
+      --color-accent: {{ scheme.settings.dark_accent.red }} {{ scheme.settings.dark_accent.green }} {{ scheme.settings.dark_accent.blue }};
+    }
+  {% endfor %}
+
+  :root {
+    --font-headings-family: {{ settings.font_headings.family }}, {{ settings.font_headings.fallback_families }};
+    --font-headings-weight: {{ settings.font_headings.weight }};
+    --font-body-family: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }}; 
+    --font-body-weight: {{ settings.font_body.weight }};
+    --letter-spacing: {{ settings.letter_spacing | divided_by: 100.0 | append: 'em' }};
+    --container-max-width: {{ settings.container_max_width }}px;
+    --border-radius: {{ settings.border_radius }}rem;
+    --border-opacity: {{ settings.border_opacity | append: '%' }};
+  }
+{% endstyle %}
+
+<script>
+  function applyInitialTheme() {
+    let defaultTheme = '{{ settings.default_theme }}';
+    let theme = defaultTheme;
+    let savedTheme = null;
+
+    try {
+      savedTheme = localStorage.getItem('theme');
+    } catch (error) {
+      savedTheme = null;
+    }
+
+    if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system') {
+      theme = savedTheme;
+    }
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    document.documentElement.setAttribute('data-theme', theme);
+  }
+
+  applyInitialTheme();
+</script>

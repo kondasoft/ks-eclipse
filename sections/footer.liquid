@@ -1,0 +1,89 @@
+{% stylesheet %}
+  .footer {
+    background-color: #f5f5f5;
+    padding: 40px 20px;
+    margin-top: 60px;
+  }
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+  }
+
+  .footer-column h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+
+  .footer-column ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .footer-column a {
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .footer-column a:hover {
+    color: #000;
+  }
+
+  .footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+    color: #999;
+    font-size: 12px;
+  }
+{% endstylesheet %}
+
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-column">
+      <h3>Shop</h3>
+      <ul>
+        <li><a href="/collections/all">All Products</a></li>
+        <li><a href="/collections">Collections</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h3>Support</h3>
+      <ul>
+        <li><a href="/pages/contact">Contact Us</a></li>
+        <li><a href="/pages/faq">FAQ</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h3>Company</h3>
+      <ul>
+        <li><a href="/pages/about">About</a></li>
+        <li><a href="/policies/privacy-policy">Privacy Policy</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; {{ "now" | date: "%Y" }} {{ shop.name }}. All rights reserved.</p>
+  </div>
+</footer>
+
+{% javascript %}
+  // Footer functionality
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": []
+}
+{% endschema %}
