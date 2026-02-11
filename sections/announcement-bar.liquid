@@ -18,10 +18,10 @@
   "tag": "section",
   "settings": [
     {
-      "type": "richtext",
+      "type": "text",
       "id": "text",
       "label": "Text",
-      "default": "<p>Free shipping on orders over $50</p>"
+      "default": "Free shipping on orders over $100!"
     },
     {
       "type": "color_scheme",
@@ -71,11 +71,11 @@
       "unit": "rem"
     }
   ],
-  "enabled_on": {
-    "groups": ["header"]
-  },
   "presets": [
-    { "name": "Announcement bar" }
+    { 
+      "name": "Announcement bar", 
+      "category": "Content",
+    }
   ]
 }
 {% endschema %}
