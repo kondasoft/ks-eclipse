@@ -54,10 +54,14 @@
     --font-headings-weight: {{ settings.font_headings.weight }};
     --font-body-family: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }}; 
     --font-body-weight: {{ settings.font_body.weight }};
+    --body-base-size: {{ settings.body_base_size | divided_by: 100.0 | append: 'rem' }};
+    --headings-base-size: {{ settings.headings_base_size | divided_by: 100.0 | append: 'rem' }};
     --letter-spacing: {{ settings.letter_spacing | divided_by: 100.0 | append: 'em' }};
     --container-max-width: {{ settings.container_max_width }}px;
     --border-radius: {{ settings.border_radius }}rem;
     --border-opacity: {{ settings.border_opacity | append: '%' }};
+    --btn-color: var(--color-{{ settings.btn_color }});
+    --btn-color-contrast: var(--color-foreground);
   }
 {% endstyle %}
 

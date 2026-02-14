@@ -1,0 +1,373 @@
+{% liquid 
+  assign media_loading = 'lazy'
+  assign media_preload = 'none'
+  assign media_fetchpriority = 'auto'
+
+  if section.index == 1 or request.design_mode
+    assign media_loading = 'eager'
+    assign media_preload = 'auto'
+    assign media_fetchpriority = 'high'
+  endif
+%}
+
+<div 
+  class="hero-media"
+  style="
+    {% if section.settings.fixed_height == true %}
+      --min-height: {{ section.settings.media_min_height | append: 'px' }};
+      --max-height: {{ section.settings.media_max_height | append: 'px' }};
+    {% endif %}
+    {% if section.settings.display_overlay %}
+      --overlay-color-rgb: {{ section.settings.overlay_color.red }} {{ section.settings.overlay_color.green }} {{ section.settings.overlay_color.blue }};
+      --overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+      --overlay-blur: {{ section.settings.overlay_blur | append: 'px' }};
+    {% endif %}
+  ">
+  {% if section.settings.type == 'image' and section.settings.img != blank %}
+    <img
+      src="{{ section.settings.img | image_url: width: 2400 }}"
+      alt="{{ section.settings.img.alt | escape }}"
+      width="{{ section.settings.img.width }}"
+      height="{{ section.settings.img.height }}"
+      srcset="
+        {{ section.settings.img | image_url: width: 800 }} 800w,
+        {{ section.settings.img | image_url: width: 1600 }} 1600w,
+        {{ section.settings.img | image_url: width: 2400 }} 2400w"
+      sizes="100vw"
+      loading="{{ media_loading }}"
+      fetchpriority="{{ media_fetchpriority }}"
+    >
+  {% elsif section.settings.type == 'video' and section.settings.video != blank %}
+    <video
+      loop
+      muted
+      playsinline
+      preload="{{ media_preload }}"
+      {% if request.design_mode or media_loading != 'lazy' %}
+        autoplay
+      {% else %}
+        data-autoplay="true"
+      {% endif %}
+      {% if media_loading == 'eager' %}
+        poster="{{ section.settings.video.preview_image | image_url: width: 1600 }}"
+      {% else %}
+        data-poster="{{ section.settings.video.preview_image | image_url: width: 1600 }}"
+      {% endif %}
+    >
+      {% comment %}theme-check-disable{% endcomment %}
+      {% for source in section.settings.video.sources %}
+        <source src="{{ source.url }}" type="{{ source.mime_type }}">
+      {% endfor %}
+      {% comment %}theme-check-enable{% endcomment %}
+    </video>
+  {% else %}
+    {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}    
+  {% endif %}
+  {% if section.settings.display_content %}
+    <div 
+      class="hero-media-content"
+      style="--content-color: {{ section.settings.content_color.red }} {{ section.settings.content_color.green }} {{ section.settings.content_color.blue }};">
+      <div class="container">
+        <div class="hero-media-content-inner {{ section.settings.content_alignment }}">
+          {% if section.settings.subheading != blank %}
+            <div class="subheading {{ section.settings.subheading_size }}">
+              {{ section.settings.subheading }}
+            </div>
+          {% endif %}
+          {% if section.settings.heading != blank %}
+            <h2 class="heading {{ section.settings.heading_size }}">
+              {{ section.settings.heading }}
+            </h2>
+          {% endif %}
+          {% if section.settings.description != blank %}
+            <div class="description rte {{ section.settings.description_size }}">
+              {{ section.settings.description }}
+            </div>
+          {% endif %}
+          {% if section.settings.primary_btn_label != blank or section.settings.secondary_btn_label != blank %}
+            <div 
+              class="btn-group"
+              style="
+                --btn-color: {{ section.settings.btn_color.red }} {{ section.settings.btn_color.green }} {{ section.settings.btn_color.blue }};
+                --btn-color-contrast: {{ section.settings.btn_color_contrast.red }} {{ section.settings.btn_color_contrast.green }} {{ section.settings.btn_color_contrast.blue }};
+              ">
+              {% if section.settings.primary_btn_label != blank %}
+                <a 
+                  href="{{ section.settings.primary_btn_link | default: '#' }}" 
+                  class="btn btn-primary {{ section.settings.btn_size }}">
+                  {{ section.settings.primary_btn_label }}
+                </a>
+              {% endif %}
+              {% if section.settings.secondary_btn_label != blank %}
+                <a 
+                  href="{{ section.settings.secondary_btn_link | default: '#' }}" 
+                  class="btn btn-outline {{ section.settings.btn_size }}">
+                  {{ section.settings.secondary_btn_label }}
+                </a>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Hero Media",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "select",
+      "id": "type",
+      "label": "Media type",
+      "default": "image",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" }
+      ],
+    },
+    {
+      "type": "image_picker",
+      "id": "img",
+      "label": "Image",
+      "visible_if": "{{ section.settings.type == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video",
+      "visible_if": "{{ section.settings.type == 'video' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "fixed_height",
+      "label": "Use fixed height",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "media_min_height",
+      "label": "Min height",
+      "min": 300,
+      "max": 800,
+      "step": 50,
+      "default": 400,
+      "unit": "px",
+      "visible_if": "{{ section.settings.fixed_height == true }}"
+    },
+    {
+      "type": "range",
+      "id": "media_max_height",
+      "label": "Max height",
+      "min": 300,
+      "max": 800,
+      "step": 50,
+      "default": 600,
+      "unit": "px",
+      "visible_if": "{{ section.settings.fixed_height == true }}"
+    },
+    {
+      "type": "header",
+      "content": "Overlay"
+    },
+    {
+      "type": "checkbox",
+      "id": "display_overlay",
+      "label": "Display overlay",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000",
+      "visible_if": "{{ section.settings.display_overlay }}"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "default": 30,
+      "unit": "%",
+      "visible_if": "{{ section.settings.display_overlay }}"
+    },
+    {
+      "type": "range",
+      "id": "overlay_blur",
+      "label": "Overlay blur",
+      "default": 0,
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "visible_if": "{{ section.settings.display_overlay and section.settings.overlay_opacity > 0 }}"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "display_content",
+      "label": "Display content",
+      "default": true
+    },
+    {
+      "id": "content_alignment",
+      "type": "select",
+      "label": "Content alignment (desktop)",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center",
+      "visible_if": "{{ section.settings.display_content }}"
+    },
+    {
+      "type": "color",
+      "id": "content_color",
+      "label": "Content color",
+      "default": "#ffffff",
+      "visible_if": "{{ section.settings.display_content }}"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Optional subheading",
+      "visible_if": "{{ section.settings.display_content }}",
+      "info": "Leave empty to hide"
+    },
+    {
+      "type": "select",
+      "id": "subheading_size",
+      "label": "Subheading size",
+      "options": [
+        { "value": "fs-sm", "label": "Small" },
+        { "value": "fs-md", "label": "Medium" },
+        { "value": "fs-lg", "label": "Large" }
+      ],
+      "default": "fs-sm",
+      "visible_if": "{{ section.settings.display_content and section.settings.subheading != blank }}"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Hero Media",
+      "visible_if": "{{ section.settings.display_content }}",
+      "info": "Leave empty to hide"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" }
+      ],
+      "default": "h1",
+      "visible_if": "{{ section.settings.display_content and section.settings.heading != blank }}"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>This is a hero section with image or video media. You can use it to showcase your products or brand.</p>",
+      "visible_if": "{{ section.settings.display_content }}",
+      "info": "Leave empty to hide"
+    },
+    {
+      "type": "select",
+      "id": "description_size",
+      "label": "Description size",
+      "options": [
+        { "value": "fs-sm", "label": "Small" },
+        { "value": "fs-md", "label": "Medium" },
+        { "value": "fs-lg", "label": "Large" }
+      ],
+      "default": "fs-md",
+      "visible_if": "{{ section.settings.display_content and section.settings.description != blank }}"
+    },
+    {
+      "type": "header",
+      "content": "Buttons",
+      "visible_if": "{{ section.settings.display_content }}"
+    },
+    {
+      "type": "color",
+      "id": "btn_color",
+      "label": "Button color",
+      "default": "#ffffff",
+      "visible_if": "{{ section.settings.display_content }}",
+    },
+    {
+      "type": "color",
+      "id": "btn_color_contrast",
+      "label": "Button contrast color",
+      "default": "#121212",
+      "visible_if": "{{ section.settings.display_content }}"
+    },
+    {
+      "type": "select",
+      "id": "btn_size",
+      "label": "Button size",
+      "options": [
+        { "value": "fs-sm", "label": "Small" },
+        { "value": "fs-md", "label": "Medium" },
+        { "value": "fs-lg", "label": "Large" }
+      ],
+      "default": "fs-md",
+      "visible_if": "{{ section.settings.display_content }}"
+    },
+    {
+      "type": "text",
+      "id": "primary_btn_label",
+      "label": "Primary button label",
+      "default": "Latest arrivals",
+      "info": "Leave empty to hide",
+      "visible_if": "{{ section.settings.display_content }}"
+    },
+    {
+      "type": "url",
+      "id": "primary_btn_link",
+      "label": "Primary button link",
+      "visible_if": "{{ section.settings.display_content and section.settings.primary_btn_label != blank }}"
+    },
+    {
+      "type": "text",
+      "id": "secondary_btn_label",
+      "label": "Secondary button label",
+      "default": "Best sellers",
+      "info": "Leave empty to hide",
+      "visible_if": "{{ section.settings.display_content }}"
+    },
+    {
+      "type": "url",
+      "id": "secondary_btn_link",
+      "label": "Secondary button link",
+      "visible_if": "{{ section.settings.display_content and section.settings.secondary_btn_label != blank }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Media",
+      "category": "Media (Image/Video)"
+    }
+  ]
+}
+{% endschema %}

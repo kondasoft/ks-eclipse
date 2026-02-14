@@ -1,0 +1,276 @@
+/*
+  Dialog (Modal/Drawer)
+*/
+.dialog {
+  --dialog-transition-duration: 0.38s;
+  --dialog-transition-easing: cubic-bezier(0.22, 1, 0.36, 1);
+  position: fixed;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  box-sizing: border-box;
+  width: min(85vw, var(--dialog-width, 400px));
+  max-width: 100%;
+  background-color: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  box-shadow: 0 0 .75rem rgb(var(--color-foreground) / .25);
+  will-change: transform;
+  transition: transform var(--dialog-transition-duration) var(--dialog-transition-easing), opacity var(--dialog-transition-duration) var(--dialog-transition-easing);
+}
+
+.dialog::backdrop {
+  background: rgb(var(--color-foreground) / .5);
+  cursor: pointer;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'%3E%3C/line%3E%3Cline x1='6' y1='6' x2='18' y2='18'%3E%3C/line%3E%3C/svg%3E") 24 24, pointer;
+  opacity: 0;
+  transition: opacity var(--dialog-transition-duration) var(--dialog-transition-easing);
+}
+
+.dialog[open]::backdrop {
+  opacity: 1;
+}
+
+.dialog[open].is-closing::backdrop {
+  opacity: 0;
+}
+
+@starting-style {
+  .dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1rem;
+  border-bottom: 1px solid rgb(var(--color-foreground) / var(--border-opacity));
+}
+
+.dialog-title {
+  font-size: 1rem;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.dialog-header button.dialog-close {
+  margin: -.6rem -.5rem -.6rem 0;
+}
+
+.dialog-body {
+  flex-grow: 1;
+  padding: 1rem;
+}
+
+.dialog-footer {
+  padding: 1rem 1rem;
+  border-top: 1px solid rgb(var(--color-foreground) / var(--border-opacity));
+}
+
+.modal {
+  transform: none;
+  opacity: 1;
+  @starting-style {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+
+.modal[open].is-closing {
+  transform: scale(0.9);
+  opacity: 0;
+}
+
+.drawer {
+  margin: 0;
+  height: 100dvh;
+  max-width: 100%;
+  max-height: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer-left {
+  margin-right: auto;
+  transform: translateX(-100%);
+}
+
+.drawer-right {
+  margin-left: auto;
+  transform: translateX(100%);
+}
+
+.drawer.drawer-left[open] {
+  transform: none;
+  @starting-style {
+    transform: translateX(-100%);
+  }
+}
+
+.drawer.drawer-right[open] {
+  transform: none;
+  @starting-style {
+    transform: translateX(100%);
+  }
+}
+
+.drawer.drawer-left[open].is-closing {
+  transform: translateX(-100%);
+}
+
+.drawer.drawer-right[open].is-closing {
+  transform: translateX(100%);
+}
+
+
+/*
+  Social icons
+*/
+.social-icons {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+
+/*
+  Color theme toggle
+*/
+color-theme-toggle {
+  display: inline-flex;
+}
+
+color-theme-toggle fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: inline-flex;
+  gap: .25rem;
+}
+
+color-theme-toggle label {
+  position: relative;
+  cursor: pointer;
+}
+
+color-theme-toggle label:has(input:checked),
+color-theme-toggle label:has(input:checked):hover {
+  color: rgb(var(--color-accent));
+  background-color: rgb(var(--color-accent) / .1);
+}
+
+color-theme-toggle label:has(input:focus-visible) {
+  outline-color: rgb(var(--color-accent));
+}
+
+
+/*
+  Tooltip
+*/
+.theme-tooltip {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  visibility: hidden;
+  max-width: min(16rem, calc(100vw - 1rem));
+  padding: .25rem .75rem;
+  border-radius: var(--border-radius);
+  background-color: rgb(var(--color-foreground) / .85);
+  backdrop-filter: blur(5px);
+  color: rgb(var(--color-background));
+  box-shadow: 0 .25rem .5rem rgb(var(--color-foreground) / .15);
+  font-size: .875rem;
+  line-height: 1.25;
+  opacity: 0;
+  transform: translateY(.25rem);
+  transition: opacity .15s ease, transform .15s ease, visibility 0s linear .15s;
+}
+
+.theme-tooltip.is-visible {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0s, 0s, 0s;
+}
+  
+
+/*
+  Nav dialog
+*/
+#nav-dialog .dialog-body .nav {
+  margin-left: -1rem;
+  margin-right: -1rem;
+}
+
+#nav-dialog .dialog-body .social-icons-nav {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+#nav-dialog .dialog-body .social-icons {
+  display: inline-flex;
+  justify-content: center;
+  background-color: rgb(var(--color-foreground) / .05);
+  border-radius: 50rem;
+  padding: .125rem .5rem;
+}
+
+#nav-dialog .dialog-footer {
+  display: flex;
+  justify-content: center;
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+}
+
+
+/*
+  Cart dialog
+*/
+#cart-dialog form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#cart-dialog[data-cart-empty="true"] .dialog-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#cart-dialog .cart-empty-wrapper {
+  text-align: center;
+  padding: 2rem 1rem;
+  margin: 0;
+}
+
+#cart-dialog .cart-empty-wrapper svg {
+  margin: 0 0 .5rem;
+  animation: cart-empty-icon 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes cart-empty-icon {
+  from {
+    transform: translatex(-.5rem);
+  }
+  to {
+    transform: translatex(.5rem);
+  }
+}
+
+#cart-dialog .cart-empty-message {
+  margin: 0 0 1.25rem;
+}
+
+#cart-dialog[data-cart-empty="true"] .dialog-footer {
+  display: none;
+}
+
+#cart-dialog .dialog-footer .btn {
+  width: 100%;
+  text-align: center;
+}

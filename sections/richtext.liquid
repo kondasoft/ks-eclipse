@@ -1,0 +1,28 @@
+<div class="richtext" style="height: 2000px;">
+  {{ section.settings.content }}
+</div>
+
+{% stylesheet %}
+  .richtext {
+    padding: 20px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+  {
+    "name": "Rich Text",
+    "settings": [
+      {
+        "type": "richtext",
+        "id": "content",
+        "label": "Content"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Rich Text",
+        "category": "Content"
+      }
+    ]
+  }
+{% endschema %}

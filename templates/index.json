@@ -1,7 +1,7 @@
 {
   "sections": {
     "hero-slideshow": {
-      "type": "hero-slideshow",
+      "type": "hero-media",
       "settings": {
         "title": "Welcome"
       }

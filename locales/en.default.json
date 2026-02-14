@@ -1,5 +1,25 @@
 {
   "accessibility": {
-    "skip_to_content": "Skip to content"
+    "skip_to_content": "Skip to content",
+    "toggle_navigation": "Toggle navigation",
+    "toggle_search": "Toggle search",
+    "toggle_cart": "Toggle cart",
+    "account": "Account",
+    "social_icons": "Social media links"
+  },
+  "general": {
+    "menu": "Menu",
+    "color_theme": {
+      "toggle": "Toggle color theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
+  },
+  "cart": {
+    "title": "Cart", 
+    "empty": "Your cart is currently empty.", 
+    "checkout": "Checkout",
+    "continue_shopping": "Continue shopping",
   }
 }

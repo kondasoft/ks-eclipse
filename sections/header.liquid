@@ -1,3 +1,8 @@
+{% liquid
+  assign logo_height = section.settings.logo_height
+  assign logo_height_x2 = logo_height | times: 2
+%}
+
 <div
   id="header"
   class="{{ section.settings.color_scheme | prepend: 'color-' }}"
@@ -9,14 +14,174 @@
   data-box-shadow="{{ section.settings.box_shadow }}"
 >
   <div class="container">
-    Header
-    <color-theme-toggle>
-      <button data-theme="light">Light</button>
-      <button data-theme="dark">Dark</button>
-      <button data-theme="system">System</button>
-    </color-theme-toggle>
+    <div id="header-inner">
+      <div class="header-col">
+        <button 
+          data-toggle="nav-dialog"
+          type="button"
+          class="btn-icon"
+          aria-controls="nav-dialog"
+          aria-expanded="false"
+          aria-haspopup="dialog"
+          aria-label="{{ 'accessibility.toggle_navigation' | t }}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+            <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <button 
+          data-toggle="nav-modal"
+          type="button"
+          class="btn-icon"
+          aria-controls="nav-modal"
+          aria-expanded="false"
+          aria-haspopup="dialog"
+          aria-label="{{ 'accessibility.toggle_search' | t }}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"  fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+            <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="header-col">
+        {% if request.page_type == 'index' %}
+          <h1>
+        {% endif %}
+          <a
+            id="header-logo" 
+            href="{{ routes.root_url }}"
+            data-has-dark-logo="{% if settings.logo_dark %}true{% else %}false{% endif %}">
+            {% if settings.logo %}
+              <img
+                id="header-logo-default"
+                class="img-fluid"
+                src="{{ settings.logo | image_url: height: logo_height_x2 }}"
+                alt="{{ shop.name | escape }}"
+                width="{{ logo_height | times: settings.logo.aspect_ratio | round }}"
+                height="{{ logo_height }}"
+                fetchpriority="high"
+                loading="eager"
+              >
+              {% if settings.logo_dark %}
+                <img
+                  id="header-logo-dark"
+                  class="img-fluid"
+                  src="{{ settings.logo_dark | image_url: height: logo_height_x2 }}"
+                  alt="{{ shop.name | escape }}"
+                  width="{{ logo_height | times: settings.logo_dark.aspect_ratio | round }}"
+                  height="{{ logo_height }}"
+                  fetchpriority="high"
+                  loading="eager"
+                >
+              {% endif %}
+            {% else %}
+              <span>
+                {{ shop.name }}
+              </span>
+            {% endif %}
+          </a>
+        {% if request.page_type == 'index' %}
+          </h1>
+        {% endif %}
+      </div>
+      <div class="header-col">
+        <a 
+          href="{{ routes.account_url }}"
+          class="btn-icon"
+          aria-label="{{ 'accessibility.account' | t }}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </a>
+        <button 
+          data-toggle="cart-dialog"
+          type="button"
+          class="btn-icon"
+          aria-controls="cart-dialog"
+          aria-expanded="false"
+          aria-haspopup="dialog"
+          aria-label="{{ 'accessibility.toggle_cart' | t }}">
+          {% if section.settings.cart_icon == 'cart' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-cart">
+              <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+          {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-bag">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+          {% endif %}
+        </button>
+      </div>
+    </div>
   </div>
 </div>
+
+<theme-dialog>
+  <dialog 
+    id="nav-dialog" 
+    class="drawer drawer-left dialog" 
+    aria-labelledby="nav-dialog-title">
+    <div class="dialog-header">
+      <h2 id="nav-dialog-title" class="dialog-title">
+        {{ 'general.menu' | t }}
+      </h2>
+      <button type="button" class="btn-icon dialog-close" data-dialog-close>  
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
+          <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="dialog-body">
+      {% unless section.settings.menu == blank %}
+        <nav 
+          class="nav" 
+          aria-label="{{ 'general.menu' | t }}">
+          <ul class="nav-list nav-list-vertical">
+            {% for link in linklists[section.settings.menu].links %}
+              <li>
+                <a 
+                  href="{{ link.url }}" 
+                  class="nav-link {% if link.active %}active{% endif %}"
+                  aria-current="{% if link.active %}page{% endif %}">
+                  {{ link.title }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </nav>
+      {% endunless %}
+      {% if section.settings.social_icons %}
+        {% render 'social-icons' %}
+      {% endif %}
+    </div>
+    <div class="dialog-footer">
+      <color-theme-toggle>
+        <fieldset>
+          <legend class="visually-hidden">
+            {{ 'general.color_theme.toggle' | t }}
+          </legend>
+          <label class="btn-icon" data-tooltip="{{ 'general.color_theme.light' | t }}">
+            <input type="radio" value="light" data-theme-option class="visually-hidden" aria-label="{{ 'general.color_theme.light' | t }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun">
+              <circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </label>
+          <label class="btn-icon" data-tooltip="{{ 'general.color_theme.dark' | t }}">
+            <input type="radio" value="dark" data-theme-option class="visually-hidden" aria-label="{{ 'general.color_theme.dark' | t }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </label>
+          <label class="btn-icon" data-tooltip="{{ 'general.color_theme.system' | t }}">
+            <input type="radio" value="system" data-theme-option class="visually-hidden" aria-label="{{ 'general.color_theme.system' | t }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-monitor">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </label>
+        </fieldset>
+      </color-theme-toggle>
+    </div>
+  </dialog>
+</theme-dialog>
+
 
 {% schema %}
 {
@@ -41,6 +206,38 @@
       "id": "box_shadow",
       "label": "Box shadow",
       "default": false
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "label": "Logo height",
+      "min": 10,
+      "max": 100,
+      "step": 2,
+      "default": 20,
+      "info": "Select your logo in [theme settings](\/editor?context=theme&category=logo)"
+    },
+    {
+      "type": "select",
+      "id": "cart_icon",
+      "label": "Cart icon",
+      "default": "cart",
+      "options": [
+        { "value": "cart", "label": "Cart" },
+        { "value": "bag", "label": "Bag" }
+      ]
+    },
+    {
+      "type": "link_list",
+      "id": "menu", 
+      "label": "Menu", 
+      "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "social_icons",
+      "label": "Show social icons",
+      "default": true
     },
     {
       "type": "header",

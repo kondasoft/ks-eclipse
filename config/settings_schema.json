@@ -90,7 +90,7 @@
       {
         "type": "select",
         "id": "default_theme",
-        "label": "Default theme",
+        "label": "Default color theme",
         "default": "light",
         "options": [
           { "value": "light", "label": "Light" },
@@ -105,7 +105,7 @@
       {
         "type": "range",
         "id": "container_max_width",
-        "label": "Container max-width",
+        "label": "Maximum container width",
         "min": 1200,
         "max": 2000,
         "default": 1400,
@@ -115,7 +115,7 @@
       {
         "type": "range",
         "id": "border_radius",
-        "label": "Border radius",
+        "label": "Corner radius",
         "unit": "rem",
         "min": 0,
         "max": 2,
@@ -134,6 +134,16 @@
       },
       {
         "type": "select",
+        "id": "btn_color",
+        "label": "Button color",
+        "default": "foreground",
+        "options": [
+          { "value": "foreground", "label": "Text" },
+          { "value": "accent", "label": "Accent" }
+        ]
+      },
+      {
+        "type": "select",
         "id": "cart_icon",
         "label": "Cart icon",
         "default": "cart",
@@ -149,15 +159,35 @@
     "settings": [
       {
         "type": "font_picker",
-        "id": "font_headings",
-        "label": "Headings font",
-        "default": "sans-serif"
-      },
-      {
-        "type": "font_picker",
         "id": "font_body",
         "label": "Body font",
         "default": "sans-serif"
+      },
+      {
+        "type": "range",
+        "id": "body_base_size",
+        "label": "Base body size",
+        "default": 100,
+        "min": 75,
+        "max": 150,
+        "step": 5,
+        "unit": "%"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_headings",
+        "label": "Heading font",
+        "default": "sans-serif"
+      },
+      {
+        "type": "range",
+        "id": "headings_base_size",
+        "label": "Base heading size",
+        "default": 100,
+        "min": 75,
+        "max": 300,
+        "step": 5,
+        "unit": "%"
       },
       {
         "type": "range",
@@ -166,7 +196,7 @@
         "default": 0,
         "min": 0,
         "max": 10,
-        "step": 1
+        "step": 1,
       }
     ]
   },
@@ -180,10 +210,70 @@
       },
       {
         "type": "image_picker",
+        "id": "logo_dark",
+        "label": "Dark mode logo",
+        "info": "Optional logo for dark theme. If not set, the regular logo will be used for both themes."
+      },
+      {
+        "type": "image_picker",
         "id": "favicon",
-        "label": "Favicon image",
+        "label": "Favicon",
         "info": "A small square version of your logo that is used by browsers. Upload a large image as it will crop automatically."
       }
     ]
   },
+   {
+    "name": "Social links",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Enter the full URL for each social media profile below (for example, https:\/\/www.facebook.com\/shopify)."
+      },
+      {
+        "type": "text",
+        "id": "social_facebook",
+        "label": "Facebook"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram",
+        "label": "Instagram"
+      },
+      {
+        "type": "text",
+        "id": "social_x",
+        "label": "X"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok",
+        "label": "TikTok"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest",
+        "label": "Pinterest"
+      },
+      {
+        "type": "text",
+        "id": "social_snapchat",
+        "label": "Snapchat"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube",
+        "label": "YouTube"
+      },
+      {
+        "type": "text",
+        "id": "social_linkedin",
+        "label": "LinkedIn"
+      },
+      {
+        "type": "text",
+        "id": "social_threads",
+        "label": "Threads"
+      }
+    ]
+  }
 ]
