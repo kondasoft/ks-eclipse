@@ -1,7 +1,7 @@
 /*
-  Color theme
+  Color scheme toggle
 */
-class ColorThemeToggle extends HTMLElement {
+class ColorSchemeToggle extends HTMLElement {
   static storageKey = 'theme';
   static validThemes = new Set(['light', 'dark', 'system']);
   static mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -18,17 +18,17 @@ class ColorThemeToggle extends HTMLElement {
   connectedCallback() {
     var initialTheme = null;
 
-    ColorThemeToggle.instanceCount += 1;
-    this.groupName = 'theme-toggle-' + ColorThemeToggle.instanceCount;
+    ColorSchemeToggle.instanceCount += 1;
+    this.groupName = 'theme-toggle-' + ColorSchemeToggle.instanceCount;
     initialTheme = this.getInitialTheme();
     this.assignGroupName();
     this.syncCheckedState(initialTheme);
     this.applyTheme(initialTheme);
     this.addEventListener('change', this.onChange);
 
-    if (!ColorThemeToggle.mediaBound) {
-      ColorThemeToggle.mediaQuery.addEventListener('change', this.onSystemChange);
-      ColorThemeToggle.mediaBound = true;
+    if (!ColorSchemeToggle.mediaBound) {
+      ColorSchemeToggle.mediaQuery.addEventListener('change', this.onSystemChange);
+      ColorSchemeToggle.mediaBound = true;
     }
   }
 
@@ -38,7 +38,7 @@ class ColorThemeToggle extends HTMLElement {
 
   getStoredTheme() {
     try {
-      return localStorage.getItem(ColorThemeToggle.storageKey);
+      return localStorage.getItem(ColorSchemeToggle.storageKey);
     } catch (error) {
       return null;
     }
@@ -46,7 +46,7 @@ class ColorThemeToggle extends HTMLElement {
 
   setStoredTheme(theme) {
     try {
-      localStorage.setItem(ColorThemeToggle.storageKey, theme);
+      localStorage.setItem(ColorSchemeToggle.storageKey, theme);
     } catch (error) {
       // Ignore storage errors.
     }
@@ -54,14 +54,14 @@ class ColorThemeToggle extends HTMLElement {
 
   resolveTheme(theme) {
     if (theme === 'system') {
-      return ColorThemeToggle.mediaQuery.matches ? 'dark' : 'light';
+      return ColorSchemeToggle.mediaQuery.matches ? 'dark' : 'light';
     }
 
     return theme;
   }
 
   applyTheme(theme) {
-    if (!ColorThemeToggle.validThemes.has(theme)) {
+    if (!ColorSchemeToggle.validThemes.has(theme)) {
       return;
     }
 
@@ -71,7 +71,7 @@ class ColorThemeToggle extends HTMLElement {
   getInitialTheme() {
     var storedTheme = this.getStoredTheme();
 
-    if (ColorThemeToggle.validThemes.has(storedTheme)) {
+    if (ColorSchemeToggle.validThemes.has(storedTheme)) {
       return storedTheme;
     }
 
@@ -91,7 +91,7 @@ class ColorThemeToggle extends HTMLElement {
   }
 
   static syncAll(theme) {
-    document.querySelectorAll('color-theme-toggle').forEach((toggle) => {
+    document.querySelectorAll('color-scheme-toggle').forEach((toggle) => {
       if (typeof toggle.syncCheckedState === 'function') {
         toggle.syncCheckedState(theme);
       }
@@ -101,7 +101,7 @@ class ColorThemeToggle extends HTMLElement {
   onSystemChange() {
     if (this.getStoredTheme() === 'system') {
       this.applyTheme('system');
-      ColorThemeToggle.syncAll('system');
+      ColorSchemeToggle.syncAll('system');
     }
   }
 
@@ -114,16 +114,16 @@ class ColorThemeToggle extends HTMLElement {
     }
 
     theme = radio.value;
-    if (!ColorThemeToggle.validThemes.has(theme)) {
+    if (!ColorSchemeToggle.validThemes.has(theme)) {
       return;
     }
 
     this.applyTheme(theme);
     this.setStoredTheme(theme);
-    ColorThemeToggle.syncAll(theme);
+    ColorSchemeToggle.syncAll(theme);
   }
 }
-customElements.define('color-theme-toggle', ColorThemeToggle);
+customElements.define('color-scheme-toggle', ColorSchemeToggle);
 
 
 /*

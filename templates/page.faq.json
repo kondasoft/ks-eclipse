@@ -1,0 +1,75 @@
+{
+  "sections": {
+    "faq_VUxY9M": {
+      "type": "faq",
+      "blocks": {
+        "item_emRHyX": {
+          "type": "item",
+          "settings": {
+            "question": "Where do you ship?",
+            "answer": "<p>We ship all around the world... Please provide here you own shipping information, including times, prices, options etc.<\/p>"
+          }
+        },
+        "item_hDi6eU": {
+          "type": "item",
+          "settings": {
+            "question": "How long will it take to receive my order",
+            "answer": "<p>This depends on whether it is an International or a Domestic order. All orders within the U.S. are considered domestic orders and they are shipped and delivered within 2-5 business days. Please see International Orders for more details.<\/p>"
+          }
+        },
+        "item_xd8VFV": {
+          "type": "item",
+          "settings": {
+            "question": "What payment methods do you support?",
+            "answer": "<p>We accept PayPal, Visa, MasterCard, Discover, and American Express but feel free to contact us for other payment options.<\/p>"
+          }
+        },
+        "item_3D6JYd": {
+          "type": "item",
+          "settings": {
+            "question": "How can I track my order?",
+            "answer": "<p>We will send tracking information to the e-mail address associated with your order once the item has shipped. If you have not received your tracking information and it has been over 2 business day, please contact us at (012) 123 - 4567<\/p>"
+          }
+        },
+        "item_nQ9W2s": {
+          "type": "item",
+          "settings": {
+            "question": "Can I order as a gift for someone else?",
+            "answer": "<p>When ordering as a gift for someone, be sure to enter in your email address to receive all summary information but enter in the recipient's name and shipping information. We will be sure to keep all prices and receipts out of the package.<\/p>"
+          }
+        },
+        "item_p7Lk4N": {
+          "type": "item",
+          "settings": {
+            "question": "How can I get a refund for my order?",
+            "answer": "<p>If for any reason you are not completely satisfied with your purchase, within 30 days of placing your order, we will refund you for your purchase with no questions asked.<\/p>"
+          }
+        }
+      },
+      "block_order": [
+        "item_emRHyX",
+        "item_hDi6eU",
+        "item_xd8VFV",
+        "item_3D6JYd",
+        "item_nQ9W2s",
+        "item_p7Lk4N"
+      ],
+      "name": "FAQ",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "container_width": 900,
+        "open_first_item": true,
+        "header_align": "center",
+        "heading": "FAQ",
+        "heading_size": "h2",
+        "description": "<p> If you have any other questions, please <a href=\"\/pages\/contact\" target=\"_blank\" title=\"Contact\">get in touch with us<\/a>.<\/p>",
+        "description_size": "fs-md",
+        "pt": 3,
+        "pb": 3
+      }
+    }
+  },
+  "order": [
+    "faq_VUxY9M"
+  ]
+}

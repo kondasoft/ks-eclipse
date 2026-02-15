@@ -57,11 +57,11 @@
     --body-base-size: {{ settings.body_base_size | divided_by: 100.0 | append: 'rem' }};
     --headings-base-size: {{ settings.headings_base_size | divided_by: 100.0 | append: 'rem' }};
     --letter-spacing: {{ settings.letter_spacing | divided_by: 100.0 | append: 'em' }};
-    --container-max-width: {{ settings.container_max_width }}px;
-    --border-radius: {{ settings.border_radius }}rem;
+    --container-max-width: {{ settings.container_max_width | append: 'px' }};
+    --border-radius: {{ settings.border_radius | append: 'rem' }};
     --border-opacity: {{ settings.border_opacity | append: '%' }};
     --btn-color: var(--color-{{ settings.btn_color }});
-    --btn-color-contrast: var(--color-foreground);
+    --btn-color-contrast: var(--color-background);
   }
 {% endstyle %}
 

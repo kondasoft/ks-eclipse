@@ -4,22 +4,36 @@
     "toggle_navigation": "Toggle navigation",
     "toggle_search": "Toggle search",
     "toggle_cart": "Toggle cart",
-    "account": "Account",
     "social_icons": "Social media links"
   },
   "general": {
     "menu": "Menu",
-    "color_theme": {
-      "toggle": "Toggle color theme",
+    "account": "Account",
+    "contact_form": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "message": "Message",
+      "submit": "Send",
+      "success": "Your message has been sent successfully.",
+      "error": "There was an error sending your message. Please try again."
+    },
+    "color_scheme": {
+      "toggle": "Toggle color scheme",
       "light": "Light",
       "dark": "Dark",
       "system": "System"
     }
   },
   "cart": {
-    "title": "Cart", 
-    "empty": "Your cart is currently empty.", 
+    "title": "Cart",
+    "empty": "Your cart is currently empty.",
     "checkout": "Checkout",
-    "continue_shopping": "Continue shopping",
+    "continue_shopping": "Continue shopping"
+  },
+  "search": {
+    "title": "Search",
+    "label": "Search our store",
+    "placeholder": "Start typing to see results..."
   }
 }

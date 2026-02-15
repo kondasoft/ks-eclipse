@@ -17,10 +17,10 @@
     <div id="header-inner">
       <div class="header-col">
         <button 
-          data-toggle="nav-dialog"
+          data-toggle="menu-dialog"
           type="button"
           class="btn-icon"
-          aria-controls="nav-dialog"
+          aria-controls="menu-dialog"
           aria-expanded="false"
           aria-haspopup="dialog"
           aria-label="{{ 'accessibility.toggle_navigation' | t }}">
@@ -29,10 +29,10 @@
           </svg>
         </button>
         <button 
-          data-toggle="nav-modal"
+          data-toggle="search-dialog"
           type="button"
           class="btn-icon"
-          aria-controls="nav-modal"
+          aria-controls="search-dialog"
           aria-expanded="false"
           aria-haspopup="dialog"
           aria-label="{{ 'accessibility.toggle_search' | t }}">
@@ -86,7 +86,7 @@
         <a 
           href="{{ routes.account_url }}"
           class="btn-icon"
-          aria-label="{{ 'accessibility.account' | t }}">
+          aria-label="{{ 'general.account' | t }}">
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
           </svg>
@@ -113,75 +113,6 @@
     </div>
   </div>
 </div>
-
-<theme-dialog>
-  <dialog 
-    id="nav-dialog" 
-    class="drawer drawer-left dialog" 
-    aria-labelledby="nav-dialog-title">
-    <div class="dialog-header">
-      <h2 id="nav-dialog-title" class="dialog-title">
-        {{ 'general.menu' | t }}
-      </h2>
-      <button type="button" class="btn-icon dialog-close" data-dialog-close>  
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
-          <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </div>
-    <div class="dialog-body">
-      {% unless section.settings.menu == blank %}
-        <nav 
-          class="nav" 
-          aria-label="{{ 'general.menu' | t }}">
-          <ul class="nav-list nav-list-vertical">
-            {% for link in linklists[section.settings.menu].links %}
-              <li>
-                <a 
-                  href="{{ link.url }}" 
-                  class="nav-link {% if link.active %}active{% endif %}"
-                  aria-current="{% if link.active %}page{% endif %}">
-                  {{ link.title }}
-                </a>
-              </li>
-            {% endfor %}
-          </ul>
-        </nav>
-      {% endunless %}
-      {% if section.settings.social_icons %}
-        {% render 'social-icons' %}
-      {% endif %}
-    </div>
-    <div class="dialog-footer">
-      <color-theme-toggle>
-        <fieldset>
-          <legend class="visually-hidden">
-            {{ 'general.color_theme.toggle' | t }}
-          </legend>
-          <label class="btn-icon" data-tooltip="{{ 'general.color_theme.light' | t }}">
-            <input type="radio" value="light" data-theme-option class="visually-hidden" aria-label="{{ 'general.color_theme.light' | t }}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun">
-              <circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-            </svg>
-          </label>
-          <label class="btn-icon" data-tooltip="{{ 'general.color_theme.dark' | t }}">
-            <input type="radio" value="dark" data-theme-option class="visually-hidden" aria-label="{{ 'general.color_theme.dark' | t }}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-            </svg>
-          </label>
-          <label class="btn-icon" data-tooltip="{{ 'general.color_theme.system' | t }}">
-            <input type="radio" value="system" data-theme-option class="visually-hidden" aria-label="{{ 'general.color_theme.system' | t }}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-monitor">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line>
-            </svg>
-          </label>
-        </fieldset>
-      </color-theme-toggle>
-    </div>
-  </dialog>
-</theme-dialog>
-
 
 {% schema %}
 {
@@ -226,18 +157,6 @@
         { "value": "cart", "label": "Cart" },
         { "value": "bag", "label": "Bag" }
       ]
-    },
-    {
-      "type": "link_list",
-      "id": "menu", 
-      "label": "Menu", 
-      "default": "main-menu"
-    },
-    {
-      "type": "checkbox",
-      "id": "social_icons",
-      "label": "Show social icons",
-      "default": true
     },
     {
       "type": "header",

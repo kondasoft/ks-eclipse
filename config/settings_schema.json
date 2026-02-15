@@ -93,10 +93,16 @@
         "label": "Default color theme",
         "default": "light",
         "options": [
-          { "value": "light", "label": "Light" },
-          { "value": "dark", "label": "Dark" }
+          {
+            "value": "light",
+            "label": "Light"
+          },
+          {
+            "value": "dark",
+            "label": "Dark"
+          }
         ]
-      },
+      }
     ]
   },
   {
@@ -105,7 +111,7 @@
       {
         "type": "range",
         "id": "container_max_width",
-        "label": "Maximum container width",
+        "label": "Container width",
         "min": 1200,
         "max": 2000,
         "default": 1400,
@@ -138,8 +144,14 @@
         "label": "Button color",
         "default": "foreground",
         "options": [
-          { "value": "foreground", "label": "Text" },
-          { "value": "accent", "label": "Accent" }
+          {
+            "value": "foreground",
+            "label": "Text"
+          },
+          {
+            "value": "accent",
+            "label": "Accent"
+          }
         ]
       },
       {
@@ -148,8 +160,14 @@
         "label": "Cart icon",
         "default": "cart",
         "options": [
-          { "value": "cart", "label": "Cart" }, 
-          { "value": "bag", "label": "Bag" }
+          {
+            "value": "cart",
+            "label": "Cart"
+          },
+          {
+            "value": "bag",
+            "label": "Bag"
+          }
         ]
       }
     ]
@@ -196,7 +214,7 @@
         "default": 0,
         "min": 0,
         "max": 10,
-        "step": 1,
+        "step": 1
       }
     ]
   },
@@ -222,7 +240,30 @@
       }
     ]
   },
-   {
+  {
+    "name": "Menu",
+    "settings": [
+      {
+        "type": "link_list",
+        "id": "menu",
+        "label": "Menu",
+        "default": "main-menu"
+      },
+      {
+        "type": "checkbox",
+        "id": "menu_social_icons",
+        "label": "Show social icons in menu",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "menu_color_toggle",
+        "label": "Show color toggle in menu",
+        "default": true
+      }
+    ]
+  },
+  {
     "name": "Social links",
     "settings": [
       {

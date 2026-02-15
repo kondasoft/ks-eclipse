@@ -1,10 +1,73 @@
 {
   "current": {
+    "default_theme": "light",
+    "container_max_width": 1200,
+    "font_body": "assistant_n4",
+    "body_base_size": 100,
+    "font_headings": "cabin_n4",
+    "headings_base_size": 100,
+    "letter_spacing": 5,
+    "logo": "shopify:\/\/shop_images\/logo.png",
+    "logo_dark": "shopify:\/\/shop_images\/logo-white.png",
+    "favicon": "shopify:\/\/shop_images\/Icon.png",
+    "social_facebook": "http:\/\/facebook.com\/shopify",
+    "social_instagram": "http:\/\/instagram.com\/shopify",
+    "social_x": "http:\/\/x.com\/shopify",
+    "social_tiktok": "http:\/\/tiktok.com\/@shopify",
+    "social_youtube": "http:\/\/youtube.com\/@shopify",
+    "social_linkedin": "http:\/\/youtube.com\/@shopify",
+    "social_threads": "",
+    "color_scheme_dark": "scheme-e2449ddb-632b-4267-a1f0-3ca5b49d95c4",
+    "content_for_index": [],
     "color_schemes": {
       "scheme-1": {
         "settings": {
+          "light_background": "#ffffff",
+          "light_background_gradient": "",
+          "light_foreground": "#121212",
+          "light_accent": "#0069a9",
+          "dark_background": "#121212",
+          "dark_background_gradient": "",
+          "dark_foreground": "#ffffff",
+          "dark_accent": "#ccecff"
         }
       },
+      "scheme-e2449ddb-632b-4267-a1f0-3ca5b49d95c4": {
+        "settings": {
+          "light_background": "#f6f6f6",
+          "light_background_gradient": "",
+          "light_foreground": "#121212",
+          "light_accent": "#0069a9",
+          "dark_background": "#2b2b2b",
+          "dark_background_gradient": "",
+          "dark_foreground": "#ffffff",
+          "dark_accent": "#ccecff"
+        }
+      },
+      "scheme-29e675a4-d04b-4835-be68-30e0db08195b": {
+        "settings": {
+          "light_background": "#121212",
+          "light_background_gradient": "",
+          "light_foreground": "#ffffff",
+          "light_accent": "#ccecff",
+          "dark_background": "#ffffff",
+          "dark_background_gradient": "",
+          "dark_foreground": "#121212",
+          "dark_accent": "#0069a9"
+        }
+      },
+      "scheme-58d20620-320b-446e-a8a3-aae5e5b74bfb": {
+        "settings": {
+          "light_background": "#0069a9",
+          "light_background_gradient": "",
+          "light_foreground": "#ffffff",
+          "light_accent": "#ccecff",
+          "dark_background": "#0f4160",
+          "dark_background_gradient": "",
+          "dark_foreground": "#ffffff",
+          "dark_accent": "#ccecff"
+        }
+      }
     }
   }
 }

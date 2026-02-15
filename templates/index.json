@@ -1,11 +1,47 @@
 {
   "sections": {
-    "hero-slideshow": {
+    "hero_media_M4Xdyq": {
       "type": "hero-media",
+      "name": "Hero Media",
       "settings": {
-        "title": "Welcome"
+        "type": "video",
+        "img": "shopify:\/\/shop_images\/philipp-dusel-2F-m1FvoJT4-unsplash.jpg",
+        "video": "shopify:\/\/files\/videos\/4991088-hd_1920_1080_30fps.mp4",
+        "fixed_height": true,
+        "media_min_height": 500,
+        "media_max_height": 600,
+        "display_overlay": true,
+        "overlay_color": "#000000",
+        "overlay_opacity": 30,
+        "overlay_blur": 0,
+        "display_content": true,
+        "content_alignment": "center",
+        "content_color": "#ffffff",
+        "subheading": "Optional subheading",
+        "subheading_size": "fs-sm",
+        "heading": "Hero Media",
+        "heading_size": "h1",
+        "description": "<p>This is a hero section with image or video media. You can use it to showcase your products or brand.<\/p>",
+        "description_size": "fs-lg",
+        "btn_color": "#ffffff",
+        "btn_color_contrast": "#121212",
+        "btn_size": "fs-md",
+        "primary_btn_label": "Latest arrivals",
+        "primary_btn_link": "shopify:\/\/collections\/latest-arrivals",
+        "secondary_btn_label": "Best sellers",
+        "secondary_btn_link": "shopify:\/\/collections\/best-selling"
+      }
+    },
+    "richtext_FUFaAX": {
+      "type": "richtext",
+      "name": "Rich Text",
+      "settings": {
+        "content": ""
       }
     }
   },
-  "order": ["hero-slideshow"]
-} 
+  "order": [
+    "hero_media_M4Xdyq",
+    "richtext_FUFaAX"
+  ]
+}

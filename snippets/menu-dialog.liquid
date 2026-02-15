@@ -1,0 +1,46 @@
+
+<theme-dialog>
+  <dialog 
+    id="menu-dialog" 
+    class="drawer drawer-left dialog" 
+    aria-labelledby="menu-dialog-title">
+    <div class="dialog-header">
+      <h2 id="menu-dialog-title" class="dialog-title">
+        {{ 'general.menu' | t }}
+      </h2>
+      <button type="button" class="btn-icon dialog-close" data-dialog-close>  
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
+          <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="dialog-body">
+      {% unless settings.menu == blank %}
+        <nav 
+          class="nav" 
+          aria-label="{{ 'general.menu' | t }}">
+          <ul class="nav-list nav-list-vertical">
+            {% for link in linklists[settings.menu].links %}
+              <li>
+                <a 
+                  href="{{ link.url }}" 
+                  class="nav-link {% if link.active %}active{% endif %}"
+                  aria-current="{% if link.active %}page{% endif %}">
+                  {{ link.title }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </nav>
+      {% endunless %}
+      {% if settings.menu_social_icons %}
+        {% render 'social-icons' %}
+      {% endif %}
+    </div>
+    {% if settings.menu_color_toggle %}
+      <div class="dialog-footer">
+        {% render 'theme-color-toggle' %}
+      </div>
+    {% endif %}
+  </dialog>
+</theme-dialog>

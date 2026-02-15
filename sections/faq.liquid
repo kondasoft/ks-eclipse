@@ -1,0 +1,210 @@
+<div
+  id="faq-{{ section.id }}"
+  class="faq {{ section.settings.color_scheme | prepend: 'color-' }}"
+  style="
+    --pt: {{ section.settings.pt | append: 'rem' }};
+    --pb: {{ section.settings.pb | append: 'rem' }};
+  "
+>
+  <div
+    class="container"
+    style="max-width: {{ section.settings.container_width | append: 'px' }};"
+  >
+    {% if section.settings.heading != blank or section.settings.description != blank %}
+      <header class="section-header text-{{ section.settings.header_align }}">
+        {% if section.settings.heading != blank %}
+          <h2 class="{{ section.settings.heading_size }}">
+            {{ section.settings.heading }}
+          </h2>
+        {% endif %}
+
+        {% if section.settings.description != blank %}
+          <div class="description rte {{ section.settings.description_size }}">
+            {{ section.settings.description }}
+          </div>
+        {% endif %}
+      </header>
+    {% endif %}
+    {% if section.blocks.size > 0 %}
+      <div class="faq-list">
+        {% for block in section.blocks %}
+          <details
+            class="faq-item"
+            {% if section.settings.open_first_item and forloop.first %}open{% endif %}
+            {{ block.shopify_attributes }}
+          >
+            <summary class="faq-question">
+              <span>{{ block.settings.question }}</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+            </summary>
+            <div class="faq-answer">
+              <div class="description rte">
+                {{ block.settings.answer }}
+              </div>
+            </div>
+          </details>
+        {% endfor %}
+      </div>
+    {% elsif request.design_mode %}
+      <div class="alert alert-warning">
+        <p>Add FAQ blocks to show questions and answers.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {% for block in section.blocks %}
+      {
+        "@type": "Question",
+        "name": {{ block.settings.question | json }},
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": {{ block.settings.answer | json }}
+        }
+      }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+    ]
+  }
+</script>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container width",
+      "min": 500,
+      "max": 1400,
+      "step": 50,
+      "default": 900,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first_item",
+      "label": "Open first item by default",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text_alignment",
+      "id": "header_align",
+      "label": "Header alignment",
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "FAQ"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" }
+      ]
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Here are some of our FAQs. <br> If you have any other questions, please contact us.</p>"
+    },
+    {
+      "type": "select",
+      "id": "description_size",
+      "label": "Description size",
+      "default": "fs-md",
+      "options": [
+        { "value": "fs-sm", "label": "Small" },
+        { "value": "fs-md", "label": "Medium" },
+        { "value": "fs-lg", "label": "Large" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pt",
+      "label": "Top",
+      "min": 0,
+      "max": 8,
+      "step": 0.1,
+      "default": 3,
+      "unit": "rem"
+    },
+    {
+      "type": "range",
+      "id": "pb",
+      "label": "Bottom",
+      "min": 0,
+      "max": 8,
+      "step": 0.1,
+      "default": 3,
+      "unit": "rem"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "What is your return policy?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>You can return eligible items within 30 days of purchase.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ",
+      "category": "Text",
+      "blocks": [
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

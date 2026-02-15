@@ -136,13 +136,13 @@
 
 
 /*
-  Color theme toggle
+  Color scheme toggle
 */
-color-theme-toggle {
+color-scheme-toggle {
   display: inline-flex;
 }
 
-color-theme-toggle fieldset {
+color-scheme-toggle fieldset {
   margin: 0;
   padding: 0;
   border: 0;
@@ -150,18 +150,18 @@ color-theme-toggle fieldset {
   gap: .25rem;
 }
 
-color-theme-toggle label {
+color-scheme-toggle label {
   position: relative;
   cursor: pointer;
 }
 
-color-theme-toggle label:has(input:checked),
-color-theme-toggle label:has(input:checked):hover {
+color-scheme-toggle label:has(input:checked),
+color-scheme-toggle label:has(input:checked):hover {
   color: rgb(var(--color-accent));
   background-color: rgb(var(--color-accent) / .1);
 }
 
-color-theme-toggle label:has(input:focus-visible) {
+color-scheme-toggle label:has(input:focus-visible) {
   outline-color: rgb(var(--color-accent));
 }
 
@@ -199,18 +199,18 @@ color-theme-toggle label:has(input:focus-visible) {
 /*
   Nav dialog
 */
-#nav-dialog .dialog-body .nav {
+#menu-dialog .dialog-body .nav {
   margin-left: -1rem;
   margin-right: -1rem;
 }
 
-#nav-dialog .dialog-body .social-icons-nav {
+#menu-dialog .dialog-body .social-icons-nav {
   display: flex;
   justify-content: center;
   margin-top: 1.5rem;
 }
 
-#nav-dialog .dialog-body .social-icons {
+#menu-dialog .dialog-body .social-icons {
   display: inline-flex;
   justify-content: center;
   background-color: rgb(var(--color-foreground) / .05);
@@ -218,7 +218,7 @@ color-theme-toggle label:has(input:focus-visible) {
   padding: .125rem .5rem;
 }
 
-#nav-dialog .dialog-footer {
+#menu-dialog .dialog-footer {
   display: flex;
   justify-content: center;
   padding-top: .5rem;
