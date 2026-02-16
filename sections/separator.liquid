@@ -1,0 +1,63 @@
+<div 
+  id="separator-{{ section.id }}"
+  class="separator"
+  style="
+    --mt: {{ section.settings.mt | append: 'rem' }};
+    --mb: {{ section.settings.mb | append: 'rem' }};
+  "
+>
+  {% if section.settings.wrap_container %}
+    <div class="container">
+  {% endif %}
+    <div class="separator-inner">
+      <hr>
+    </div>
+  {% if section.settings.wrap_container %}
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Separator",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "wrap_container",
+      "label": "Wrap in container",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "mt",
+      "label": "Top",
+      "min": 0,
+      "max": 5,
+      "step": 0.1,
+      "default": 2.5,
+      "unit": "rem"
+    },
+    {
+      "type": "range",
+      "id": "mb",
+      "label": "Bottom",
+      "min": 0,
+      "max": 5,
+      "step": 0.1,
+      "default": 2.5,
+      "unit": "rem"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Separator",
+      "category": "Layout"
+    }
+  ]
+}
+{% endschema %}

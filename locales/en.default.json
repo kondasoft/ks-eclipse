@@ -4,11 +4,15 @@
     "toggle_navigation": "Toggle navigation",
     "toggle_search": "Toggle search",
     "toggle_cart": "Toggle cart",
-    "social_icons": "Social media links"
+    "social_icons": "Social media links",
+    "policy_links": "Policy links",
+    "payment_methods": "Payment methods"
   },
   "general": {
     "menu": "Menu",
     "account": "Account",
+    "all_rights_reserved": "All rights reserved.",
+    "secure_payments": "100% secure & protected payments",
     "contact_form": {
       "name": "Name",
       "email": "Email",

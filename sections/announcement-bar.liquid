@@ -1,9 +1,13 @@
 <div 
-  class="announcement-bar {{ section.settings.color_scheme | prepend: 'color-' }}"
+  class="announcement-bar"
   style="
     --pt: {{ section.settings.pt | append: 'rem' }};
     --pb: {{ section.settings.pb | append: 'rem' }};
   "
+  {% if section.settings.custom_color_schemes %}
+    data-light-color-scheme="{{ section.settings.light_color_scheme }}"
+    data-dark-color-scheme="{{ section.settings.dark_color_scheme }}"
+  {% endif %}
   data-border-bottom="{{ section.settings.border_bottom }}">
   <div class="container">
     <div class="rte {{ section.settings.fs }}">
@@ -18,16 +22,34 @@
   "tag": "section",
   "settings": [
     {
-      "type": "text",
+      "type": "inline_richtext",
       "id": "text",
       "label": "Text",
       "default": "Free shipping on orders over $100!"
     },
     {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_schemes",
+      "label": "Use custom color schemes",
+      "default": false
+    },
+    {
       "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "Color scheme",
-      "default": "scheme-1"
+      "id": "light_color_scheme",
+      "label": "Light color scheme",
+      "default": "scheme-3",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "dark_color_scheme",
+      "label": "Dark color scheme",
+      "default": "scheme-3",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
     },
     {
       "type": "checkbox",

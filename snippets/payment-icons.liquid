@@ -1,0 +1,19 @@
+ 
+{% unless shop.enabled_payment_types == empty %}
+  <div class="payment-icons">
+    <ul aria-label="{{ 'accessibility.payment_methods' | t }}">
+      {% for type in shop.enabled_payment_types %}
+        {% assign payment_label = type | replace: '_', ' ' | capitalize %}
+        <li
+          aria-label="{{ payment_label }}"
+          data-tooltip="{{ payment_label }}"
+        >
+          {{ type | payment_type_svg_tag: class: 'icon' }}
+        </li>
+      {% endfor %}
+    </ul>
+    <small class="payment-icons-text">
+      {{ 'general.secure_payments' | t }}
+    </small>
+  </div>
+{% endunless %}

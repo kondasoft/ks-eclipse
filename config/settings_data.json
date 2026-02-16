@@ -1,5 +1,6 @@
 {
   "current": {
+    "dark_color_scheme": "scheme-29e675a4-d04b-4835-be68-30e0db08195b",
     "default_theme": "light",
     "container_max_width": 1200,
     "font_body": "assistant_n4",
@@ -17,55 +18,47 @@
     "social_youtube": "http:\/\/youtube.com\/@shopify",
     "social_linkedin": "http:\/\/youtube.com\/@shopify",
     "social_threads": "",
-    "color_scheme_dark": "scheme-e2449ddb-632b-4267-a1f0-3ca5b49d95c4",
+    "color_scheme_dark": "scheme-3",
     "content_for_index": [],
     "color_schemes": {
       "scheme-1": {
         "settings": {
-          "light_background": "#ffffff",
-          "light_background_gradient": "",
-          "light_foreground": "#121212",
-          "light_accent": "#0069a9",
-          "dark_background": "#121212",
-          "dark_background_gradient": "",
-          "dark_foreground": "#ffffff",
-          "dark_accent": "#ccecff"
+          "background": "#ffffff",
+          "background_gradient": "",
+          "foreground": "#121212",
+          "accent": "#0069a9"
         }
       },
-      "scheme-e2449ddb-632b-4267-a1f0-3ca5b49d95c4": {
+      "scheme-2": {
         "settings": {
-          "light_background": "#f6f6f6",
-          "light_background_gradient": "",
-          "light_foreground": "#121212",
-          "light_accent": "#0069a9",
-          "dark_background": "#2b2b2b",
-          "dark_background_gradient": "",
-          "dark_foreground": "#ffffff",
-          "dark_accent": "#ccecff"
+          "background": "#f6f6f6",
+          "background_gradient": "",
+          "foreground": "#121212",
+          "accent": "#0069a9"
         }
       },
-      "scheme-29e675a4-d04b-4835-be68-30e0db08195b": {
+      "scheme-3": {
         "settings": {
-          "light_background": "#121212",
-          "light_background_gradient": "",
-          "light_foreground": "#ffffff",
-          "light_accent": "#ccecff",
-          "dark_background": "#ffffff",
-          "dark_background_gradient": "",
-          "dark_foreground": "#121212",
-          "dark_accent": "#0069a9"
+          "background": "#121212",
+          "background_gradient": "",
+          "foreground": "#ffffff",
+          "accent": "#cde9fa"
         }
       },
-      "scheme-58d20620-320b-446e-a8a3-aae5e5b74bfb": {
+      "scheme-4": {
         "settings": {
-          "light_background": "#0069a9",
-          "light_background_gradient": "",
-          "light_foreground": "#ffffff",
-          "light_accent": "#ccecff",
-          "dark_background": "#0f4160",
-          "dark_background_gradient": "",
-          "dark_foreground": "#ffffff",
-          "dark_accent": "#ccecff"
+          "background": "#242424",
+          "background_gradient": "",
+          "foreground": "#ffffff",
+          "accent": "#cde9fa"
+        }
+      },
+      "scheme-5": {
+        "settings": {
+          "background": "#0069a9",
+          "background_gradient": "",
+          "foreground": "#ffffff",
+          "accent": "#cde9fa"
         }
       }
     }

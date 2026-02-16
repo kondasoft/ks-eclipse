@@ -35,13 +35,29 @@
     "richtext_FUFaAX": {
       "type": "richtext",
       "name": "Rich Text",
+      "settings": {}
+    },
+    "separator_1": {
+      "type": "separator",
+      "name": "Separator",
       "settings": {
-        "content": ""
+        "color_scheme": "scheme-1",
+        "wrap_container": true
+      }
+    },
+    "html_9n2q8X": {
+      "type": "html",
+      "name": "HTML\/Liquid",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "wrap_container": true
       }
     }
   },
   "order": [
     "hero_media_M4Xdyq",
-    "richtext_FUFaAX"
+    "richtext_FUFaAX",
+    "separator_1",
+    "html_9n2q8X"
   ]
 }

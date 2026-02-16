@@ -15,77 +15,101 @@
         "id": "color_schemes",
         "definition": [
           {
-            "type": "header",
-            "content": "Light theme"
-          },
-          {
             "type": "color",
-            "id": "light_background",
+            "id": "background",
             "label": "Background",
             "default": "#FFFFFF"
           },
           {
             "type": "color_background",
-            "id": "light_background_gradient",
+            "id": "background_gradient",
             "label": "Background gradient",
             "info": "Background gradient replaces background where possible."
           },
           {
             "type": "color",
-            "id": "light_foreground",
+            "id": "foreground",
             "label": "Text",
             "default": "#121212"
           },
           {
             "type": "color",
-            "id": "light_accent",
+            "id": "accent",
             "label": "Accent",
             "default": "#0069A9"
           },
           {
             "type": "header",
-            "content": "Dark theme"
+            "content": "Primary button"
           },
           {
             "type": "color",
-            "id": "dark_background",
+            "id": "btn_primary_background",
             "label": "Background",
             "default": "#121212"
           },
           {
-            "type": "color_background",
-            "id": "dark_background_gradient",
-            "label": "Background gradient",
-            "info": "Background gradient replaces background where possible."
-          },
-          {
             "type": "color",
-            "id": "dark_foreground",
+            "id": "btn_primary_foreground",
             "label": "Text",
             "default": "#FFFFFF"
           },
           {
             "type": "color",
-            "id": "dark_accent",
-            "label": "Accent",
-            "default": "#0069A9"
+            "id": "btn_primary_border",
+            "label": "Border",
+            "default": "#121212"
+          },
+          {
+            "type": "header",
+            "content": "Secondary button"
+          },
+          {
+            "type": "color",
+            "id": "btn_secondary_background",
+            "label": "Background",
+            "default": "#FFFFFF"
+          },
+          {
+            "type": "color",
+            "id": "btn_secondary_foreground",
+            "label": "Text",
+            "default": "#121212"
+          },
+          {
+            "type": "color",
+            "id": "btn_secondary_border",
+            "label": "Border",
+            "default": "#121212"
           }
         ],
         "role": {
           "background": {
-            "solid": "light_background",
-            "gradient": "light_background_gradient"
+            "solid": "background",
+            "gradient": "background_gradient"
           },
-          "text": "light_foreground",
-          "links": "light_foreground",
-          "icons": "light_foreground",
-          "primary_button": "light_accent",
-          "on_primary_button": "light_background",
-          "primary_button_border": "light_accent",
-          "secondary_button": "light_background",
-          "on_secondary_button": "light_foreground",
-          "secondary_button_border": "light_foreground"
+          "text": "foreground",
+          "links": "foreground",
+          "icons": "foreground",
+          "primary_button": "btn_primary_background",
+          "on_primary_button": "btn_primary_foreground",
+          "primary_button_border": "btn_primary_border",
+          "secondary_button": "btn_secondary_background",
+          "on_secondary_button": "btn_secondary_foreground",
+          "secondary_button_border": "btn_secondary_border"
         }
+      },
+      {
+        "type": "color_scheme",
+        "id": "light_color_scheme",
+        "label": "Light color scheme",
+        "default": "scheme-1"
+      },
+      {
+        "type": "color_scheme",
+        "id": "dark_color_scheme",
+        "label": "Dark color scheme",
+        "default": "scheme-2"
       },
       {
         "type": "select",
@@ -101,8 +125,8 @@
             "value": "dark",
             "label": "Dark"
           }
-        ]
-      }
+        ],
+      },
     ]
   },
   {
@@ -137,22 +161,6 @@
         "max": 100,
         "step": 5,
         "unit": "%"
-      },
-      {
-        "type": "select",
-        "id": "btn_color",
-        "label": "Button color",
-        "default": "foreground",
-        "options": [
-          {
-            "value": "foreground",
-            "label": "Text"
-          },
-          {
-            "value": "accent",
-            "label": "Accent"
-          }
-        ]
       },
       {
         "type": "select",

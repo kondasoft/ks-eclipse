@@ -67,7 +67,8 @@
   {% if section.settings.display_content %}
     <div 
       class="hero-media-content"
-      style="--content-color: {{ section.settings.content_color.red }} {{ section.settings.content_color.green }} {{ section.settings.content_color.blue }};">
+      data-color-scheme="{{ section.settings.content_color_scheme }}"
+    >
       <div class="container">
         <div class="hero-media-content-inner {{ section.settings.content_alignment }}">
           {% if section.settings.subheading != blank %}
@@ -86,12 +87,7 @@
             </div>
           {% endif %}
           {% if section.settings.primary_btn_label != blank or section.settings.secondary_btn_label != blank %}
-            <div 
-              class="btn-group"
-              style="
-                --btn-color: {{ section.settings.btn_color.red }} {{ section.settings.btn_color.green }} {{ section.settings.btn_color.blue }};
-                --btn-color-contrast: {{ section.settings.btn_color_contrast.red }} {{ section.settings.btn_color_contrast.green }} {{ section.settings.btn_color_contrast.blue }};
-              ">
+            <div class="btn-group">
               {% if section.settings.primary_btn_label != blank %}
                 <a 
                   href="{{ section.settings.primary_btn_link | default: '#' }}" 
@@ -102,7 +98,7 @@
               {% if section.settings.secondary_btn_label != blank %}
                 <a 
                   href="{{ section.settings.secondary_btn_link | default: '#' }}" 
-                  class="btn btn-outline {{ section.settings.btn_size }}">
+                  class="btn btn-secondary {{ section.settings.btn_size }}">
                   {{ section.settings.secondary_btn_label }}
                 </a>
               {% endif %}
@@ -223,6 +219,13 @@
       "default": true
     },
     {
+      "type": "color_scheme",
+      "id": "content_color_scheme",
+      "label": "Content color scheme",
+      "default": "scheme-3",
+      "visible_if": "{{ section.settings.display_content }}"
+    },
+    {
       "id": "content_alignment",
       "type": "select",
       "label": "Content alignment (desktop)",
@@ -232,13 +235,6 @@
         { "value": "right", "label": "Right" }
       ],
       "default": "center",
-      "visible_if": "{{ section.settings.display_content }}"
-    },
-    {
-      "type": "color",
-      "id": "content_color",
-      "label": "Content color",
-      "default": "#ffffff",
       "visible_if": "{{ section.settings.display_content }}"
     },
     {
@@ -307,20 +303,6 @@
     {
       "type": "header",
       "content": "Buttons",
-      "visible_if": "{{ section.settings.display_content }}"
-    },
-    {
-      "type": "color",
-      "id": "btn_color",
-      "label": "Button color",
-      "default": "#ffffff",
-      "visible_if": "{{ section.settings.display_content }}",
-    },
-    {
-      "type": "color",
-      "id": "btn_color_contrast",
-      "label": "Button contrast color",
-      "default": "#121212",
       "visible_if": "{{ section.settings.display_content }}"
     },
     {

@@ -1,89 +1,278 @@
-{% stylesheet %}
-  .footer {
-    background-color: #f5f5f5;
-    padding: 40px 20px;
-    margin-top: 60px;
-  }
-
-  .footer-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 30px;
-  }
-
-  .footer-column h3 {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 15px;
-  }
-
-  .footer-column ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  .footer-column a {
-    color: #666;
-    text-decoration: none;
-    font-size: 14px;
-    line-height: 1.8;
-  }
-
-  .footer-column a:hover {
-    color: #000;
-  }
-
-  .footer-bottom {
-    text-align: center;
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #ddd;
-    color: #999;
-    font-size: 12px;
-  }
-{% endstylesheet %}
-
-<footer class="footer">
-  <div class="footer-content">
-    <div class="footer-column">
-      <h3>Shop</h3>
-      <ul>
-        <li><a href="/collections/all">All Products</a></li>
-        <li><a href="/collections">Collections</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column">
-      <h3>Support</h3>
-      <ul>
-        <li><a href="/pages/contact">Contact Us</a></li>
-        <li><a href="/pages/faq">FAQ</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column">
-      <h3>Company</h3>
-      <ul>
-        <li><a href="/pages/about">About</a></li>
-        <li><a href="/policies/privacy-policy">Privacy Policy</a></li>
-      </ul>
+<div 
+  id="footer"
+  class="footer"
+  style="
+    --pt: {{ section.settings.pt | append: 'rem' }};
+    --pb: {{ section.settings.pb | append: 'rem' }};
+  "
+  {% if section.settings.custom_color_schemes %}
+    data-light-color-scheme="{{ section.settings.light_color_scheme }}"
+    data-dark-color-scheme="{{ section.settings.dark_color_scheme }}"
+  {% endif %}
+  data-border-top="{{ section.settings.border_top }}"
+>
+  <div class="container">
+    {% unless section.blocks == empty %}
+      <div id="footer-blocks" data-block-count="{{ section.blocks.size }}">
+        {% for block in section.blocks %}
+          <div class="footer-block">
+            {% unless block.settings.heading == blank %}
+              <h3 class="footer-block-heading {{ block.settings.heading_size }}">
+                {{ block.settings.heading }}
+              </h3>
+            {% endunless %}
+            {% if block.type == 'menu' %}
+              <ul class="nav-list">
+                {% for link in linklists[block.settings.menu].links %}
+                  <li>
+                    <a href="{{ link.url }}">
+                      {{ link.title }}
+                    </a>
+                  </li>
+                {% else %}
+                  {% for n in (1..5) %}
+                    <li>
+                      <a href="#">
+                        Menu item {{ n }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                {% endfor %}
+              </ul>
+            {% elsif block.type == 'text' %}
+              <div class="description rte">
+                {{ block.settings.description }}
+              </div>
+              {% unless block.settings.btn_label == blank %}
+                <a
+                  href="{{ block.settings.btn_link }}" 
+                  class="btn {{ block.settings.btn_style }} {{ block.settings.btn_size }}">
+                  {{ block.settings.btn_label }}
+                </a>
+              {% endunless %}
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      <hr class="footer-separator">
+    {% endunless %}
+    <div 
+      id="footer-bottom"
+      class="fs-sm">
+       <p id="footer-copyright">
+          &copy; {{ 'now' | date: '%Y' }}
+          {{ shop.name | replace: ' (', '<span hidden>' | replace: ')', '</span>' }}. {{ 'general.all_rights_reserved' | t }}
+        </p>
+        {% if section.settings.policy_links %}
+          <ul
+            id="footer-policy-links"
+            class="list-unstyled"
+            aria-label="{{ 'accessibility.policy_links' | t }}"
+          >
+            {% for policy in shop.policies %}
+              <li>
+                <a href="{{ policy.url }}">
+                  {{ policy.title }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+          {% if section.settings.payment_icons %}
+          <div id="footer-payment-icons">
+            {% render 'payment-icons' %}
+          </div>
+        {% endif %}
+        {% if section.settings.powered_by %}
+          <p id="footer-powered-by">
+            {{ powered_by_link }}
+        </p>
+        {% endif %}
     </div>
   </div>
-
-  <div class="footer-bottom">
-    <p>&copy; {{ "now" | date: "%Y" }} {{ shop.name }}. All rights reserved.</p>
-  </div>
-</footer>
-
-{% javascript %}
-  // Footer functionality
-{% endjavascript %}
+</div>
 
 {% schema %}
 {
   "name": "Footer",
-  "settings": []
+  "tag": "footer",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "custom_color_schemes",
+      "label": "Custom color schemes",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "light_color_scheme",
+      "label": "Light color scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "dark_color_scheme",
+      "label": "Dark color scheme",
+      "default": "scheme-3",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+     {
+      "type": "checkbox",
+      "id": "border_top",
+      "label": "Border top",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "policy_links",
+      "label": "Show policy links",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "payment_icons",
+      "label": "Show payment icons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "powered_by",
+      "label": "Show 'Powered by Shopify'",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pt",
+      "label": "Top",
+      "min": 0,
+      "max": 5,
+      "step": 0.1,
+      "default": 2.5,
+      "unit": "rem"
+    },
+    {
+      "type": "range",
+      "id": "pb",
+      "label": "Bottom",
+      "min": 0,
+      "max": 5,
+      "step": 0.1,
+      "default": 2.5,
+      "unit": "rem"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        {
+          "type": "link_list",
+          "id": "menu_link_list",
+          "label": "Menu"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Menu block"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "label": "Heading size",
+          "default": "h5",
+          "options": [
+            { "value": "h1", "label": "H1" },
+            { "value": "h2", "label": "H2" },
+            { "value": "h3", "label": "H3" },
+            { "value": "h4", "label": "H4" },
+            { "value": "h5", "label": "H5" },
+            { "value": "h6", "label": "H6" }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Text block"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "label": "Heading size",
+          "default": "h5",
+          "options": [
+            { "value": "h1", "label": "H1" },
+            { "value": "h2", "label": "H2" },
+            { "value": "h3", "label": "H3" },
+            { "value": "h4", "label": "H4" },
+            { "value": "h5", "label": "H5" },
+            { "value": "h6", "label": "H6" }
+          ]
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Find helpful links, support info, and the latest updates from our store.</p>"
+        },
+        {
+          "type": "text",
+          "id": "btn_label",
+          "label": "Button label",
+          "default": "Contact us",
+          "info": "Leave empty to hide"
+        },
+        {
+          "type": "url",
+          "id": "btn_link",
+          "label": "Button link"
+        },
+        {
+          "type": "select",
+          "id": "btn_style",
+          "label": "Button style",
+          "default": "btn-primary",
+          "options": [
+            { "value": "btn-primary", "label": "Primary" },
+            { "value": "btn-secondary", "label": "Secondary" },
+          ]
+        },
+        {
+          "type": "select",
+          "id": "btn_size",
+          "label": "Button size",
+          "default": "btn-md",
+          "options": [
+            { "value": "btn-sm", "label": "Small" },
+            { "value": "btn-md", "label": "Medium" },
+            { "value": "btn-lg", "label": "Large" }
+          ]
+        }
+      ]
+    }
+  ],
+  "enabled_on": {
+    "groups": [ "footer" ]
+  },
+  "presets": [
+    { 
+      "name": "Footer",
+      "category": "Footer"
+    } 
+  ]
 }
 {% endschema %}

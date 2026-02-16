@@ -1,0 +1,158 @@
+<div 
+  id="html-section-{{ section.id }}"
+  class="html-section"
+  style="
+    --pt: {{ section.settings.pt | append: 'rem' }};
+    --pb: {{ section.settings.pb | append: 'rem' }};
+  "
+  {% if section.settings.custom_color_schemes %}
+    data-light-color-scheme="{{ section.settings.light_color_scheme }}"
+    data-dark-color-scheme="{{ section.settings.dark_color_scheme }}"
+  {% endif %}
+>
+  {% if section.settings.heading != blank or section.settings.description != blank %}
+    <header class="section-header text-{{ section.settings.header_align }}">
+      {% if section.settings.heading != blank %}
+        <h2 class="{{ section.settings.heading_size }}">
+          {{ section.settings.heading }}
+        </h2>
+      {% endif %}
+      {% if section.settings.description != blank %}
+        <div class="description rte {{ section.settings.description_size }}">
+          {{ section.settings.description }}
+        </div>
+      {% endif %}
+    </header>
+  {% endif %}
+  {% if section.settings.wrap_container %}
+    <div class="container">
+  {% endif %}
+    <div class="html-section-inner">
+      {{ section.settings.liquid }}
+    </div>
+  {% if section.settings.wrap_container %}
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "HTML/Liquid",
+  "tag": "section",
+  "settings": [
+        {
+      "type": "liquid",
+      "id": "liquid",
+      "label": "HTML/Liquid code",
+      "default": "<p class=\"alert text-center\">Current time is: <strong>{{ \"now\" | date: \"%Y-%m-%d %H:%M\" }}</strong></p>"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_schemes",
+      "label": "Custom color schemes",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "light_color_scheme",
+      "label": "Light color scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "dark_color_scheme",
+      "label": "Dark color scheme",
+      "default": "scheme-3",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "wrap_container",
+      "label": "Wrap in container",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text_alignment",
+      "id": "header_align",
+      "label": "Header alignment",
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "HTML/Liquid"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" }
+      ]
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>This is a custom HTML section. You can add any HTML or Liquid code here to create custom layouts and functionality.<\/p>"
+    },
+    {
+      "type": "select",
+      "id": "description_size",
+      "label": "Description size",
+      "default": "fs-md",
+      "options": [
+        { "value": "fs-sm", "label": "Small" },
+        { "value": "fs-md", "label": "Medium" },
+        { "value": "fs-lg", "label": "Large" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pt",
+      "label": "Top",
+      "min": 0,
+      "max": 5,
+      "step": 0.1,
+      "default": 2.5,
+      "unit": "rem"
+    },
+    {
+      "type": "range",
+      "id": "pb",
+      "label": "Bottom",
+      "min": 0,
+      "max": 5,
+      "step": 0.1,
+      "default": 2.5,
+      "unit": "rem"
+    }
+  ],
+  "presets": [
+    {
+      "name": "HTML/Liquid",
+      "category": "Other"
+    }
+  ]
+}
+{% endschema %}

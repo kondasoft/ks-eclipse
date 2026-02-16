@@ -4,7 +4,54 @@
   "sections": {
     "footer": {
       "type": "footer",
-      "settings": {}
+      "blocks": {
+        "menu_yp3YWH": {
+          "type": "menu",
+          "settings": {
+            "menu_link_list": "",
+            "heading": "Menu",
+            "heading_size": "h5"
+          }
+        },
+        "menu_LQAtcE": {
+          "type": "menu",
+          "settings": {
+            "menu_link_list": "",
+            "heading": "Menu",
+            "heading_size": "h5"
+          }
+        },
+        "menu_pt6Tzp": {
+          "type": "menu",
+          "settings": {
+            "menu_link_list": "",
+            "heading": "Menu",
+            "heading_size": "h5"
+          }
+        },
+        "text_hyRChH": {
+          "type": "text",
+          "settings": {
+            "heading": "Text block",
+            "description": "<p>Helpful links and store updates.<\/p>"
+          }
+        }
+      },
+      "block_order": [
+        "menu_yp3YWH",
+        "menu_LQAtcE",
+        "menu_pt6Tzp",
+        "text_hyRChH"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "border_top": true,
+        "policy_links": true,
+        "payment_icons": true,
+        "powered_by": true,
+        "pt": 2.5,
+        "pb": 2.5
+      }
     }
   },
   "order": [

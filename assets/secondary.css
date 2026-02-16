@@ -7,7 +7,6 @@
   position: fixed;
   border: 0;
   padding: 0;
-  background: transparent;
   box-sizing: border-box;
   width: min(85vw, var(--dialog-width, 400px));
   max-width: 100%;
@@ -194,6 +193,39 @@ color-scheme-toggle label:has(input:focus-visible) {
   transform: translateY(0);
   transition-delay: 0s, 0s, 0s;
 }
+
+
+/* 
+  Payment icons
+*/
+.payment-icons {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.payment-icons ul {
+  display: inline-flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 0.15em;
+}
+
+.payment-icons svg {
+  display: flex;
+  height: 20px;
+  width: 100%;
+}
+
+.payment-icons-text {
+  opacity: 0.75;
+  text-align: center;
+  margin: 0.125rem 0 0;
+  font-size: .875em;
+}
   
 
 /*
@@ -202,6 +234,42 @@ color-scheme-toggle label:has(input:focus-visible) {
 #menu-dialog .dialog-body .nav {
   margin-left: -1rem;
   margin-right: -1rem;
+}
+
+#menu-dialog .dialog-body .nav-list {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#menu-dialog .dialog-body .nav-list li a {
+  text-decoration: none;
+  display: block;
+  transition: all .3s ease;
+}
+
+#menu-dialog .dialog-body .nav-list li a:hover {
+  background-color: rgb(var(--color-foreground) / .05);
+}
+
+#menu-dialog .dialog-body .nav-list li a:active {
+  background-color: rgb(var(--color-foreground) / .15);
+}
+
+#menu-dialog .dialog-body .nav-list li a.active {
+  color: rgb(var(--color-accent));
+  background-color: rgb(var(--color-accent) / .05);
+  border-left: 2px solid rgb(var(--color-accent));
+  padding-left: calc(1rem - 2px);
+}
+
+#menu-dialog .dialog-body .nav-list-vertical {
+  flex-direction: column;
+}
+
+#menu-dialog .dialog-body .nav-list-vertical li a {
+  padding: .6rem 1rem;
 }
 
 #menu-dialog .dialog-body .social-icons-nav {

@@ -1,4 +1,9 @@
 /*
+  Theme copyright
+*/
+console.info('KS Eclipse theme by KondaSoft (https://kondasoft.com)');
+
+/*
   Color scheme toggle
 */
 class ColorSchemeToggle extends HTMLElement {

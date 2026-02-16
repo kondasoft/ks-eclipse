@@ -1,21 +1,226 @@
-<div class="richtext" style="height: 2000px;">
-  {{ section.settings.content }}
+<div 
+  id="richtext-{{ section.id }}"
+  class="richtext"
+  style="
+    --pt: {{ section.settings.pt | append: 'rem' }};
+    --pb: {{ section.settings.pb | append: 'rem' }};  
+  "
+  {% if section.settings.custom_color_schemes %}
+    data-light-color-scheme="{{ section.settings.light_color_scheme }}"
+    data-dark-color-scheme="{{ section.settings.dark_color_scheme }}"
+  {% endif %}
+>
+  <div 
+    class="container" 
+    style="--container-max-width: {{ section.settings.container_width | append: 'px' }};">
+    <div class="richtext-content {{ section.settings.text_alignment  | prepend: 'text-' }}">
+      {% if section.settings.subheading != blank %}
+        <div class="subheading {{ section.settings.subheading_size }}">
+          {{ section.settings.subheading }}
+        </div>
+      {% endif %}
+      {% if section.settings.heading != blank %}
+        <h2 class="heading {{ section.settings.heading_size }}">
+          {{ section.settings.heading }}
+        </h2>
+      {% endif %}
+      {% if section.settings.description != blank %}
+        <div class="description rte {{ section.settings.description_size }}">
+          {{ section.settings.description }}
+        </div>
+      {% endif %}
+      {% if section.settings.primary_btn_label != blank or section.settings.secondary_btn_label != blank %}
+        <div class="btn-group">
+          {% if section.settings.primary_btn_label != blank %}
+            <a 
+              href="{{ section.settings.primary_btn_link | default: '#' }}" 
+              class="btn btn-primary {{ section.settings.btn_size }}">
+              {{ section.settings.primary_btn_label }}
+            </a>
+          {% endif %}
+          {% if section.settings.secondary_btn_label != blank %}
+            <a 
+              href="{{ section.settings.secondary_btn_link | default: '#' }}" 
+              class="btn btn-secondary {{ section.settings.btn_size }}">
+              {{ section.settings.secondary_btn_label }}
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
 </div>
-
-{% stylesheet %}
-  .richtext {
-    padding: 20px;
-  }
-{% endstylesheet %}
 
 {% schema %}
   {
     "name": "Rich Text",
+    "tag": "section",
     "settings": [
+      {
+        "type": "checkbox",
+        "id": "custom_color_schemes",
+        "label": "Custom color schemes",
+        "default": false
+      },
+      {
+        "type": "color_scheme",
+        "id": "light_color_scheme",
+        "label": "Light color scheme",
+        "default": "scheme-1",
+        "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+      },
+      {
+        "type": "color_scheme",
+        "id": "dark_color_scheme",
+        "label": "Dark color scheme",
+        "default": "scheme-3",
+        "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+      },
+      {
+        "type": "range",
+        "id": "container_width",
+        "label": "Container width",
+        "min": 500,
+        "max": 1200,
+        "step": 50,
+        "default": 600,
+        "unit": "px"
+      },
+      {
+        "type": "text_alignment",
+        "id": "text_alignment",
+        "label": "Text alignment",
+        "default": "center"
+      },
       {
         "type": "richtext",
         "id": "content",
         "label": "Content"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "subheading",
+        "label": "Subheading",
+        "default": "Optional subheading",
+        "info": "Leave empty to hide"
+      },
+      {
+        "type": "select",
+        "id": "subheading_size",
+        "label": "Subheading size",
+        "options": [
+          { "value": "fs-sm", "label": "Small" },
+          { "value": "fs-md", "label": "Medium" },
+          { "value": "fs-lg", "label": "Large" }
+        ],
+        "default": "fs-sm",
+        "visible_if": "{{ section.settings.subheading != blank }}"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "heading",
+        "label": "Heading",
+        "default": "Rich Text",
+        "info": "Leave empty to hide"
+      },
+      {
+        "type": "select",
+        "id": "heading_size",
+        "label": "Heading size",
+        "options": [
+          { "value": "h1", "label": "H1" },
+          { "value": "h2", "label": "H2" },
+          { "value": "h3", "label": "H3" },
+          { "value": "h4", "label": "H4" },
+          { "value": "h5", "label": "H5" },
+          { "value": "h6", "label": "H6" }
+        ],
+        "default": "h1",
+        "visible_if": "{{ section.settings.heading != blank }}"
+      },
+      {
+        "type": "richtext",
+        "id": "description",
+        "label": "Description",
+        "default": "<p>This is a rich text section. You can use it to showcase your content or brand.</p>",
+        "info": "Leave empty to hide"
+      },
+      {
+        "type": "select",
+        "id": "description_size",
+        "label": "Description size",
+        "options": [
+          { "value": "fs-sm", "label": "Small" },
+          { "value": "fs-md", "label": "Medium" },
+          { "value": "fs-lg", "label": "Large" }
+        ],
+        "default": "fs-md",
+        "visible_if": "{{ section.settings.description != blank }}"
+      },
+      {
+        "type": "header",
+        "content": "Buttons"
+      },
+      {
+        "type": "select",
+        "id": "btn_size",
+        "label": "Button size",
+        "options": [
+          { "value": "fs-sm", "label": "Small" },
+          { "value": "fs-md", "label": "Medium" },
+          { "value": "fs-lg", "label": "Large" }
+        ],
+        "default": "fs-md"
+      },
+      {
+        "type": "text",
+        "id": "primary_btn_label",
+        "label": "Primary button label",
+        "default": "Latest arrivals",
+        "info": "Leave empty to hide"
+      },
+      {
+        "type": "url",
+        "id": "primary_btn_link",
+        "label": "Primary button link",
+        "visible_if": "{{ section.settings.primary_btn_label != blank }}"
+      },
+      {
+        "type": "text",
+        "id": "secondary_btn_label",
+        "label": "Secondary button label",
+        "default": "Best sellers",
+        "info": "Leave empty to hide"
+      },
+      {
+        "type": "url",
+        "id": "secondary_btn_link",
+        "label": "Secondary button link",
+        "visible_if": "{{ section.settings.secondary_btn_label != blank }}"
+      },
+      {
+        "type": "header",
+        "content": "Spacing"
+      },
+      {
+        "type": "range",
+        "id": "pt",
+        "label": "Padding top",
+        "min": 0,
+        "max": 5,
+        "step": 0.5,
+        "default": 2.5,
+        "unit": "rem"
+      },
+      {
+        "type": "range",
+        "id": "pb",
+        "label": "Padding bottom",
+        "min": 0,
+        "max": 5,
+        "step": 0.5,
+        "default": 2.5,
+        "unit": "rem"
       }
     ],
     "presets": [

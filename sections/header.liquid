@@ -5,11 +5,15 @@
 
 <div
   id="header"
-  class="{{ section.settings.color_scheme | prepend: 'color-' }}"
+  class="header"
   style="
     --pt: {{ section.settings.pt | append: 'rem' }};
     --pb: {{ section.settings.pb | append: 'rem' }};
   "
+  {% if section.settings.custom_color_schemes %}
+    data-light-color-scheme="{{ section.settings.light_color_scheme }}"
+    data-dark-color-scheme="{{ section.settings.dark_color_scheme }}"
+  {% endif %}
   data-border-bottom="{{ section.settings.border_bottom }}"
   data-box-shadow="{{ section.settings.box_shadow }}"
 >
@@ -121,12 +125,26 @@
   "limit": 1,
   "settings": [
     {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "Color scheme",
-      "default": "scheme-1"
+      "type": "checkbox",
+      "id": "custom_color_schemes",
+      "label": "Custom color schemes",
+      "default": false
     },
-     {
+    {
+      "type": "color_scheme",
+      "id": "light_color_scheme",
+      "label": "Light color scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "dark_color_scheme",
+      "label": "Dark color scheme",
+      "default": "scheme-3",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
       "type": "checkbox",
       "id": "border_bottom",
       "label": "Border bottom",
