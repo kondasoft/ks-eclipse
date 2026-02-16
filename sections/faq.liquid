@@ -33,19 +33,19 @@
       <div class="faq-list">
         {% for block in section.blocks %}
           <details
-            class="faq-item"
+            class="theme-collapse-details"
             {% if section.settings.open_first_item and forloop.first %}open{% endif %}
             {{ block.shopify_attributes }}
           >
-            <summary class="faq-question">
+            <summary class="theme-collapse-summary">
               <span>{{ block.settings.question }}</span>
-              <span class="faq-icon" aria-hidden="true">
+              <span class="theme-collapse-icon" aria-hidden="true">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
                   <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
               </span>
             </summary>
-            <div class="faq-answer">
+            <div class="theme-collapse-content">
               <div class="description rte">
                 {{ block.settings.answer }}
               </div>

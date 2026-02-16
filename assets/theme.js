@@ -4,6 +4,41 @@
 console.info('KS Eclipse theme by KondaSoft (https://kondasoft.com)');
 
 /*
+  External HTTP links
+*/
+function decorateHttpsLinks() {
+  document.querySelectorAll('a[href*="https://"]').forEach((link) => {
+    link.setAttribute('target', '_blank');
+    link.setAttribute('rel', 'noopener noreferrer');
+  });
+}
+decorateHttpsLinks();
+
+/*
+  Footer collapse state
+*/
+function initFooterCollapseState() {
+  var mobileQuery = window.matchMedia('(max-width: 599px)');
+
+  function syncFooterDetailsState(isMobile) {
+    document.querySelectorAll('#footer .theme-collapse-details').forEach((details) => {
+      if (isMobile) {
+        details.removeAttribute('open');
+        return;
+      }
+
+      details.setAttribute('open', '');
+    });
+  }
+
+  syncFooterDetailsState(mobileQuery.matches);
+  mobileQuery.addEventListener('change', (event) => {
+    syncFooterDetailsState(event.matches);
+  });
+}
+initFooterCollapseState();
+
+/*
   Color scheme toggle
 */
 class ColorSchemeToggle extends HTMLElement {

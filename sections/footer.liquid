@@ -15,42 +15,55 @@
     {% unless section.blocks == empty %}
       <div id="footer-blocks" data-block-count="{{ section.blocks.size }}">
         {% for block in section.blocks %}
-          <div class="footer-block">
-            {% unless block.settings.heading == blank %}
-              <h3 class="footer-block-heading {{ block.settings.heading_size }}">
-                {{ block.settings.heading }}
-              </h3>
-            {% endunless %}
-            {% if block.type == 'menu' %}
-              <ul class="nav-list">
-                {% for link in linklists[block.settings.menu].links %}
-                  <li>
-                    <a href="{{ link.url }}">
-                      {{ link.title }}
+          <div class="footer-block" {{ block.shopify_attributes }}>
+            <details class="theme-collapse-details" open>
+              <summary class="theme-collapse-summary">
+                <span>
+                  {{ block.settings.heading | default: 'Footer block' }}
+                </span>
+                <span class="theme-collapse-icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </span>
+              </summary>
+              <div class="theme-collapse-content">
+                <h3 class="heading {{ block.settings.heading_size }}">
+                  {{ block.settings.heading | default: 'Footer block' }}
+                </h3>
+                {% if block.type == 'menu' %}
+                  <ul class="nav-list">
+                    {% for link in linklists[block.settings.menu].links %}
+                      <li>
+                        <a href="{{ link.url }}">
+                          {{ link.title }}
+                        </a>
+                      </li>
+                    {% else %}
+                      {% for n in (1..5) %}
+                        <li>
+                          <a href="#">
+                            Menu item {{ n }}
+                          </a>
+                        </li>
+                      {% endfor %}
+                    {% endfor %}
+                  </ul>
+                {% elsif block.type == 'text' %}
+                  <div class="description rte">
+                    {{ block.settings.description }}
+                  </div>
+                  {% unless block.settings.btn_label == blank %}
+                    <a
+                      href="{{ block.settings.btn_link }}" 
+                      class="btn {{ block.settings.btn_style }} {{ block.settings.btn_size }}"
+                    >
+                      {{ block.settings.btn_label }}
                     </a>
-                  </li>
-                {% else %}
-                  {% for n in (1..5) %}
-                    <li>
-                      <a href="#">
-                        Menu item {{ n }}
-                      </a>
-                    </li>
-                  {% endfor %}
-                {% endfor %}
-              </ul>
-            {% elsif block.type == 'text' %}
-              <div class="description rte">
-                {{ block.settings.description }}
+                  {% endunless %}
+                {% endif %}
               </div>
-              {% unless block.settings.btn_label == blank %}
-                <a
-                  href="{{ block.settings.btn_link }}" 
-                  class="btn {{ block.settings.btn_style }} {{ block.settings.btn_size }}">
-                  {{ block.settings.btn_label }}
-                </a>
-              {% endunless %}
-            {% endif %}
+            </details>
           </div>
         {% endfor %}
       </div>
@@ -174,7 +187,7 @@
       "settings": [
         {
           "type": "link_list",
-          "id": "menu_link_list",
+          "id": "menu",
           "label": "Menu"
         },
         {

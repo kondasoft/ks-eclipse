@@ -103,6 +103,7 @@ a {
   color: rgb(var(--color-foreground));
   text-decoration: underline;
   outline: 2px solid transparent;
+  transition: color .2s ease-out;
 }
 
 a:hover {
@@ -381,6 +382,67 @@ html[data-theme="dark"] .alert-error {
 
 html[data-theme="dark"] .alert-warning {
   --color: 253 186 116;
+}
+
+
+/*
+  Collapse
+*/
+.theme-collapse-details {
+  border: 1px solid rgb(var(--color-foreground) / var(--border-opacity));
+  border-radius: var(--border-radius);
+  overflow: clip;
+  background-color: rgb(var(--color-background));
+  outline: 1px solid transparent;
+  transition: all .2s ease;
+}
+
+.theme-collapse-details:has(:focus-visible) {
+  outline-color: currentColor;
+}
+
+.theme-collapse-details[open] {
+  border-color: rgb(var(--color-accent));
+}
+
+.theme-collapse-summary {
+  list-style: none;
+  margin: 0;
+  padding: .75em 1em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: all .2s ease;
+  outline: none;
+}
+
+.theme-collapse-summary:hover {
+  background-color: rgb(var(--color-foreground) / .05);
+}
+
+.theme-collapse-summary:focus-visible {
+  background-color: rgb(var(--color-foreground) / .05);
+}
+
+.theme-collapse-details[open] .theme-collapse-summary {
+  background-color: rgb(var(--color-accent) / .1);
+  color: rgb(var(--color-accent));
+}
+
+.theme-collapse-icon {
+  display: inline-flex;
+  transition: transform .2s ease;
+  margin-right: -.25rem;
+}
+
+.theme-collapse-details[open] .theme-collapse-icon {
+  transform: rotate(180deg);
+}
+
+.theme-collapse-content {
+  padding: 1rem;
 }
 
 
