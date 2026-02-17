@@ -208,6 +208,7 @@ a#header-logo {
     border-radius: 0;
     overflow: visible;
     background: transparent;
+    outline: none;
   }
 
   .footer-block .theme-collapse-details > .theme-collapse-content {
