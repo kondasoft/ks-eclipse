@@ -157,11 +157,11 @@ html[data-theme="dark"] .drawer-right {
 /*
   Color scheme toggle
 */
-color-scheme-toggle {
+theme-color-toggle {
   display: inline-flex;
 }
 
-color-scheme-toggle fieldset {
+theme-color-toggle fieldset {
   margin: 0;
   padding: 0;
   border: 0;
@@ -169,19 +169,43 @@ color-scheme-toggle fieldset {
   gap: .25rem;
 }
 
-color-scheme-toggle label {
+theme-color-toggle label {
   position: relative;
   cursor: pointer;
 }
 
-color-scheme-toggle label:has(input:checked),
-color-scheme-toggle label:has(input:checked):hover {
+theme-color-toggle label:has(input:checked),
+theme-color-toggle label:has(input:checked):hover {
   color: rgb(var(--color-accent));
   background-color: rgb(var(--color-accent) / .1);
 }
 
-color-scheme-toggle label:has(input:focus-visible) {
+theme-color-toggle label:has(input:focus-visible) {
   outline-color: rgb(var(--color-accent));
+}
+
+#theme-color-toggle-sticky {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 9;
+  background-color: rgb(var(--color-background) / .85);
+  border: 1px solid rgb(var(--color-foreground) / var(--border-opacity));
+  backdrop-filter: blur(5px);
+  border-radius: 50rem;
+  padding: .125rem .25rem;
+  animation: theme-color-toggle-sticky-show 0.2s ease-out forwards;
+}
+
+@keyframes theme-color-toggle-sticky-show {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 

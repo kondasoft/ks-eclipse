@@ -1,6 +1,6 @@
 <div 
-  id="html-section-{{ section.id }}"
-  class="html-section"
+  id="newsletter-{{ section.id }}"
+  class="newsletter"
   style="
     --pt: {{ section.settings.pt | append: 'rem' }};
     --pb: {{ section.settings.pb | append: 'rem' }};
@@ -10,9 +10,10 @@
     data-dark-color-scheme="{{ section.settings.dark_color_scheme }}"
   {% endif %}
 >
-  <div 
-    class="container {% if section.settings.container_width == 'full' %}container-full{% endif %}" 
-    style="{% if section.settings.container_width == 'custom' %} --container-max-width: {{ section.settings.custom_container_width | append: 'px' }}; {% endif %}">
+  <div
+    class="container"
+    style="--container-max-width: {{ section.settings.container_width | append: 'px' }};"
+  >
     {% if section.settings.heading != blank or section.settings.description != blank %}
       <header class="section-header text-{{ section.settings.header_align }}">
         {% if section.settings.heading != blank %}
@@ -27,23 +28,15 @@
         {% endif %}
       </header>
     {% endif %}
-    <div class="html-section-inner">
-      {{ section.settings.liquid }}
-    </div>
+    {% render 'newsletter-form' %}
   </div>
 </div>
 
 {% schema %}
 {
-  "name": "HTML/Liquid",
+  "name": "Newsletter",
   "tag": "section",
   "settings": [
-    {
-      "type": "liquid",
-      "id": "liquid",
-      "label": "HTML/Liquid code",
-      "default": "<p class=\"alert text-center\">Current time is: <strong>{{ \"now\" | date: \"%Y-%m-%d %H:%M\" }}</strong></p>"
-    },
     {
       "type": "header",
       "content": "Appearance"
@@ -69,26 +62,20 @@
       "visible_if": "{{ section.settings.custom_color_schemes == true }}"
     },
     {
-      "type": "select",
+      "type": "range",
       "id": "container_width",
       "label": "Container width",
-      "options": [
-        { "value": "theme", "label": "Theme" },
-        { "value": "full", "label": "Full width" },
-        { "value": "custom", "label": "Custom" }
-      ],
-      "default": "theme",
+      "min": 500,
+      "max": 1200,
+      "step": 50,
+      "default": 600,
+      "unit": "px"
     },
     {
-      "type": "range",
-      "id": "custom_container_width",
-      "label": "Custom container width",
-      "default": 1200,
-      "min": 500,
-      "max": 2000,
-      "step": 50,
-      "unit": "px",
-      "visible_if": "{{ section.settings.container_width == 'custom' }}"
+      "type": "checkbox",
+      "id": "wrap_container",
+      "label": "Wrap in container",
+      "default": true
     },
     {
       "type": "header",
@@ -104,7 +91,7 @@
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "HTML/Liquid"
+      "default": "Newsletter Signup"
     },
     {
       "type": "select",
@@ -124,7 +111,7 @@
       "type": "richtext",
       "id": "description",
       "label": "Description",
-      "default": "<p>This is a custom HTML section. You can add any HTML or Liquid code here to create custom layouts and functionality.<\/p>"
+      "default": "<p>Subscribe to our newsletter to stay updated with the latest news and offers.<\/p>"
     },
     {
       "type": "select",
@@ -164,8 +151,8 @@
   ],
   "presets": [
     {
-      "name": "HTML/Liquid",
-      "category": "Other"
+      "name": "Newsletter",
+      "category": "Promotional"
     }
   ]
 }

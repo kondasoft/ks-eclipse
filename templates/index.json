@@ -15,42 +15,71 @@
         "overlay_opacity": 30,
         "overlay_blur": 0,
         "display_content": true,
+        "content_color_scheme": "scheme-3",
         "content_alignment": "center",
-        "content_color": "#ffffff",
-        "subheading": "Optional subheading",
+        "subheading": "Developed by KondaSoft",
         "subheading_size": "fs-sm",
-        "heading": "Hero Media",
+        "heading": "Welcome to  KS Eclipse Theme",
         "heading_size": "h1",
-        "description": "<p>This is a hero section with image or video media. You can use it to showcase your products or brand.<\/p>",
+        "description": "<p>Modern, flexible Shopify theme with adaptive Light & Dark modes<\/p>",
         "description_size": "fs-lg",
-        "btn_color": "#ffffff",
-        "btn_color_contrast": "#121212",
         "btn_size": "fs-md",
-        "primary_btn_label": "Latest arrivals",
-        "primary_btn_link": "shopify:\/\/collections\/latest-arrivals",
-        "secondary_btn_label": "Best sellers",
-        "secondary_btn_link": "shopify:\/\/collections\/best-selling"
+        "primary_btn_label": "Download theme",
+        "primary_btn_link": "https:\/\/www.kondasoft.com\/collections\/shopify-themes\/products\/ks-eclipse",
+        "secondary_btn_label": "Learn more",
+        "secondary_btn_link": "https:\/\/www.kondasoft.com\/collections\/shopify-themes\/products\/ks-eclipse"
       }
     },
     "richtext_FUFaAX": {
       "type": "richtext",
       "name": "Rich Text",
-      "settings": {}
+      "settings": {
+        "custom_color_schemes": false,
+        "light_color_scheme": "",
+        "dark_color_scheme": "scheme-3",
+        "container_width": 600,
+        "text_alignment": "center",
+        "content": "",
+        "subheading": "Optional subheading",
+        "subheading_size": "fs-sm",
+        "heading": "Rich Text",
+        "heading_size": "h1",
+        "description": "<p>This is a rich text section. You can use it to showcase your content or brand.<\/p>",
+        "description_size": "fs-md",
+        "btn_size": "fs-md",
+        "primary_btn_label": "Latest arrivals",
+        "primary_btn_link": "shopify:\/\/collections\/latest-arrivals",
+        "secondary_btn_label": "Best sellers",
+        "secondary_btn_link": "shopify:\/\/collections\/best-selling",
+        "pt": 2.5,
+        "pb": 2.5
+      }
     },
     "separator_1": {
       "type": "separator",
       "name": "Separator",
       "settings": {
-        "color_scheme": "scheme-1",
-        "wrap_container": true
+        "wrap_container": true,
+        "mt": 2.5,
+        "mb": 2.5
       }
     },
     "html_9n2q8X": {
       "type": "html",
       "name": "HTML\/Liquid",
       "settings": {
-        "color_scheme": "scheme-1",
-        "wrap_container": true
+        "liquid": "<p class=\"alert text-center\">Current time is: <strong>{{ \"now\" | date: \"%Y-%m-%d %H:%M\" }}<\/strong><\/p>",
+        "custom_color_schemes": false,
+        "light_color_scheme": "",
+        "dark_color_scheme": "scheme-3",
+        "wrap_container": true,
+        "header_align": "center",
+        "heading": "HTML\/Liquid",
+        "heading_size": "h2",
+        "description": "<p>This is a custom HTML section. You can add any HTML or Liquid code here to create custom layouts and functionality.<\/p>",
+        "description_size": "fs-md",
+        "pt": 2.5,
+        "pb": 2.5
       }
     }
   },

@@ -2,38 +2,60 @@
   "name": "Footer",
   "type": "footer",
   "sections": {
+    "newsletter_nEKhjc": {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "settings": {
+        "custom_color_schemes": true,
+        "light_color_scheme": "scheme-3",
+        "dark_color_scheme": "scheme-4",
+        "wrap_container": true,
+        "header_align": "center",
+        "heading": "Newsletter Signup",
+        "heading_size": "h2",
+        "description": "<p>Subscribe to our newsletter to stay updated with the latest news and offers.<\/p>",
+        "description_size": "fs-md",
+        "pt": 2.5,
+        "pb": 2.5
+      }
+    },
     "footer": {
       "type": "footer",
       "blocks": {
         "menu_yp3YWH": {
           "type": "menu",
           "settings": {
-            "menu_link_list": "",
-            "heading": "Menu",
+            "menu": "men",
+            "heading": "Men",
             "heading_size": "h5"
           }
         },
         "menu_LQAtcE": {
           "type": "menu",
           "settings": {
-            "menu_link_list": "",
-            "heading": "Menu",
+            "menu": "women",
+            "heading": "Women",
             "heading_size": "h5"
           }
         },
         "menu_pt6Tzp": {
           "type": "menu",
           "settings": {
-            "menu_link_list": "",
-            "heading": "Menu",
+            "menu": "company",
+            "heading": "Company",
             "heading_size": "h5"
           }
         },
         "text_hyRChH": {
           "type": "text",
           "settings": {
-            "heading": "Text block",
-            "description": "<p>Helpful links and store updates.<\/p>"
+            "heading": "KS Eclipse",
+            "heading_size": "h5",
+            "description": "<p>Modern, flexible Shopify theme with adaptive Light & Dark modes<\/p>",
+            "btn_label": "Download theme",
+            "btn_link": "https:\/\/www.kondasoft.com\/collections\/shopify-themes\/products\/ks-eclipse",
+            "btn_style": "btn-primary",
+            "btn_size": "btn-md"
           }
         }
       },
@@ -44,7 +66,9 @@
         "text_hyRChH"
       ],
       "settings": {
-        "color_scheme": "",
+        "custom_color_schemes": true,
+        "light_color_scheme": "scheme-3",
+        "dark_color_scheme": "scheme-4",
         "border_top": true,
         "policy_links": true,
         "payment_icons": true,
@@ -55,6 +79,7 @@
     }
   },
   "order": [
+    "newsletter_nEKhjc",
     "footer"
   ]
 }

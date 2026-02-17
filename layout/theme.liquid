@@ -2,6 +2,7 @@
 <html 
   lang="{{ request.locale.iso_code }}"
   data-theme="{{ settings.default_theme }}"
+  data-default-theme="{{ settings.default_theme }}"
   data-design-mode="{{ request.design_mode }}">
   <head>
     {% render 'theme-head' %}
@@ -38,5 +39,11 @@
     {% render 'cart-dialog' %}
     {% render 'menu-dialog' %}
     {% render 'search-dialog' %}
+
+    {% if shop.permanent_domain contains 'ks-' %}
+      <div id="theme-color-toggle-sticky">
+        {% render 'theme-color-toggle' %}
+      </div>
+    {% endif %}
   </body>
 </html>

@@ -115,7 +115,7 @@
         "type": "select",
         "id": "default_theme",
         "label": "Default color theme",
-        "default": "light",
+        "default": "system",
         "options": [
           {
             "value": "light",
@@ -124,9 +124,13 @@
           {
             "value": "dark",
             "label": "Dark"
+          },
+          {
+            "value": "system",
+            "label": "System"
           }
-        ],
-      },
+        ]
+      }
     ]
   },
   {

@@ -1,0 +1,354 @@
+{% liquid 
+  assign media_loading = 'lazy'
+  assign media_preload = 'none'
+  assign media_fetchpriority = 'auto'
+
+  if section.index == 1 or request.design_mode
+    assign media_loading = 'eager'
+    assign media_preload = 'auto'
+    assign media_fetchpriority = 'high'
+  endif
+%}
+
+<div 
+  id="basic-media-{{ section.id }}"
+  class="basic-media"
+  style="
+    --pt: {{ section.settings.pt | append: 'rem' }};
+    --pb: {{ section.settings.pb | append: 'rem' }};
+  "
+  {% if section.settings.custom_color_schemes %}
+    data-light-color-scheme="{{ section.settings.light_color_scheme }}"
+    data-dark-color-scheme="{{ section.settings.dark_color_scheme }}"
+  {% endif %}
+>
+  <div 
+    class="container {% if section.settings.container_width == 'full' %}container-full{% endif %}" 
+    style="{% if section.settings.container_width == 'custom' %} --container-max-width: {{ section.settings.custom_container_width | append: 'px' }}; {% endif %}">
+    {% if section.settings.heading != blank or section.settings.description != blank %}
+      <header class="section-header text-{{ section.settings.header_align }}">
+        {% if section.settings.heading != blank %}
+          <h2 class="{{ section.settings.heading_size }}">
+            {{ section.settings.heading }}
+          </h2>
+        {% endif %}
+        {% if section.settings.description != blank %}
+          <div class="description rte {{ section.settings.description_size }}">
+            {{ section.settings.description }}
+          </div>
+        {% endif %}
+      </header>
+    {% endif %}
+    <div class="basic-media-inner">
+      {% if section.settings.type == 'image' and section.settings.img != blank %}
+        <img
+          src="{{ section.settings.img | image_url: width: 2400 }}"
+          alt="{{ section.settings.img.alt | escape }}"
+          width="{{ section.settings.img.width }}"
+          height="{{ section.settings.img.height }}"
+          srcset="
+            {{ section.settings.img | image_url: width: 800 }} 800w,
+            {{ section.settings.img | image_url: width: 1600 }} 1600w,
+            {{ section.settings.img | image_url: width: 2400 }} 2400w"
+          sizes="100vw"
+          loading="{{ media_loading }}"
+          fetchpriority="{{ media_fetchpriority }}"
+        >
+      {% elsif section.settings.type == 'video' and section.settings.video != blank %}
+        {% liquid
+          assign video_should_be_muted = section.settings.video_muted
+          if section.settings.video_autoplay
+            assign video_should_be_muted = true
+          endif
+          assign video_preview_image = section.settings.video.preview_image | image_url: width: 1600
+        %}
+        <video
+          {% if section.settings.video_loop %}
+            loop
+          {% endif %}
+          {% if video_should_be_muted %}
+            muted
+          {% endif %}
+          playsinline
+          preload="{{ media_preload }}"
+          {% if section.settings.video_controls %}
+            controls
+          {% endif %}
+          {% if section.settings.video_autoplay and media_loading == 'lazy' %}
+            data-autoplay="true"
+            data-poster="{{ video_preview_image }}"
+          {% elsif section.settings.video_autoplay %}
+            autoplay
+            poster="{{ video_preview_image }}"
+          {% else %}
+            poster="{{ video_preview_image }}"
+          {% endif %}
+        >
+          {% comment %}theme-check-disable{% endcomment %}
+          {% for source in section.settings.video.sources %}
+            <source src="{{ source.url }}" type="{{ source.mime_type }}">
+          {% endfor %}
+          {% comment %}theme-check-enable{% endcomment %}
+        </video>
+      {% elsif section.settings.type == 'external_video' and section.settings.external_video != blank %}
+        {% liquid
+          assign video_should_be_muted = section.settings.video_muted
+          if section.settings.video_autoplay
+            assign video_should_be_muted = true
+          endif
+
+          if section.settings.external_video.type == 'youtube'
+            assign video_src = 'https://www.youtube.com/embed/' | append: section.settings.external_video.id | append: '?playsinline=1&rel=0'
+            if section.settings.video_autoplay
+              assign video_src = video_src | append: '&autoplay=1'
+            endif
+            if video_should_be_muted
+              assign video_src = video_src | append: '&mute=1'
+            endif
+            if section.settings.video_loop
+              assign video_src = video_src | append: '&loop=1&playlist=' | append: section.settings.external_video.id
+            endif
+            unless section.settings.video_controls
+              assign video_src = video_src | append: '&controls=0'
+            endunless
+          else
+            assign video_src = 'https://player.vimeo.com/video/' | append: section.settings.external_video.id
+            assign video_query = ''
+            if section.settings.video_autoplay
+              assign video_query = video_query | append: 'autoplay=1'
+            endif
+            if video_should_be_muted
+              if video_query != blank
+                assign video_query = video_query | append: '&'
+              endif
+              assign video_query = video_query | append: 'muted=1'
+            endif
+            if section.settings.video_loop
+              if video_query != blank
+                assign video_query = video_query | append: '&'
+              endif
+              assign video_query = video_query | append: 'loop=1'
+            endif
+            unless section.settings.video_controls
+              if video_query != blank
+                assign video_query = video_query | append: '&'
+              endif
+              assign video_query = video_query | append: 'controls=0'
+            endunless
+            if video_query != blank
+              assign video_src = video_src | append: '?' | append: video_query
+            endif
+          endif
+        %}
+        <iframe
+          {% if section.settings.video_autoplay and media_loading == 'lazy' %}
+            data-src="{{ video_src }}"
+            data-autoplay="true"
+          {% else %}
+            src="{{ video_src }}"
+          {% endif %}
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+          frameborder="0"
+          allowfullscreen
+          loading="{{ media_loading }}">
+        </iframe>
+      {% else %}
+        {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}    
+      {% endif %}
+    </div>
+  </div> 
+</div>
+
+{% schema %}
+{
+  "name": "Basic media",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_schemes",
+      "label": "Custom color schemes",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "light_color_scheme",
+      "label": "Light color scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "dark_color_scheme",
+      "label": "Dark color scheme",
+      "default": "scheme-3",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "select",
+      "id": "container_width",
+      "label": "Container width",
+      "options": [
+        { "value": "theme", "label": "Theme" },
+        { "value": "full", "label": "Full width" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "theme"
+    },
+    {
+      "type": "range",
+      "id": "custom_container_width",
+      "label": "Custom container width",
+      "default": 1200,
+      "min": 500,
+      "max": 2000,
+      "step": 50,
+      "unit": "px",
+      "visible_if": "{{ section.settings.container_width == 'custom' }}"
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text_alignment",
+      "id": "header_align",
+      "label": "Header alignment",
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Basic Media"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" }
+      ]
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>This is a basic media section. Use this section to add images, videos, or external videos from YouTube and Vimeo to your store.</p>"
+    },
+    {
+      "type": "select",
+      "id": "description_size",
+      "label": "Description size",
+      "default": "fs-md",
+      "options": [
+        { "value": "fs-sm", "label": "Small" },
+        { "value": "fs-md", "label": "Medium" },
+        { "value": "fs-lg", "label": "Large" }
+      ]
+    },
+     {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "select",
+      "id": "type",
+      "label": "Media type",
+      "default": "image",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" },
+        { "value": "external_video", "label": "External video" }
+      ]
+    },
+    {
+      "type": "image_picker",
+      "id": "img",
+      "label": "Image",
+      "visible_if": "{{ section.settings.type == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video",
+      "visible_if": "{{ section.settings.type == 'video' }}"
+    },
+    {
+      "type": "video_url",
+      "id": "external_video",
+      "label": "External video",
+      "accept": ["youtube", "vimeo"],
+      "visible_if": "{{ section.settings.type == 'external_video' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "video_autoplay",
+      "label": "Autoplay video",
+      "default": true,
+      "visible_if": "{{ section.settings.type == 'video' or section.settings.type == 'external_video' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "video_muted",
+      "label": "Muted",
+      "default": true,
+      "visible_if": "{{ section.settings.type == 'video' or section.settings.type == 'external_video' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "video_controls",
+      "label": "Controls",
+      "default": true,
+      "visible_if": "{{ section.settings.type == 'video' or section.settings.type == 'external_video' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "video_loop",
+      "label": "Loop video",
+      "default": true,
+      "visible_if": "{{ section.settings.type == 'video' or section.settings.type == 'external_video' }}"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pt",
+      "label": "Top",
+      "min": 0,
+      "max": 5,
+      "step": 0.1,
+      "default": 2.5,
+      "unit": "rem"
+    },
+    {
+      "type": "range",
+      "id": "pb",
+      "label": "Bottom",
+      "min": 0,
+      "max": 5,
+      "step": 0.1,
+      "default": 2.5,
+      "unit": "rem"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Basic media",
+      "category": "Media (Image/Video)"
+    }
+  ]
+}
+{% endschema %}

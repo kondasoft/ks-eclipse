@@ -7,7 +7,9 @@
       "name": "Announcement bar",
       "settings": {
         "text": "Free shipping on orders over $50",
-        "color_scheme": "scheme-29e675a4-d04b-4835-be68-30e0db08195b",
+        "custom_color_schemes": true,
+        "light_color_scheme": "scheme-3",
+        "dark_color_scheme": "scheme-4",
         "border_bottom": false,
         "fs": "fs-sm",
         "pt": 0.4,
@@ -17,12 +19,13 @@
     "header": {
       "type": "header",
       "settings": {
-        "color_scheme": "scheme-1",
+        "custom_color_schemes": false,
+        "light_color_scheme": "",
+        "dark_color_scheme": "scheme-3",
         "border_bottom": true,
         "box_shadow": false,
         "logo_height": 20,
         "cart_icon": "bag",
-        "menu": "main-menu",
         "pt": 0.5,
         "pb": 0.5
       }

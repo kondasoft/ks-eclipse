@@ -110,12 +110,22 @@ class ColorSchemeToggle extends HTMLElement {
 
   getInitialTheme() {
     var storedTheme = this.getStoredTheme();
+    var defaultTheme = document.documentElement.getAttribute('data-default-theme');
+    var documentTheme = document.documentElement.getAttribute('data-theme');
 
     if (ColorSchemeToggle.validThemes.has(storedTheme)) {
       return storedTheme;
     }
 
-    return 'system';
+    if (ColorSchemeToggle.validThemes.has(defaultTheme)) {
+      return defaultTheme;
+    }
+
+    if (documentTheme === 'light' || documentTheme === 'dark') {
+      return documentTheme;
+    }
+
+    return 'light';
   }
 
   assignGroupName() {
@@ -131,7 +141,7 @@ class ColorSchemeToggle extends HTMLElement {
   }
 
   static syncAll(theme) {
-    document.querySelectorAll('color-scheme-toggle').forEach((toggle) => {
+    document.querySelectorAll('theme-color-toggle').forEach((toggle) => {
       if (typeof toggle.syncCheckedState === 'function') {
         toggle.syncCheckedState(theme);
       }
@@ -163,7 +173,7 @@ class ColorSchemeToggle extends HTMLElement {
     ColorSchemeToggle.syncAll(theme);
   }
 }
-customElements.define('color-scheme-toggle', ColorSchemeToggle);
+customElements.define('theme-color-toggle', ColorSchemeToggle);
 
 
 /*

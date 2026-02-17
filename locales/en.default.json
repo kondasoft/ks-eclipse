@@ -22,6 +22,12 @@
       "success": "Your message has been sent successfully.",
       "error": "There was an error sending your message. Please try again."
     },
+    "newsletter_form": {
+      "email": "Email",
+      "submit": "Subscribe",
+      "success": "Thank you for subscribing to our newsletter!",
+      "error": "There was an error with your subscription. Please try again."
+    },
     "color_scheme": {
       "toggle": "Toggle color scheme",
       "light": "Light",

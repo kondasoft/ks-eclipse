@@ -10,9 +10,33 @@
     endunless
   %}
 
-  :root[data-theme="light"] {
+  :root {
+    --font-headings-family: {{ settings.font_headings.family }}, {{ settings.font_headings.fallback_families }};
+    --font-headings-weight: {{ settings.font_headings.weight }};
+    --font-body-family: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }}; 
+    --font-body-weight: {{ settings.font_body.weight }};
+    --body-base-size: {{ settings.body_base_size | divided_by: 100.0 | append: 'rem' }};
+    --headings-base-size: {{ settings.headings_base_size | divided_by: 100.0 | append: 'rem' }};
+    --letter-spacing: {{ settings.letter_spacing | divided_by: 100.0 | append: 'em' }};
+    --container-max-width: {{ settings.container_max_width | append: 'px' }};
+    --border-radius: {{ settings.border_radius | append: 'rem' }};
+    --border-opacity: {{ settings.border_opacity | append: '%' }};
+    --color-alert-light-success: 0 130 54;
+    --color-alert-light-error: 239 68 68;
+    --color-alert-light-warning: 187 77 0;
+    --color-alert-dark-success: 110 231 183;
+    --color-alert-dark-error: 252 165 165;
+    --color-alert-dark-warning: 253 186 116;
+  }
+
+  :root[data-theme="light"],
+  :root[data-theme="system"] {
     {%- for scheme in settings.color_schemes -%}
-      {% if scheme.id contains settings.light_color_scheme %}
+      {% liquid
+        assign scheme_id_normalized = scheme.id | remove: 'scheme-'
+        assign light_scheme_id_normalized = settings.light_color_scheme | append: '' | remove: 'scheme-'
+      %}
+      {% if scheme_id_normalized == light_scheme_id_normalized %}
         --color-background: {{ scheme.settings.background.red }} {{ scheme.settings.background.green }} {{ scheme.settings.background.blue }};
         {% if scheme.settings.background_gradient != empty -%}
           --color-background-gradient: {{ scheme.settings.background_gradient }};
@@ -26,14 +50,21 @@
         --color-btn-secondary-background: {{ scheme.settings.btn_secondary_background.red }} {{ scheme.settings.btn_secondary_background.green }} {{ scheme.settings.btn_secondary_background.blue }};
         --color-btn-secondary-background-opacity: {{ scheme.settings.btn_secondary_background.alpha }};
         --color-btn-secondary-foreground: {{ scheme.settings.btn_secondary_foreground.red }} {{ scheme.settings.btn_secondary_foreground.green }} {{ scheme.settings.btn_secondary_foreground.blue }};
-        --color-btn-secondary-border: {{ scheme.settings.btn_secondary_border.red }} {{ scheme.settings.btn_secondary_border.green }} {{ scheme.settings.btn_secondary_border.blue }};    
+        --color-btn-secondary-border: {{ scheme.settings.btn_secondary_border.red }} {{ scheme.settings.btn_secondary_border.green }} {{ scheme.settings.btn_secondary_border.blue }};
+        --color-alert-success: var(--color-alert-light-success);
+        --color-alert-error: var(--color-alert-light-error);
+        --color-alert-warning: var(--color-alert-light-warning);
       {%- endif %}
     {%- endfor -%}
   }
 
   :root[data-theme="dark"] {
     {%- for scheme in settings.color_schemes -%}
-      {% if scheme.id contains settings.dark_color_scheme %}
+      {% liquid
+        assign scheme_id_normalized = scheme.id | remove: 'scheme-'
+        assign dark_scheme_id_normalized = settings.dark_color_scheme | append: '' | remove: 'scheme-'
+      %}
+      {% if scheme_id_normalized == dark_scheme_id_normalized %}
         --color-background: {{ scheme.settings.background.red }} {{ scheme.settings.background.green }} {{ scheme.settings.background.blue }};
         {% if scheme.settings.background_gradient != empty -%}
           --color-background-gradient: {{ scheme.settings.background_gradient }};
@@ -47,12 +78,18 @@
         --color-btn-secondary-background: {{ scheme.settings.btn_secondary_background.red }} {{ scheme.settings.btn_secondary_background.green }} {{ scheme.settings.btn_secondary_background.blue }};
         --color-btn-secondary-background-opacity: {{ scheme.settings.btn_secondary_background.alpha }};
         --color-btn-secondary-foreground: {{ scheme.settings.btn_secondary_foreground.red }} {{ scheme.settings.btn_secondary_foreground.green }} {{ scheme.settings.btn_secondary_foreground.blue }};
-        --color-btn-secondary-border: {{ scheme.settings.btn_secondary_border.red }} {{ scheme.settings.btn_secondary_border.green }} {{ scheme.settings.btn_secondary_border.blue }};    
+        --color-btn-secondary-border: {{ scheme.settings.btn_secondary_border.red }} {{ scheme.settings.btn_secondary_border.green }} {{ scheme.settings.btn_secondary_border.blue }};
+        --color-alert-success: var(--color-alert-dark-success);
+        --color-alert-error: var(--color-alert-dark-error);
+        --color-alert-warning: var(--color-alert-dark-warning);
       {%- endif %}
     {%- endfor -%}
   }
 
   {% for scheme in settings.color_schemes %}
+    {% liquid
+      assign bg_brightness = scheme.settings.background | color_brightness 
+    %}
     [data-color-scheme="{{ scheme.id }}"] {
       --color-background: {{ scheme.settings.background.red }} {{ scheme.settings.background.green }} {{ scheme.settings.background.blue }};
       {% if scheme.settings.background_gradient != empty -%}
@@ -68,6 +105,15 @@
       --color-btn-secondary-background-opacity: {{ scheme.settings.btn_secondary_background.alpha }};
       --color-btn-secondary-foreground: {{ scheme.settings.btn_secondary_foreground.red }} {{ scheme.settings.btn_secondary_foreground.green }} {{ scheme.settings.btn_secondary_foreground.blue }};
       --color-btn-secondary-border: {{ scheme.settings.btn_secondary_border.red }} {{ scheme.settings.btn_secondary_border.green }} {{ scheme.settings.btn_secondary_border.blue }};
+      {% if bg_brightness < 128 %}
+        --color-alert-success: var(--color-alert-dark-success);
+        --color-alert-error: var(--color-alert-dark-error);
+        --color-alert-warning: var(--color-alert-dark-warning);
+      {% else %}
+        --color-alert-success: var(--color-alert-light-success);
+        --color-alert-error: var(--color-alert-light-error);
+        --color-alert-warning: var(--color-alert-light-warning);
+      {% endif %}
     }
     :root[data-theme="light"] [data-light-color-scheme="{{ scheme.id }}"] {
       --color-background: {{ scheme.settings.background.red }} {{ scheme.settings.background.green }} {{ scheme.settings.background.blue }};
@@ -84,6 +130,15 @@
       --color-btn-secondary-background-opacity: {{ scheme.settings.btn_secondary_background.alpha }};
       --color-btn-secondary-foreground: {{ scheme.settings.btn_secondary_foreground.red }} {{ scheme.settings.btn_secondary_foreground.green }} {{ scheme.settings.btn_secondary_foreground.blue }};
       --color-btn-secondary-border: {{ scheme.settings.btn_secondary_border.red }} {{ scheme.settings.btn_secondary_border.green }} {{ scheme.settings.btn_secondary_border.blue }};
+      {% if bg_brightness < 128 %}
+        --color-alert-success: var(--color-alert-dark-success);
+        --color-alert-error: var(--color-alert-dark-error);
+        --color-alert-warning: var(--color-alert-dark-warning);
+      {% else %}
+        --color-alert-success: var(--color-alert-light-success);
+        --color-alert-error: var(--color-alert-light-error);
+        --color-alert-warning: var(--color-alert-light-warning);
+      {% endif %}
     }
     :root[data-theme="dark"] [data-dark-color-scheme="{{ scheme.id }}"] {
       --color-background: {{ scheme.settings.background.red }} {{ scheme.settings.background.green }} {{ scheme.settings.background.blue }};
@@ -100,21 +155,17 @@
       --color-btn-secondary-background-opacity: {{ scheme.settings.btn_secondary_background.alpha }};
       --color-btn-secondary-foreground: {{ scheme.settings.btn_secondary_foreground.red }} {{ scheme.settings.btn_secondary_foreground.green }} {{ scheme.settings.btn_secondary_foreground.blue }};
       --color-btn-secondary-border: {{ scheme.settings.btn_secondary_border.red }} {{ scheme.settings.btn_secondary_border.green }} {{ scheme.settings.btn_secondary_border.blue }};
+      {% if bg_brightness < 128 %}
+        --color-alert-success: var(--color-alert-dark-success);
+        --color-alert-error: var(--color-alert-dark-error);
+        --color-alert-warning: var(--color-alert-dark-warning);
+      {% else %}
+        --color-alert-success: var(--color-alert-light-success);
+        --color-alert-error: var(--color-alert-light-error);
+        --color-alert-warning: var(--color-alert-light-warning);
+      {% endif %}
     }
   {% endfor %}
-
-  :root {
-    --font-headings-family: {{ settings.font_headings.family }}, {{ settings.font_headings.fallback_families }};
-    --font-headings-weight: {{ settings.font_headings.weight }};
-    --font-body-family: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }}; 
-    --font-body-weight: {{ settings.font_body.weight }};
-    --body-base-size: {{ settings.body_base_size | divided_by: 100.0 | append: 'rem' }};
-    --headings-base-size: {{ settings.headings_base_size | divided_by: 100.0 | append: 'rem' }};
-    --letter-spacing: {{ settings.letter_spacing | divided_by: 100.0 | append: 'em' }};
-    --container-max-width: {{ settings.container_max_width | append: 'px' }};
-    --border-radius: {{ settings.border_radius | append: 'rem' }};
-    --border-opacity: {{ settings.border_opacity | append: '%' }};
-  }
 {% endstyle %}
 
 <script>

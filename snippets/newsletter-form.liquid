@@ -1,0 +1,82 @@
+{% liquid 
+  assign form_id = 'contact_form'
+
+  if id
+    assign form_id = form_id | append: '-' | append: id
+  elsif section.id != blank
+    assign form_id = form_id | append: '-' | append: section.id
+  endif
+%}
+
+{% form 'customer', class: 'newsletter-form', id: form_id %}
+  <input 
+    type="hidden" 
+    name="contact[tags]" 
+    value="{{ section.settings.newsletter_tags | default: 'newsletter' }}">
+  {% if form.posted_successfully? %}
+    <div 
+      class="alert alert-success" 
+      role="status"
+      tabindex="-1">
+      <p>{{ 'general.newsletter_form.success' | t }}</p>
+    </div>
+  {% elsif form.errors %}
+    <div 
+      class="alert alert-error" 
+      role="alert" 
+      tabindex="-1">
+      <p>{{ 'general.newsletter_form.error' | t }}</p>
+      <ul>
+        {% for field in form.errors %}
+          <li>
+            {% if field == 'form' %}
+              {{ form.errors.messages[field] }}
+            {% else %}
+              {{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+  <div class="input-wrapper">
+    <input
+      class="input input-lg"
+      type="email"
+      name="contact[email]"
+      size="30"
+      value="{% if customer.email != blank %}{{ customer.email }}{% endif %}"
+      aria-label="{{ 'general.newsletter_form.email' | t }}"
+      placeholder="{{ 'general.newsletter_form.email' | t }}"
+      autocorrect="off"
+      autocapitalize="off"
+    >
+    <button
+      class="btn"
+      type="submit"
+      name="commit"
+      data-btn-style="{{ section.settings.btn_style }}"
+      aria-label="{{ 'general.newsletter_form.submit' | t }}"
+    >
+      <svg width="22" height="22" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+          <path d="M28,61 C28,161.710136 28,212.065204 28,212.065204 C28,212.065204 351.044692,255.885938 351.044692,255.885938 C351.044692,255.885938 243.363128,270.4319 28,299.523824 L28,451 L483.555218,256 L28,61 Z" fill="currentColor"></path>
+        </g>
+      </svg>
+    </button>
+  </div>
+{% endform %}
+
+<script>
+  (() => {
+    const form = document.getElementById('{{ form_id }}');
+    if (!form) return;
+
+    const alert = form.querySelector('.alert[tabindex="-1"]');
+    if (!alert) return;
+
+    requestAnimationFrame(() => {
+      alert.focus();
+    });
+  })();
+</script>
