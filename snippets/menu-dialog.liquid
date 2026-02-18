@@ -17,18 +17,99 @@
     <div class="dialog-body">
       {% unless settings.menu == blank %}
         <nav 
+          id="main-menu"
           class="nav" 
           aria-label="{{ 'general.menu' | t }}">
-          <ul class="nav-list nav-list-vertical">
+          <ul class="nav-list">
             {% for link in linklists[settings.menu].links %}
-              <li>
-                <a 
-                  href="{{ link.url }}" 
-                  class="nav-link {% if link.active %}active{% endif %}"
-                  aria-current="{% if link.active %}page{% endif %}">
-                  {{ link.title }}
-                </a>
-              </li>
+              {% assign top_index = forloop.index %}
+              {% if link.links != blank %}
+                <li class="nav-item has-children">
+                  <div class="nav-link-group">
+                    <a 
+                      href="{{ link.url }}" 
+                      class="nav-link {% if link.active %}active{% endif %}"
+                      aria-current="{% if link.active %}page{% endif %}">
+                      {{ link.title }}
+                    </a>
+                    <button
+                      type="button"
+                      class="nav-link-toggle"
+                      data-menu-toggle
+                      aria-label="{{ 'accessibility.toggle_navigation' | t }}: {{ link.title | escape }}"
+                      aria-expanded="{% if link.active or link.child_active %}true{% else %}false{% endif %}"
+                      aria-controls="main-menu-sub-{{ top_index }}">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </button>
+                  </div>
+                  <ul
+                    id="main-menu-sub-{{ top_index }}"
+                    class="nav-list nav-list-sub"
+                    {% unless link.active or link.child_active %}hidden{% endunless %}>
+                    {% for child_link in link.links %}
+                      {% assign child_index = forloop.index %}
+                      {% if child_link.links != blank %}
+                        <li class="nav-item has-children">
+                          <div class="nav-link-group">
+                            <a 
+                              href="{{ child_link.url }}" 
+                              class="nav-link {% if child_link.active %}active{% endif %}"
+                              aria-current="{% if child_link.active %}page{% endif %}">
+                              {{ child_link.title }}
+                            </a>
+                            <button
+                              type="button"
+                              class="nav-link-toggle"
+                              data-menu-toggle
+                              aria-label="{{ 'accessibility.toggle_navigation' | t }}: {{ child_link.title | escape }}"
+                              aria-expanded="{% if child_link.active or child_link.child_active %}true{% else %}false{% endif %}"
+                              aria-controls="main-menu-sub-{{ top_index }}-{{ child_index }}">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                              </svg>
+                            </button>
+                          </div>
+                          <ul
+                            id="main-menu-sub-{{ top_index }}-{{ child_index }}"
+                            class="nav-list nav-list-sub"
+                            {% unless child_link.active or child_link.child_active %}hidden{% endunless %}>
+                            {% for grandchild_link in child_link.links %}
+                              <li class="nav-item">
+                                <a 
+                                  href="{{ grandchild_link.url }}" 
+                                  class="nav-link {% if grandchild_link.active %}active{% endif %}"
+                                  aria-current="{% if grandchild_link.active %}page{% endif %}">
+                                  {{ grandchild_link.title }}
+                                </a>
+                              </li>
+                            {% endfor %}
+                          </ul>
+                        </li>
+                      {% else %}
+                        <li class="nav-item">
+                          <a 
+                            href="{{ child_link.url }}" 
+                            class="nav-link {% if child_link.active %}active{% endif %}"
+                            aria-current="{% if child_link.active %}page{% endif %}">
+                            {{ child_link.title }}
+                          </a>
+                        </li>
+                      {% endif %}
+                    {% endfor %}
+                  </ul>
+                </li>
+              {% else %}
+                <li class="nav-item">
+                  <a 
+                    href="{{ link.url }}" 
+                    class="nav-link {% if link.active %}active{% endif %}"
+                    aria-current="{% if link.active %}page{% endif %}">
+                    {{ link.title }}
+                  </a>
+                </li>
+              {% endif %}
             {% endfor %}
           </ul>
         </nav>

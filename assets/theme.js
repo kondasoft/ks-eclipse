@@ -39,6 +39,93 @@ function initFooterCollapseState() {
 initFooterCollapseState();
 
 /*
+  Menu collapse state
+*/
+function initMenuCollapseState() {
+  var menuDialog = document.getElementById('menu-dialog');
+
+  if (!menuDialog) {
+    return;
+  }
+
+  function getToggleTarget(button) {
+    var linkGroup = button.closest('.nav-link-group');
+    var item = button.closest('.nav-item');
+
+    if (
+      linkGroup &&
+      linkGroup.nextElementSibling instanceof HTMLElement &&
+      linkGroup.nextElementSibling.classList.contains('nav-list-sub')
+    ) {
+      return linkGroup.nextElementSibling;
+    }
+
+    if (!item) {
+      return null;
+    }
+
+    return item.querySelector(':scope > .nav-list-sub');
+  }
+
+  function collapseToggle(button) {
+    var target = getToggleTarget(button);
+
+    button.setAttribute('aria-expanded', 'false');
+    if (target) {
+      target.hidden = true;
+    }
+  }
+
+  function collapseBranch(item) {
+    item.querySelectorAll('[data-menu-toggle]').forEach((button) => {
+      collapseToggle(button);
+    });
+  }
+
+  menuDialog.addEventListener('click', (event) => {
+    var toggle = event.target.closest('[data-menu-toggle]');
+    var target = null;
+    var isExpanded = false;
+    var currentItem = null;
+    var parentList = null;
+
+    if (!toggle || !menuDialog.contains(toggle)) {
+      return;
+    }
+
+    target = getToggleTarget(toggle);
+    if (!target) {
+      return;
+    }
+
+    currentItem = toggle.closest('.nav-item');
+    parentList = currentItem ? currentItem.parentElement : null;
+    if (!currentItem || !parentList) {
+      return;
+    }
+
+    isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+
+    if (isExpanded) {
+      collapseBranch(currentItem);
+      return;
+    }
+
+    Array.from(parentList.children).forEach((sibling) => {
+      if (!(sibling instanceof HTMLElement) || sibling === currentItem) {
+        return;
+      }
+
+      collapseBranch(sibling);
+    });
+
+    toggle.setAttribute('aria-expanded', 'true');
+    target.hidden = false;
+  });
+}
+initMenuCollapseState();
+
+/*
   Color scheme toggle
 */
 class ColorSchemeToggle extends HTMLElement {

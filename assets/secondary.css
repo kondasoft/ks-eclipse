@@ -273,57 +273,128 @@ theme-color-toggle label:has(input:focus-visible) {
   
 
 /*
-  Nav dialog
+  Menu dialog
 */
-#menu-dialog .dialog-body .nav {
+#menu-dialog .nav {
   margin-left: -1rem;
   margin-right: -1rem;
 }
 
-#menu-dialog .dialog-body .nav-list {
+#menu-dialog .nav-list {
   display: flex;
+  flex-direction: column;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-#menu-dialog .dialog-body .nav-list li a {
+#menu-dialog .nav-item {
+  border-bottom: 1px dotted rgb(var(--color-foreground) / var(--border-opacity));
+}
+
+#menu-dialog .nav-link {
   text-decoration: none;
   display: block;
-  transition: all .3s ease;
+  padding: .75em 1rem;
+  transition: all .2s ease-out;
   outline-offset: -2px;
 }
 
-#menu-dialog .dialog-body .nav-list li a:hover {
+#menu-dialog .nav-link:hover {
   background-color: rgb(var(--color-foreground) / .05);
 }
 
-#menu-dialog .dialog-body .nav-list li a:active {
+#menu-dialog .nav-link:active {
   background-color: rgb(var(--color-foreground) / .15);
 }
 
-#menu-dialog .dialog-body .nav-list li a.active {
+#menu-dialog .nav-link.active {
   color: rgb(var(--color-accent));
   background-color: rgb(var(--color-accent) / .05);
   border-left: 2px solid rgb(var(--color-accent));
   padding-left: calc(1rem - 2px);
 }
 
-#menu-dialog .dialog-body .nav-list-vertical {
-  flex-direction: column;
+#menu-dialog .nav-link-group {
+  display: flex;
 }
 
-#menu-dialog .dialog-body .nav-list-vertical li a {
-  padding: .6rem 1rem;
+#menu-dialog .nav-link-group .nav-link {
+  flex: 1 1 auto;
 }
 
-#menu-dialog .dialog-body .social-icons-nav {
+#menu-dialog .nav-link-toggle {
+  border: 0;
+  background: transparent;
+  color: currentColor;
+  width: 2.5rem;
+  min-height: 100%;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 0;
+  transition: background-color .2s ease;
+  outline-offset: -2px;
+}
+
+#menu-dialog .nav-link-toggle:hover,
+#menu-dialog .nav-link-toggle:focus-visible {
+  background-color: rgb(var(--color-foreground) / .05);
+}
+
+#menu-dialog .nav-link-toggle svg {
+  transition: transform .2s ease;
+}
+
+#menu-dialog .nav-link-toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+#menu-dialog .nav-list-sub {
+  background-color: rgb(var(--color-foreground) / .05);
+  padding: 0;
+  border-radius: var(--border-radius);
+  margin: .75rem 1rem 1rem;
+  overflow: hidden;
+}
+
+#menu-dialog .nav-list-sub[hidden] {
+  display: none;
+}
+
+#menu-dialog .nav-list-sub .nav-item:last-child {
+  border: 0;
+}
+
+#menu-dialog .nav-list-sub .nav-link {
+  font-size: .925em;
+}
+
+#menu-dialog .nav-list-sub .nav-list-sub {
+  margin: 0 0 .75rem;
+  border-radius: 0;
+  border: none;
+  background-color: transparent;
+  padding: 0;
+}
+
+#menu-dialog .nav-list-sub .nav-list-sub .nav-item {
+  border: 0;
+}
+
+#menu-dialog .nav-list-sub .nav-list-sub .nav-link {
+  font-size: .875em;
+}
+
+#menu-dialog .social-icons-nav {
   display: flex;
   justify-content: center;
   margin-top: 1.5rem;
 }
 
-#menu-dialog .dialog-body .social-icons {
+#menu-dialog .social-icons {
   display: inline-flex;
   justify-content: center;
   background-color: rgb(var(--color-foreground) / .05);

@@ -1,0 +1,24 @@
+{
+  "sections": {
+    "contact_form_qWmttB": {
+      "type": "contact-form",
+      "name": "Contact form",
+      "settings": {
+        "color_scheme": "",
+        "container_max_width": 600,
+        "header_align": "center",
+        "heading": "Contact us",
+        "heading_size": "h2",
+        "description": "<p>Send us a message and we will get back to you as soon as possible.<\/p>",
+        "description_size": "fs-md",
+        "show_phone": true,
+        "btn_size": "fs-md",
+        "pt": 2.5,
+        "pb": 2.5
+      }
+    }
+  },
+  "order": [
+    "contact_form_qWmttB"
+  ]
+}
