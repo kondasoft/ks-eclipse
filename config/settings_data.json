@@ -1,7 +1,7 @@
 {
   "current": {
     "dark_color_scheme": "scheme-3",
-    "default_theme": "light",
+    "default_theme": "system",
     "container_max_width": 1200,
     "font_body": "assistant_n4",
     "body_base_size": 100,

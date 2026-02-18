@@ -1,0 +1,51 @@
+{%- if product.metafields.reviews.rating.value != blank -%}
+  {% liquid 
+    assign rating_value = product.metafields.reviews.rating | metafield_text | round: 1 | remove: '.0'
+    assign rating_max = 5
+    assign rating_count = product.metafields.reviews.rating_count
+
+    assign whole_stars = product.metafields.reviews.rating | metafield_text | split: '.' | first
+    assign half_star = product.metafields.reviews.rating | metafield_text | split: '.' | last | prepend: '0.'
+
+    assign text_detailed = 'product.rating_detailed' | t: rating_value: rating_value, rating_max: rating_max, rating_count: rating_count
+  %}
+  
+  <div
+    data-block-id="{{ block.id }}" 
+    class="product-rating-badge">
+    <svg 
+      class="star-rating" 
+      width="82" 
+      height="14"
+      viewBox="0 0 82 14" 
+      xmlns="http://www.w3.org/2000/svg"
+      style="
+        --whole-stars: {{ whole_stars }};
+        --half-star: {{ half_star }};
+      "
+      aria-label="{{ text_detailed }}">
+      <symbol id="symbol-stars" viewBox="0 0 82 14">
+        <path d="M7 0L8.65299 5.34777H14L9.6746 8.65223L11.3276 14L7 10.6933L2.6746 14L4.32759 8.65223L0 5.34777H5.34701L7 0Z"/>
+        <path d="M24 0L25.653 5.34777H31L26.6746 8.65223L28.3276 14L24 10.6933L19.6746 14L21.3276 8.65223L17 5.34777H22.347L24 0Z"/>
+        <path d="M41 0L42.653 5.34777H48L43.6746 8.65223L45.3276 14L41 10.6933L36.6746 14L38.3276 8.65223L34 5.34777H39.347L41 0Z"/>
+        <path d="M58 0L59.653 5.34777H65L60.6746 8.65223L62.3276 14L58 10.6933L53.6746 14L55.3276 8.65223L51 5.34777H56.347L58 0Z"/>
+        <path d="M75 0L76.653 5.34777H82L77.6746 8.65223L79.3276 14L75 10.6933L70.6746 14L72.3276 8.65223L68 5.34777H73.347L75 0Z"/>
+      </symbol>
+      <use
+        class="star-rating-bg"
+        href="#symbol-stars"
+      />
+      <use
+        class="star-rating-fg"
+        href="#symbol-stars"
+        clip-path="inset(0 calc(100% - (var(--whole-stars) * 17px + var(--half-star) * 14px)) 0 0)" />
+    </svg>
+    <span class="product-rating-badge-count" aria-hidden="true">
+      {% if mode == 'detailed' %}
+        {{ text_detailed  }}
+      {% else %}
+        ({{ rating_count }})
+      {% endif %}
+    </span>
+  </div>
+{%- endif -%}

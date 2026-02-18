@@ -1,9 +1,9 @@
 <div 
   id="separator-{{ section.id }}"
-  class="separator"
+  class="separator section-spacing"
   style="
-    --mt: {{ section.settings.mt | append: 'rem' }};
-    --mb: {{ section.settings.mb | append: 'rem' }};
+    --pt: {{ section.settings.pt }};
+    --pb: {{ section.settings.pb }};
   "
 >
   {% if section.settings.wrap_container %}
@@ -34,23 +34,21 @@
     },
     {
       "type": "range",
-      "id": "mt",
+      "id": "pt",
       "label": "Top",
       "min": 0,
-      "max": 5,
-      "step": 0.1,
-      "default": 2.5,
-      "unit": "rem"
+      "max": 50,
+      "step": 1,
+      "default": 0
     },
     {
       "type": "range",
-      "id": "mb",
+      "id": "pb",
       "label": "Bottom",
       "min": 0,
-      "max": 5,
-      "step": 0.1,
-      "default": 2.5,
-      "unit": "rem"
+      "max": 50,
+      "step": 1,
+      "default": 0
     }
   ],
   "presets": [

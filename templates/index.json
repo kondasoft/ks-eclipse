@@ -51,8 +51,8 @@
         "primary_btn_link": "shopify:\/\/collections\/latest-arrivals",
         "secondary_btn_label": "Best sellers",
         "secondary_btn_link": "shopify:\/\/collections\/best-selling",
-        "pt": 2.5,
-        "pb": 2.5
+        "pt": 25,
+        "pb": 25
       }
     },
     "separator_1": {
@@ -60,8 +60,8 @@
       "name": "Separator",
       "settings": {
         "wrap_container": true,
-        "mt": 2.5,
-        "mb": 2.5
+        "pt": 0,
+        "pb": 0
       }
     },
     "html_9n2q8X": {
@@ -72,14 +72,41 @@
         "custom_color_schemes": false,
         "light_color_scheme": "",
         "dark_color_scheme": "scheme-3",
-        "wrap_container": true,
+        "container_width": "theme",
+        "custom_container_width": 1500,
         "header_align": "center",
         "heading": "HTML\/Liquid",
         "heading_size": "h2",
         "description": "<p>This is a custom HTML section. You can add any HTML or Liquid code here to create custom layouts and functionality.<\/p>",
         "description_size": "fs-md",
-        "pt": 2.5,
-        "pb": 2.5
+        "pt": 25,
+        "pb": 25
+      }
+    },
+    "basic_media_QjjY66": {
+      "type": "basic-media",
+      "name": "Basic media",
+      "settings": {
+        "custom_color_schemes": false,
+        "light_color_scheme": "",
+        "dark_color_scheme": "",
+        "container_width": "theme",
+        "custom_container_width": 1200,
+        "header_align": "center",
+        "heading": "Basic Media",
+        "heading_size": "h2",
+        "description": "<p>This is a basic media section. Use this section to add images, videos, or external videos from YouTube and Vimeo to your store.<\/p>",
+        "description_size": "fs-md",
+        "type": "external_video",
+        "img": "shopify:\/\/shop_images\/philipp-dusel-2F-m1FvoJT4-unsplash.jpg",
+        "video": "shopify:\/\/files\/videos\/4991088-hd_1920_1080_30fps.mp4",
+        "external_video": "https:\/\/www.youtube.com\/watch?v=rgZU5pDf6mw",
+        "video_autoplay": true,
+        "video_muted": true,
+        "video_controls": true,
+        "video_loop": true,
+        "pt": 25,
+        "pb": 25
       }
     }
   },
@@ -87,6 +114,7 @@
     "hero_media_M4Xdyq",
     "richtext_FUFaAX",
     "separator_1",
-    "html_9n2q8X"
+    "html_9n2q8X",
+    "basic_media_QjjY66"
   ]
 }

@@ -4,7 +4,6 @@
       "type": "contact-form",
       "name": "Contact form",
       "settings": {
-        "color_scheme": "",
         "container_max_width": 600,
         "header_align": "center",
         "heading": "Contact us",

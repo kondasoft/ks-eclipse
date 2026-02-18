@@ -7,12 +7,7 @@
   <head>
     {% render 'theme-head' %}
     {{ content_for_header }}
-    {% render 'theme-style-script' %}
-    <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}">
-    <link rel="stylesheet" href="{{ 'sections.css' | asset_url }}">
-    <link rel="stylesheet" href="{{ 'secondary.css' | asset_url }}" media="print" onload="this.media='all'">
-    <script src="{{ 'theme.js' | asset_url }}" defer></script>
-    <script src="{{ 'cart.js' | asset_url }}" defer></script>
+    {% render 'theme-assets' %}
   </head>
 
   <body

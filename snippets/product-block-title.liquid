@@ -1,0 +1,14 @@
+ <div
+  id="product-block-{{ block.id }}"
+  class="product-block section-spacing"
+  style="
+    --pt: {{ block.settings.pt }};
+    --pb: {{ block.settings.pb }};
+  "
+  data-type="{{ block.type }}"
+  {{ block.shopify_attributes }}
+>
+  <h1 class="heading {{ block.settings.heading_size }}">
+    {{ product.title }}
+  </h1>
+</div>

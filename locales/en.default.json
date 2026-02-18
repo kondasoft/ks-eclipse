@@ -35,6 +35,39 @@
       "system": "System"
     }
   },
+  "product": {
+    "regular_price": "Regular price",
+    "sale_price": "Sale price",
+    "unit_price": "Unit price",
+    "price_from": "From",
+    "sold_out": "Sold out",
+    "add_to_cart": "Add to cart",
+    "buy_it_now": "Buy it now",
+    "unavailable": "Unavailable",
+    "product_details": "Product details",
+    "color_options": "Color options",
+    "select_variant": "Select variant",
+    "sale_badge": "Save {{ value }}",
+    "rating_detailed": "{{ rating_value }}\/{{ rating_max }} stars from {{ rating_count }} reviews",
+    "taxes_included": "Taxes included.",
+    "duties_included": "Duties included.",
+    "duties_and_taxes_included": "Duties and taxes included.",
+    "shipping_policy_html": "<a href=\"{{ link }}\">Shipping<\/a> calculated at checkout.",
+    "quantity": {
+      "label": "Quantity",
+      "increase": "Increase quantity",
+      "decrease": "Decrease quantity"
+    },
+    "gift_card": {
+      "title": "Send to",
+      "my_email": "My email",
+      "recipient_email": "Recipient's email",
+      "recipient_name": "Recipient's name (optional)",
+      "message": "Message (optional)",
+      "message_chars_remaining": "characters remaining",
+      "send_on": "Send on (optional)"
+    }
+  },
   "cart": {
     "title": "Cart",
     "empty": "Your cart is currently empty.",

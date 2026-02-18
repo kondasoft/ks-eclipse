@@ -12,8 +12,8 @@
         "dark_color_scheme": "scheme-4",
         "border_bottom": false,
         "fs": "fs-sm",
-        "pt": 0.4,
-        "pb": 0.4
+        "pt": 3,
+        "pb": 3
       }
     },
     "header": {
@@ -26,8 +26,8 @@
         "box_shadow": false,
         "logo_height": 20,
         "cart_icon": "bag",
-        "pt": 0.5,
-        "pb": 0.5
+        "pt": 5,
+        "pb": 5
       }
     }
   },

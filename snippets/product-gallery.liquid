@@ -1,0 +1,52 @@
+<product-gallery
+  id="product-gallery-{{ section.id }}"
+  class="product-gallery">
+  <ul class="product-gallery-list">
+    {% for media in product.media %}
+      {% liquid 
+        assign media_loading = 'lazy'
+        assign media_preload = 'none'
+        assign media_fetchpriority = 'auto'
+
+        if forloop.first
+          assign media_loading = 'eager'
+          assign media_preload = 'auto'
+          assign media_fetchpriority = 'high'
+        endif
+      %}
+      {% case media.media_type %}
+        {% when 'image' %}
+          <li class="product-gallery-item">
+            <img
+              src="{{ media.preview_image | image_url: width: 1600 }}"
+              alt="{{ media.alt | escape }}"
+              class="img-fluid"
+              width="{{ media.preview_image.width }}"
+              height="{{ media.preview_image.height }}"
+              srcset="
+                {{ media.preview_image | image_url: width: 800 }} 800w,
+                {{ media.preview_image | image_url: width: 1600 }} 1600w
+              "
+              sizes="100vw"
+              loading="{{ media_loading }}"
+              fetchpriority="{{ media_fetchpriority }}"
+            >
+          </li>
+         {% when 'video' %}
+            {{ media | video_tag: controls: true, image_size: '1600x', muted: true, loading: 'lazy', class: 'img-fluid' }}
+          {% when 'external_video' %}
+            {{ media | external_video_tag: controls: true, image_size: '1600x', muted: true, loading: 'lazy', class: 'img-fluid' }}
+          {% when 'model' %}
+        {{ media | model_viewer_tag }}
+        {% when 'external_video' %}
+          <li class="product-gallery-item">
+            <iframe
+              src="{{ media.embed_url }}"
+              title="{{ media.alt | escape }}"
+              allowfullscreen
+            ></iframe>
+          </li>
+      {% endcase %}
+    {% endfor %}
+  </ul>
+</product-gallery>

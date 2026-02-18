@@ -150,7 +150,6 @@
         "type": "range",
         "id": "border_radius",
         "label": "Corner radius",
-        "unit": "rem",
         "min": 0,
         "max": 2,
         "step": 0.1,

@@ -1,9 +1,9 @@
 <div 
   id="richtext-{{ section.id }}"
-  class="richtext"
+  class="richtext section-styling section-spacing"
   style="
-    --pt: {{ section.settings.pt | append: 'rem' }};
-    --pb: {{ section.settings.pb | append: 'rem' }};  
+    --pt: {{ section.settings.pt }};
+    --pb: {{ section.settings.pb }};  
   "
   {% if section.settings.custom_color_schemes %}
     data-light-color-scheme="{{ section.settings.light_color_scheme }}"
@@ -207,20 +207,18 @@
         "id": "pt",
         "label": "Padding top",
         "min": 0,
-        "max": 5,
-        "step": 0.5,
-        "default": 2.5,
-        "unit": "rem"
+        "max": 50,
+        "step": 1,
+        "default": 20
       },
       {
         "type": "range",
         "id": "pb",
         "label": "Padding bottom",
         "min": 0,
-        "max": 5,
-        "step": 0.5,
-        "default": 2.5,
-        "unit": "rem"
+        "max": 50,
+        "step": 1,
+        "default": 20
       }
     ],
     "presets": [

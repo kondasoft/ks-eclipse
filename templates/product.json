@@ -1,0 +1,18 @@
+{
+  "sections": {
+    "product_gpN69x": {
+      "type": "product",
+      "name": "Product",
+      "settings": {
+        "custom_color_schemes": false,
+        "light_color_scheme": "",
+        "dark_color_scheme": "",
+        "pt": 50,
+        "pb": 4
+      }
+    }
+  },
+  "order": [
+    "product_gpN69x"
+  ]
+}

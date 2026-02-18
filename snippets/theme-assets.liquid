@@ -193,3 +193,15 @@
 
   applyInitialTheme();
 </script>
+
+<link rel="stylesheet" href="{{ 'theme.css' | asset_url }}">
+<link rel="stylesheet" href="{{ 'sections.css' | asset_url }}">
+
+{% if template.name == 'product' %}
+  <link rel="stylesheet" href="{{ 'product.css' | asset_url }}">
+{% endif %}
+
+<link rel="stylesheet" href="{{ 'secondary.css' | asset_url }}" media="print" onload="this.media='all'">
+
+<script src="{{ 'theme.js' | asset_url }}" defer></script>
+<script src="{{ 'cart.js' | asset_url }}" defer></script>

@@ -1,9 +1,9 @@
 <div 
   id="footer"
-  class="footer"
+  class="footer section-styling section-spacing"
   style="
-    --pt: {{ section.settings.pt | append: 'rem' }};
-    --pb: {{ section.settings.pb | append: 'rem' }};
+    --pt: {{ section.settings.pt }};
+    --pb: {{ section.settings.pb }};
   "
   {% if section.settings.custom_color_schemes %}
     data-light-color-scheme="{{ section.settings.light_color_scheme }}"
@@ -67,7 +67,9 @@
           </div>
         {% endfor %}
       </div>
-      <hr class="footer-separator">
+      <div class="separator section-spacing">
+          <hr class="footer-separator">
+      </div>
     {% endunless %}
     <div 
       id="footer-bottom"
@@ -164,20 +166,18 @@
       "id": "pt",
       "label": "Top",
       "min": 0,
-      "max": 5,
-      "step": 0.1,
-      "default": 2.5,
-      "unit": "rem"
+      "max": 50,
+      "step": 1,
+      "default": 0
     },
     {
       "type": "range",
       "id": "pb",
       "label": "Bottom",
       "min": 0,
-      "max": 5,
-      "step": 0.1,
-      "default": 2.5,
-      "unit": "rem"
+      "max": 50,
+      "step": 1,
+      "default": 0
     }
   ],
   "blocks": [

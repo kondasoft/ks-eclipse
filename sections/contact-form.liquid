@@ -1,9 +1,9 @@
 <div 
   id="contact-form-{{ section.id }}"
-  class="contact-form"
+  class="contact-form section-styling section-spacing"
   style="
-    --pt: {{ section.settings.pt | append: 'rem' }};
-    --pb: {{ section.settings.pb | append: 'rem' }};
+    --pt: {{ section.settings.pt }};
+    --pb: {{ section.settings.pb }};
   "
   {% if section.settings.custom_color_schemes %}
     data-light-color-scheme="{{ section.settings.light_color_scheme }}"
@@ -288,20 +288,18 @@
       "id": "pt",
       "label": "Top",
       "min": 0,
-      "max": 5,
-      "step": 0.1,
-      "default": 2.5,
-      "unit": "rem"
+      "max": 50,
+      "step": 1,
+      "default": 20
     },
     {
       "type": "range",
       "id": "pb",
       "label": "Bottom",
       "min": 0,
-      "max": 5,
-      "step": 0.1,
-      "default": 2.5,
-      "unit": "rem"
+      "max": 50,
+      "step": 1,
+      "default": 20
     }
   ],
   "presets": [

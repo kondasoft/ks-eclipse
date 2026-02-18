@@ -9,14 +9,15 @@
         "custom_color_schemes": true,
         "light_color_scheme": "scheme-3",
         "dark_color_scheme": "scheme-4",
+        "container_width": 600,
         "wrap_container": true,
         "header_align": "center",
         "heading": "Newsletter Signup",
         "heading_size": "h2",
         "description": "<p>Subscribe to our newsletter to stay updated with the latest news and offers.<\/p>",
         "description_size": "fs-md",
-        "pt": 2.5,
-        "pb": 2.5
+        "pt": 25,
+        "pb": 25
       }
     },
     "footer": {
@@ -73,8 +74,8 @@
         "policy_links": true,
         "payment_icons": true,
         "powered_by": true,
-        "pt": 2.5,
-        "pb": 2.5
+        "pt": 25,
+        "pb": 25
       }
     }
   },

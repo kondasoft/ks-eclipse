@@ -1,0 +1,79 @@
+{% liquid 
+  assign current_variant = product.selected_or_first_available_variant
+  assign available = current_variant.available
+  assign compare_price = current_variant.compare_at_price
+  assign price = current_variant.price
+  assign unit_price = current_variant.unit_price
+  assign badge_discount_type = block.settings.badge_discount_type
+
+  if badge_discount_type == 'percentage'
+    assign sale_value = compare_price | minus: price | times: 100.0 | divided_by: compare_price | round | append: '%'
+  else
+    assign sale_value = compare_price | minus: price | money_without_trailing_zeros
+  endif
+%}
+ <div
+  id="product-block-{{ block.id }}"
+  class="product-block section-spacing"
+  style="
+    --pt: {{ block.settings.pt }};
+    --pb: {{ block.settings.pb }};
+  "
+  data-type="{{ block.type }}"
+  {{ block.shopify_attributes }}
+>
+  <div
+    class="price {{ block.settings.fs }}"
+    data-has-price-compare="{% if compare_price > price %}true{% else %}false{% endif %}"
+    data-has-price-unit="{% if unit_price > 0 %}true{% else %}false{% endif %}"
+    data-available="{% if available %}true{% else %}false{% endif %}"
+    >
+    <s class="price-compare">
+      <span class="visually-hidden"> {{ 'product.regular_price' | t }} &nbsp; </span>
+      <span data-compare-price>{{ compare_price | money }}</span>
+    </s>
+    <span class="price-sale">
+      <span class="visually-hidden"> {{ 'product.sale_price' | t }} &nbsp; </span>
+      <span data-price>{{ price | money }}</span>
+    </span>
+    <span class="price-regular">
+      <span data-price>{{ price | money }}</span>
+    </span>
+    <span class="price-unit">
+      <span class="visually-hidden"> {{ 'product.unit_price' | t }} &nbsp; </span>
+      <span data-unit-price>({{ unit_price | unit_price_with_measurement: current_variant.unit_price_measurement }})</span>
+    </span>
+    <span
+      class="badge badge-sale"
+      data-discount-type="{{ badge_discount_type }}"
+      data-text="{{ 'product.sale_badge' | t }}"
+    >
+      {{ 'product.sale_badge' | t: value: sale_value }}
+    </span>
+    <span class="badge badge-sold-out">
+      {{ 'product.sold_out' | t }}
+    </span>
+  </div>
+
+  {% if block.settings.show_payment_terms %}
+    {{ form | payment_terms }}
+  {% endif %}
+
+  {%- if block.settings.show_taxes_duties_text -%}
+    {%- if cart.taxes_included or cart.duties_included or shop.shipping_policy.body != blank -%}
+      <div class="price-taxes-info rte fs-sm">
+        {%- if cart.duties_included and cart.taxes_included -%}
+          {{ 'product.duties_and_taxes_included' | t }}
+        {%- elsif cart.taxes_included -%}
+          {{ 'product.taxes_included' | t }}
+        {%- elsif cart.duties_included -%}
+          {{ 'product.duties_included' | t }}
+        {%- endif -%}
+        {%- if shop.shipping_policy.body != blank -%}
+          {{ 'product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+
+</div>

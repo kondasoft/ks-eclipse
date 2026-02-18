@@ -75,6 +75,42 @@ body {
   padding-right: 0;
 }
 
+/*
+  Utility classes
+*/
+.fs-sm {
+  font-size: .875em;
+}
+.fs-md {
+  font-size: 1em;
+}
+.fs-lg {
+  font-size: 1.125em;
+}
+.fs-lg {
+  font-size: 1.25em;
+}
+
+.text-left {
+  text-align: left;
+}
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
+}
+
+.text-capitalize {
+  text-transform: capitalize;
+}
+.text-lowercase {
+  text-transform: lowercase;
+}
+.text-uppercase {
+  text-transform: uppercase;
+}
+
 
 /*
   Headings
@@ -399,6 +435,22 @@ label .required {
 
 
 /*
+  Badge
+*/
+.badge {
+  display: inline-flex;
+  padding: .25em .75em;
+  font-size: 0.625em;
+  font-weight: 600;
+  letter-spacing: calc(var(--letter-spacing) * 2);
+  color: rgb(var(--color-background));
+  background-color: rgb(var(--color-accent) / .1);
+  border-radius: var(--border-radius);
+  text-transform: uppercase;
+}
+
+
+/*
   Collapse
 */
 .theme-collapse-details {
@@ -470,8 +522,27 @@ hr, .hr {
 
 
 /*
-  Section header
+  Sections 
 */
+.section-styling {
+  background-color: rgb(var(--color-background));
+  background-image: var(--color-background-gradient);
+  color: rgb(var(--color-foreground));
+  transition: background-color 0.2s ease-out;
+}
+
+.section-spacing {
+  --spacing-scale: 0.1em;
+  padding-top: calc(var(--pt) * var(--spacing-scale));
+  padding-bottom: calc(var(--pb) * var(--spacing-scale));
+}
+
+@media (min-width: 600px) {
+  .section-spacing {
+    --spacing-scale: 0.125em;
+  }
+}
+
 .section-header {
   margin-bottom: 1.75em;
   max-width: 600px;
@@ -562,18 +633,6 @@ shop-follow-button:hover {
 
 
 /*
-  Utility classes
-*/
-.fs-sm { font-size: .875em } 
-.fs-md { font-size: 1em } 
-.fs-lg { font-size: 1.125em } 
-
-.text-left { text-align: left } 
-.text-center { text-align: center } 
-.text-right { text-align: right }
-
-
-/*
   Newsletter form
 */
 .newsletter-form {
@@ -616,4 +675,32 @@ shop-follow-button:hover {
 
 .newsletter-form button:active {
   opacity: .75;
+}
+
+
+/*
+  Product rating badge
+*/
+.product-rating-badge {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: .375em;
+}
+
+.product-rating-badge svg {
+  --color: var(--star-rating-color, var(--color-foreground));
+  display: block;
+}
+
+.product-rating-badge svg .star-rating-bg {
+  fill: rgba(var(--color), 0.15);
+}
+
+.product-rating-badge svg .star-rating-fg {
+  fill: rgba(var(--color), 1);
+}
+
+.product-rating-badge-count {
+  font-size: .925em;
 }

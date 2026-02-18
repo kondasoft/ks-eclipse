@@ -1,0 +1,110 @@
+.product {
+  
+}
+
+@media (min-width: 1200px) {
+  .product-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem
+  }
+}
+
+
+/*
+  Product gallery
+*/
+.product-gallery {
+  display: block;
+  margin-bottom: 1.5rem;
+}
+
+.product-gallery-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.product-gallery-item {
+}
+
+.product-gallery-item img,
+.product-gallery-item video,
+.product-gallery-item iframe {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+
+/*
+  Product vendor [block]
+*/
+.product-block[data-type="vendor"] p {
+  margin: 0;
+  letter-spacing: calc(var(--letter-spacing) * 2);
+}
+
+
+/*
+  Product title [block]
+*/
+.product-block[data-type="title"] .heading {
+  margin: 0;
+}
+
+
+/*
+  Product price [block]
+*/
+.product-block[data-type="price"] .price {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  gap: 0.5em;
+}
+
+.product-block[data-type="price"] .price-compare {
+  opacity: 0.5;
+}
+
+.product-block[data-type="price"] .price-sale {}
+
+.product-block[data-type="price"] .price-regular {}
+
+.product-block[data-type="price"] .price-unit {
+  font-size: 0.725em;
+  opacity: 0.75;
+}
+
+.product-block[data-type="price"] .badge-sale {
+  background-color: rgb(var(--color-accent));
+}
+
+.product-block[data-type="price"] .badge-sold-out {
+  background-color: rgb(var(--color-foreground) / 0.75);
+}
+
+.product-block[data-type="price"] [data-has-price-compare="true"] .price-regular,
+.product-block[data-type="price"] [data-has-price-compare="false"] .price-compare,
+.product-block[data-type="price"] [data-has-price-compare="false"] .price-sale,
+.product-block[data-type="price"] [data-has-price-compare="false"] .badge-sale,
+.product-block[data-type="price"] [data-has-price-unit="false"] .price-unit,
+.product-block[data-type="price"] [data-available="false"] .badge-sale,
+.product-block[data-type="price"] [data-available="true"] .badge-sold-out {
+  display: none;
+}
+
+.product-block[data-type="price"] shopify-payment-terms {
+  display: block;
+  font-size: .875em;
+  margin: .125em 0 0;
+}
+
+.product-block[data-type="price"] .price-taxes-info {
+  opacity: 0.75;
+  margin: 0.25em 0 0;
+}
