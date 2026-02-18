@@ -50,53 +50,39 @@ function initMenuCollapseState() {
 
   function getToggleTarget(button) {
     var linkGroup = button.closest('.nav-link-group');
-    var item = button.closest('.nav-item');
+    var target = null;
 
-    if (
-      linkGroup &&
-      linkGroup.nextElementSibling instanceof HTMLElement &&
-      linkGroup.nextElementSibling.classList.contains('nav-list-sub')
-    ) {
-      return linkGroup.nextElementSibling;
-    }
-
-    if (!item) {
+    if (!linkGroup || !(linkGroup.nextElementSibling instanceof HTMLElement)) {
       return null;
     }
 
-    return item.querySelector(':scope > .nav-list-sub');
+    target = linkGroup.nextElementSibling;
+    if (!target.classList.contains('nav-list-sub')) {
+      return null;
+    }
+
+    return target;
   }
 
-  function collapseToggle(button) {
+  function setExpanded(button, expanded) {
     var target = getToggleTarget(button);
 
-    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-expanded', String(expanded));
     if (target) {
-      target.hidden = true;
+      target.hidden = !expanded;
     }
   }
 
-  function collapseBranch(item) {
+  function collapseItemAndDescendants(item) {
     item.querySelectorAll('[data-menu-toggle]').forEach((button) => {
-      collapseToggle(button);
+      setExpanded(button, false);
     });
   }
 
-  menuDialog.addEventListener('click', (event) => {
-    var toggle = event.target.closest('[data-menu-toggle]');
-    var target = null;
+  function handleMenuToggle(toggle) {
     var isExpanded = false;
     var currentItem = null;
     var parentList = null;
-
-    if (!toggle || !menuDialog.contains(toggle)) {
-      return;
-    }
-
-    target = getToggleTarget(toggle);
-    if (!target) {
-      return;
-    }
 
     currentItem = toggle.closest('.nav-item');
     parentList = currentItem ? currentItem.parentElement : null;
@@ -107,20 +93,31 @@ function initMenuCollapseState() {
     isExpanded = toggle.getAttribute('aria-expanded') === 'true';
 
     if (isExpanded) {
-      collapseBranch(currentItem);
+      collapseItemAndDescendants(currentItem);
       return;
     }
 
-    Array.from(parentList.children).forEach((sibling) => {
-      if (!(sibling instanceof HTMLElement) || sibling === currentItem) {
-        return;
+    for (var i = 0; i < parentList.children.length; i += 1) {
+      var sibling = parentList.children[i];
+
+      if (sibling === currentItem) {
+        continue;
       }
 
-      collapseBranch(sibling);
-    });
+      collapseItemAndDescendants(sibling);
+    }
 
-    toggle.setAttribute('aria-expanded', 'true');
-    target.hidden = false;
+    setExpanded(toggle, true);
+  }
+
+  menuDialog.addEventListener('click', (event) => {
+    var toggle = event.target.closest('[data-menu-toggle]');
+
+    if (!toggle || !menuDialog.contains(toggle) || !getToggleTarget(toggle)) {
+      return;
+    }
+
+    handleMenuToggle(toggle);
   });
 }
 initMenuCollapseState();
