@@ -3,20 +3,24 @@
   class="product-gallery">
   <ul class="product-gallery-list">
     {% for media in product.media %}
-      {% liquid 
-        assign media_loading = 'lazy'
-        assign media_preload = 'none'
-        assign media_fetchpriority = 'auto'
+      <li
+        class="product-gallery-item"
+        data-gallery-item
+        {% unless forloop.first %}
+          hidden
+        {% endunless %}
+      >
+        {% case media.media_type %}
+          {% when 'image' %}
+            {% liquid 
+              assign img_loading = 'lazy'
+              assign img_fetchpriority = 'auto'
 
-        if forloop.first
-          assign media_loading = 'eager'
-          assign media_preload = 'auto'
-          assign media_fetchpriority = 'high'
-        endif
-      %}
-      {% case media.media_type %}
-        {% when 'image' %}
-          <li class="product-gallery-item">
+              if forloop.first or request.design_mode
+                assign img_loading = 'eager'
+                assign img_fetchpriority = 'high'
+              endif
+            %}
             <img
               src="{{ media.preview_image | image_url: width: 1600 }}"
               alt="{{ media.alt | escape }}"
@@ -28,25 +32,157 @@
                 {{ media.preview_image | image_url: width: 1600 }} 1600w
               "
               sizes="100vw"
-              loading="{{ media_loading }}"
-              fetchpriority="{{ media_fetchpriority }}"
+              loading="{{ img_loading }}"
+              fetchpriority="{{ img_fetchpriority }}"
             >
-          </li>
-         {% when 'video' %}
-            {{ media | video_tag: controls: true, image_size: '1600x', muted: true, loading: 'lazy', class: 'img-fluid' }}
+          {% when 'video' %}
+            {% liquid
+              assign video_autoplay = ''
+              assign video_poster = ''
+              assign video_loop = ''
+              assign video_muted = ''
+              assign video_controls = ''
+              assign video_preload = ''
+
+              if section.settings.gallery_video_autoplay and forloop.first
+                assign video_autoplay = 'autoplay '
+              elsif section.settings.gallery_video_autoplay and request.design_mode
+                assign video_autoplay = 'autoplay '
+              elsif section.settings.gallery_video_autoplay
+                assign video_autoplay = 'data-autoplay'
+              endif
+
+              if section.settings.gallery_video_autoplay and forloop.first
+                assign video_preload = 'preload="auto" '
+              elsif video_autoplay == ''
+                assign video_preload = 'preload="none" '
+              endif
+
+              assign video_poster_img = media.preview_image | image_url: width: 1600
+              if forloop.first or request.design_mode
+                assign video_poster = 'poster="' | append: video_poster_img | append: '" '
+              else
+                assign video_poster = 'data-poster="' | append: video_poster_img | append: '" '
+              endif
+
+              if section.settings.gallery_video_loop
+                assign video_loop = 'loop '
+              endif
+
+              if section.settings.gallery_video_muted or section.settings.gallery_video_autoplay
+                assign video_muted = 'muted '
+              endif
+
+              if section.settings.gallery_video_controls
+                assign video_controls = 'controls '
+              endif
+            %}
+            <video
+              {{ video_autoplay }}
+              {{ video_preload }}
+              {{ video_poster }}
+              {{ video_loop }}
+              {{ video_muted }}
+              {{ video_controls }}
+              playsinline
+              width="{{ media.preview_image.width }}"
+              height="{{ media.preview_image.height }}"
+            >
+              {% for source in media.sources %}
+                {% comment %}theme-check-disable{% endcomment %}
+                  <source src="{{ source.url }}" type="{{ source.mime_type }}">
+                {% comment %}theme-check-enable{% endcomment %}
+              {% endfor %}
+            </video>
           {% when 'external_video' %}
-            {{ media | external_video_tag: controls: true, image_size: '1600x', muted: true, loading: 'lazy', class: 'img-fluid' }}
-          {% when 'model' %}
-        {{ media | model_viewer_tag }}
-        {% when 'external_video' %}
-          <li class="product-gallery-item">
-            <iframe
-              src="{{ media.embed_url }}"
-              title="{{ media.alt | escape }}"
+            {% liquid
+              assign video_autoplay = ''
+              assign video_controls = ''
+              assign video_loop = ''
+              assign video_url = ''
+              assign video_src = ''
+              assign video_loading = 'lazy'
+
+              if media.host == 'youtube'
+                assign video_url = 'https://www.youtube.com/embed/' | append: media.external_id | append: '?rel=0'
+              elsif media.host == 'vimeo'
+                assign video_url = 'https://player.vimeo.com/video/' | append: media.external_id | append: '?dnt=1'
+              endif
+
+              if section.settings.gallery_video_autoplay
+                if media.host == 'youtube'
+                  assign video_url = video_url | append: '&autoplay=1&mute=1'
+                elsif media.host == 'vimeo'
+                  assign video_url = video_url | append: '&autoplay=1&muted=1'
+                endif
+              endif
+
+              if section.settings.gallery_video_controls == false
+                assign video_url = video_url | append: '&controls=0'
+              endif
+
+              if section.settings.gallery_video_loop
+                assign video_url = video_url | append: '&loop=1'
+                if media.host == 'youtube'
+                  assign video_url = video_url | append: '&playlist=' | append: media.external_id
+                endif
+              endif
+
+              if forloop.first or request.design_mode
+                assign video_src = 'src="' | append: video_url | append: '" '
+                assign video_loading = 'eager'
+              else
+                assign video_src = 'data-src="' | append: video_url | append: '" '
+                assign video_loading = 'lazy'
+              endif
+            %}
+            <iframe 
+              {{ video_src }}
+              frameborder="0" 
+              allow="autoplay; encrypted-media"
               allowfullscreen
-            ></iframe>
-          </li>
-      {% endcase %}
+              loading="{{ video_loading }}"
+              >
+            </iframe>
+          {% when 'model' %}
+            {% liquid
+              assign model_src = ''
+              assign model_loading = 'lazy'
+              assign model_poster_url = media.preview_image | image_url: width: 1600
+              assign model_poster = ''
+
+              if forloop.first or request.design_mode
+                assign model_src = 'src="' | append: media.sources.first.url | append: '" '
+                assign model_loading = 'eager'
+                assign model_poster = 'poster="' | append: model_poster_url | append: '" '
+              else
+                assign model_src = 'data-src="' | append: media.sources.first.url | append: '" '
+                assign model_loading = 'lazy'
+                assign model_poster = 'data-poster="' | append: model_poster_url | append: '" '
+              endif
+            %}
+            <script 
+              type="module" 
+              src="https://cdn.shopify.com/shopifycloud/model-viewer/v1.12/model-viewer.js"
+              defer>
+            </script>
+            <model-viewer
+              {{ model_src }}
+              {{ model_poster }}
+              camera-controls="true"
+              loading="{{ model_loading }}"
+              alt="{{ media.alt | escape }}">
+            </model-viewer>
+        {% endcase %}
+      </li>
     {% endfor %}
   </ul>
+  <div class="product-gallery-controls" {% if product.media.size < 2 %}hidden{% endif %}>
+    <button type="button" data-gallery-prev aria-label="Previous media">
+      Prev
+    </button>
+    <button type="button" data-gallery-next aria-label="Next media">
+      Next
+    </button>
+  </div>
 </product-gallery>

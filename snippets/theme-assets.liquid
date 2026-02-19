@@ -199,6 +199,7 @@
 
 {% if template.name == 'product' %}
   <link rel="stylesheet" href="{{ 'product.css' | asset_url }}">
+  <script src="{{ 'product.js' | asset_url }}" defer></script>
 {% endif %}
 
 <link rel="stylesheet" href="{{ 'secondary.css' | asset_url }}" media="print" onload="this.media='all'">

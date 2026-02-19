@@ -1,15 +1,3 @@
-{% liquid 
-  assign media_loading = 'lazy'
-  assign media_preload = 'none'
-  assign media_fetchpriority = 'auto'
-
-  if section.index == 1 or request.design_mode
-    assign media_loading = 'eager'
-    assign media_preload = 'auto'
-    assign media_fetchpriority = 'high'
-  endif
-%}
-
 <div 
   id="hero-media-{{ section.id }}"
   class="hero-media"
@@ -25,6 +13,15 @@
     {% endif %}
   ">
   {% if section.settings.type == 'image' and section.settings.img != blank %}
+     {% liquid 
+        assign img_loading = 'lazy'
+        assign img_fetchpriority = 'auto'
+
+        if section.index < 3 or request.design_mode
+          assign img_loading = 'eager'
+          assign img_fetchpriority = 'high'
+        endif
+      %}
     <img
       src="{{ section.settings.img | image_url: width: 2400 }}"
       alt="{{ section.settings.img.alt | escape }}"
@@ -35,31 +32,41 @@
         {{ section.settings.img | image_url: width: 1600 }} 1600w,
         {{ section.settings.img | image_url: width: 2400 }} 2400w"
       sizes="100vw"
-      loading="{{ media_loading }}"
-      fetchpriority="{{ media_fetchpriority }}"
+      loading="{{ img_loading }}"
+      fetchpriority="{{ img_fetchpriority }}"
     >
   {% elsif section.settings.type == 'video' and section.settings.video != blank %}
+    {% liquid
+      assign video_autoplay = ''
+      assign video_poster = ''
+      assign video_preload = ''
+      assign video_poster_img = section.settings.video.preview_image | image_url: width: 2400
+
+      if section.index < 3 or request.design_mode
+        assign video_autoplay = 'autoplay '
+        assign video_poster = 'poster="' | append: video_poster_img | append: '" '
+        assign video_preload = 'preload="auto" '
+      else
+        assign video_autoplay = 'data-autoplay'
+        assign video_poster = 'data-poster="' | append: video_poster_img | append: '" '
+        assign video_preload = 'preload="none" '
+      endif
+    %}
     <video
+      {{ video_autoplay }}
+      {{ video_preload }}
+      {{ video_poster }}
       loop
       muted
       playsinline
-      preload="{{ media_preload }}"
-      {% if request.design_mode or media_loading != 'lazy' %}
-        autoplay
-      {% else %}
-        data-autoplay="true"
-      {% endif %}
-      {% if media_loading == 'eager' %}
-        poster="{{ section.settings.video.preview_image | image_url: width: 1600 }}"
-      {% else %}
-        data-poster="{{ section.settings.video.preview_image | image_url: width: 1600 }}"
-      {% endif %}
+      width="{{ section.settings.video.preview_image.width }}"
+      height="{{ section.settings.video.preview_image.height }}"
     >
-      {% comment %}theme-check-disable{% endcomment %}
       {% for source in section.settings.video.sources %}
-        <source src="{{ source.url }}" type="{{ source.mime_type }}">
+        {% comment %}theme-check-disable{% endcomment %}
+          <source src="{{ source.url }}" type="{{ source.mime_type }}">
+        {% comment %}theme-check-enable{% endcomment %}
       {% endfor %}
-      {% comment %}theme-check-enable{% endcomment %}
     </video>
   {% else %}
     {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}    

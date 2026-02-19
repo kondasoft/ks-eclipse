@@ -1,15 +1,3 @@
-{% liquid 
-  assign media_loading = 'lazy'
-  assign media_preload = 'none'
-  assign media_fetchpriority = 'auto'
-
-  if section.index == 1 or request.design_mode
-    assign media_loading = 'eager'
-    assign media_preload = 'auto'
-    assign media_fetchpriority = 'high'
-  endif
-%}
-
 <div 
   id="basic-media-{{ section.id }}"
   class="basic-media section-styling section-spacing"
@@ -41,6 +29,15 @@
     {% endif %}
     <div class="basic-media-inner">
       {% if section.settings.type == 'image' and section.settings.img != blank %}
+        {% liquid 
+          assign img_loading = 'lazy'
+          assign img_fetchpriority = 'auto'
+
+          if section.index < 3 or request.design_mode
+            assign img_loading = 'eager'
+            assign img_fetchpriority = 'high'
+          endif
+        %}
         <img
           src="{{ section.settings.img | image_url: width: 2400 }}"
           alt="{{ section.settings.img.alt | escape }}"
@@ -51,106 +48,113 @@
             {{ section.settings.img | image_url: width: 1600 }} 1600w,
             {{ section.settings.img | image_url: width: 2400 }} 2400w"
           sizes="100vw"
-          loading="{{ media_loading }}"
-          fetchpriority="{{ media_fetchpriority }}"
+          loading="{{ img_loading }}"
+          fetchpriority="{{ img_fetchpriority }}"
         >
       {% elsif section.settings.type == 'video' and section.settings.video != blank %}
         {% liquid
-          assign video_should_be_muted = section.settings.video_muted
-          if section.settings.video_autoplay
-            assign video_should_be_muted = true
+          assign video_autoplay = ''
+          assign video_poster = ''
+          assign video_loop = ''
+          assign video_muted = ''
+          assign video_controls = ''
+          assign video_preload = ''
+
+          if section.settings.video_autoplay and section.index < 3
+            assign video_autoplay = 'autoplay '
+          elsif section.settings.video_autoplay and request.design_mode
+            assign video_autoplay = 'autoplay '
+          elsif section.settings.video_autoplay
+            assign video_autoplay = 'data-autoplay'
           endif
-          assign video_preview_image = section.settings.video.preview_image | image_url: width: 1600
+
+          if section.settings.video_autoplay and section.index < 3
+            assign video_preload = 'preload="auto" '
+          elsif video_autoplay == ''
+            assign video_preload = 'preload="none" '
+          endif
+
+          assign video_poster_img = section.settings.video.preview_image | image_url: width: 1600
+          if section.index < 3 or request.design_mode
+            assign video_poster = 'poster="' | append: video_poster_img | append: '" '
+          else
+            assign video_poster = 'data-poster="' | append: video_poster_img | append: '" '
+          endif
+
+          if section.settings.video_loop
+            assign video_loop = 'loop '
+          endif
+
+          if section.settings.video_muted or section.settings.video_autoplay
+            assign video_muted = 'muted '
+          endif
+
+          if section.settings.video_controls
+            assign video_controls = 'controls '
+          endif
         %}
         <video
-          {% if section.settings.video_loop %}
-            loop
-          {% endif %}
-          {% if video_should_be_muted %}
-            muted
-          {% endif %}
+          {{ video_autoplay }}
+          {{ video_preload }}
+          {{ video_poster }}
+          {{ video_loop }}
+          {{ video_muted }}
+          {{ video_controls }}
           playsinline
-          preload="{{ media_preload }}"
-          {% if section.settings.video_controls %}
-            controls
-          {% endif %}
-          {% if section.settings.video_autoplay and media_loading == 'lazy' %}
-            data-autoplay="true"
-            data-poster="{{ video_preview_image }}"
-          {% elsif section.settings.video_autoplay %}
-            autoplay
-            poster="{{ video_preview_image }}"
-          {% else %}
-            poster="{{ video_preview_image }}"
-          {% endif %}
+          width="{{ section.settings.video.preview_image.width }}"
+          height="{{ section.settings.video.preview_image.height }}"
         >
-          {% comment %}theme-check-disable{% endcomment %}
           {% for source in section.settings.video.sources %}
-            <source src="{{ source.url }}" type="{{ source.mime_type }}">
+            {% comment %}theme-check-disable{% endcomment %}
+              <source src="{{ source.url }}" type="{{ source.mime_type }}">
+            {% comment %}theme-check-enable{% endcomment %}
           {% endfor %}
-          {% comment %}theme-check-enable{% endcomment %}
         </video>
       {% elsif section.settings.type == 'external_video' and section.settings.external_video != blank %}
         {% liquid
-          assign video_should_be_muted = section.settings.video_muted
-          if section.settings.video_autoplay
-            assign video_should_be_muted = true
-          endif
+          assign video_autoplay = ''
+          assign video_controls = ''
+          assign video_loop = ''
+          assign video_url = ''
+          assign video_src = ''
+          assign video_loading = 'lazy'
 
           if section.settings.external_video.type == 'youtube'
-            assign video_src = 'https://www.youtube.com/embed/' | append: section.settings.external_video.id | append: '?playsinline=1&rel=0'
-            if section.settings.video_autoplay
-              assign video_src = video_src | append: '&autoplay=1'
-            endif
-            if video_should_be_muted
-              assign video_src = video_src | append: '&mute=1'
-            endif
-            if section.settings.video_loop
-              assign video_src = video_src | append: '&loop=1&playlist=' | append: section.settings.external_video.id
-            endif
-            unless section.settings.video_controls
-              assign video_src = video_src | append: '&controls=0'
-            endunless
-          else
-            assign video_src = 'https://player.vimeo.com/video/' | append: section.settings.external_video.id
-            assign video_query = ''
-            if section.settings.video_autoplay
-              assign video_query = video_query | append: 'autoplay=1'
-            endif
-            if video_should_be_muted
-              if video_query != blank
-                assign video_query = video_query | append: '&'
-              endif
-              assign video_query = video_query | append: 'muted=1'
-            endif
-            if section.settings.video_loop
-              if video_query != blank
-                assign video_query = video_query | append: '&'
-              endif
-              assign video_query = video_query | append: 'loop=1'
-            endif
-            unless section.settings.video_controls
-              if video_query != blank
-                assign video_query = video_query | append: '&'
-              endif
-              assign video_query = video_query | append: 'controls=0'
-            endunless
-            if video_query != blank
-              assign video_src = video_src | append: '?' | append: video_query
+            assign video_url = 'https://www.youtube.com/embed/' | append: section.settings.external_video.id | append: '?rel=0'
+          elsif section.settings.external_video.type == 'vimeo'
+            assign video_url = 'https://player.vimeo.com/video/' | append: section.settings.external_video.id | append: '?dnt=1'
+          endif
+
+          if section.settings.video_autoplay
+            assign video_url = video_url | append: '&autoplay=1&mute=1'
+          endif
+
+          if section.settings.video_controls == false
+            assign video_url = video_url | append: '&controls=0'
+          endif
+
+          if section.settings.video_loop
+            assign video_url = video_url | append: '&loop=1'
+            if section.settings.external_video.type == 'youtube'
+              assign video_url = video_url | append: '&playlist=' | append: section.settings.external_video.id
             endif
           endif
+
+          if section.index < 3 or request.design_mode
+            assign video_src = 'src="' | append: video_url | append: '" '
+            assign video_loading = 'eager'
+          else
+            assign video_src = 'data-src="' | append: video_url | append: '" '
+            assign video_loading = 'lazy'
+          endif
         %}
-        <iframe
-          {% if section.settings.video_autoplay and media_loading == 'lazy' %}
-            data-src="{{ video_src }}"
-            data-autoplay="true"
-          {% else %}
-            src="{{ video_src }}"
-          {% endif %}
-          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-          frameborder="0"
+        <iframe 
+          {{ video_src }}
+          frameborder="0" 
+          allow="autoplay; encrypted-media"
           allowfullscreen
-          loading="{{ media_loading }}">
+          loading="{{ video_loading }}"
+          >
         </iframe>
       {% else %}
         {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}    
@@ -301,14 +305,14 @@
     {
       "type": "checkbox",
       "id": "video_muted",
-      "label": "Muted",
+      "label": "Start video muted",
       "default": true,
       "visible_if": "{{ section.settings.type == 'video' or section.settings.type == 'external_video' }}"
     },
     {
       "type": "checkbox",
       "id": "video_controls",
-      "label": "Controls",
+      "label": "Show controls",
       "default": true,
       "visible_if": "{{ section.settings.type == 'video' or section.settings.type == 'external_video' }}"
     },

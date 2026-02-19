@@ -156,6 +156,14 @@ a:hover {
   color: rgb(var(--color-foreground) / .85);
 }
 
+a:active {
+  color: rgb(var(--color-foreground) / .75);
+}
+
+a.active {
+  color: rgb(var(--color-accent));
+}
+
 a:focus-visible {
   text-decoration: none;
   outline-color: rgb(var(--color-foreground));
@@ -439,7 +447,7 @@ label .required {
 */
 .badge {
   display: inline-flex;
-  padding: .25em .75em;
+  padding: .2em .75em;
   font-size: 0.625em;
   font-weight: 600;
   letter-spacing: calc(var(--letter-spacing) * 2);
@@ -467,7 +475,7 @@ label .required {
 }
 
 .theme-collapse-details[open] {
-  border-color: rgb(var(--color-accent));
+  border-color: rgb(var(--color-accent) / calc(var(--border-opacity) * 2));
 }
 
 .theme-collapse-summary {
@@ -598,8 +606,11 @@ ul, ol {
 }
 
 iframe[src*="youtube.com"],
-iframe[src*="vimeo.com"] {
+iframe[src*="vimeo.com"],
+iframe[data-src*="youtube.com"],
+iframe[data-src*="vimeo.com"] {
   width: 100%;
+  height: auto;
   aspect-ratio: 16 / 9;
 }
 
@@ -685,7 +696,7 @@ shop-follow-button:hover {
   position: relative;
   display: flex;
   align-items: center;
-  gap: .375em;
+  gap: .5em;
 }
 
 .product-rating-badge svg {
@@ -694,11 +705,11 @@ shop-follow-button:hover {
 }
 
 .product-rating-badge svg .star-rating-bg {
-  fill: rgba(var(--color), 0.15);
+  fill: rgb(var(--color) / 0.15);
 }
 
 .product-rating-badge svg .star-rating-fg {
-  fill: rgba(var(--color), 1);
+  fill: rgb(var(--color) / 1);
 }
 
 .product-rating-badge-count {

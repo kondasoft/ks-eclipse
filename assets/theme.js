@@ -749,53 +749,103 @@ function initStickyHeader() {
 initStickyHeader();
 
 /*
-  Media autoplay on view
+  Media (Video/Iframe/Model) on view
 */
-function initAutoplayOnView() {
-  var mediaItems = document.querySelectorAll('video[data-autoplay="true"], iframe[data-autoplay="true"][data-src]');
+function initMediaOnView() {
+  var videos = document.querySelectorAll('video');
+  var iframes = document.querySelectorAll('iframe[data-src]');
+  var models = document.querySelectorAll('model-viewer[data-src]');
+  var mediaItems = [];
 
-  if (!mediaItems.length) {
+  if (!videos.length && !iframes.length && !models.length) {
     return;
   }
 
-  function activateMedia(media) {
-    if (media.tagName === 'VIDEO') {
-      if (media.dataset.poster && !media.poster) {
-        media.poster = media.dataset.poster;
-      }
+  function isDataAutoplayEnabled(video) {
+    if (!video.hasAttribute('data-autoplay')) {
+      return false;
+    }
 
-      media.preload = 'auto';
-      media.play().catch(function () {});
+    if (video.dataset.autoplay === 'false') {
+      return false;
+    }
+
+    return true;
+  }
+
+  function activateVideo(video) {
+    if (video.dataset.poster && !video.poster) {
+      video.poster = video.dataset.poster;
+    }
+
+    if (!isDataAutoplayEnabled(video)) {
       return;
     }
 
-    if (media.tagName === 'IFRAME' && media.dataset.src) {
-      media.src = media.dataset.src;
+    video.preload = 'auto';
+    video.play().catch(function () {
+      // Ignore autoplay failures caused by browser policies.
+    });
+  }
+
+  function activateIframe(iframe) {
+    if (iframe.dataset.src && !iframe.getAttribute('src')) {
+      iframe.setAttribute('src', iframe.dataset.src);
     }
   }
 
-  mediaItems.forEach((media) => {
-    if (!('IntersectionObserver' in window)) {
-      activateMedia(media);
-      return;
+  function activateModel(model) {
+    if (model.dataset.src && !model.getAttribute('src')) {
+      model.setAttribute('src', model.dataset.src);
     }
+  }
 
-    var observer = new IntersectionObserver((entries, instance) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) {
-          return;
-        }
+  mediaItems = mediaItems.concat(Array.prototype.slice.call(videos));
+  mediaItems = mediaItems.concat(Array.prototype.slice.call(iframes));
+  mediaItems = mediaItems.concat(Array.prototype.slice.call(models));
 
-        activateMedia(entry.target);
-        instance.unobserve(entry.target);
-      });
-    }, {
-      threshold: 0,
-      rootMargin: '300px 0px'
+  if (!('IntersectionObserver' in window)) {
+    mediaItems.forEach((media) => {
+      if (media.tagName === 'VIDEO') {
+        activateVideo(media);
+        return;
+      }
+
+      if (media.tagName === 'IFRAME') {
+        activateIframe(media);
+        return;
+      }
+
+      if (media.tagName === 'MODEL-VIEWER') {
+        activateModel(media);
+      }
     });
+    return;
+  }
 
+  var observer = new IntersectionObserver((entries, instance) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) {
+        return;
+      }
+
+      if (entry.target.tagName === 'VIDEO') {
+        activateVideo(entry.target);
+      } else if (entry.target.tagName === 'IFRAME') {
+        activateIframe(entry.target);
+      } else if (entry.target.tagName === 'MODEL-VIEWER') {
+        activateModel(entry.target);
+      }
+      instance.unobserve(entry.target);
+    });
+  }, {
+    threshold: 0,
+    rootMargin: '300px 0px 0px 0px'
+  });
+
+  mediaItems.forEach((media) => {
     observer.observe(media);
   });
 }
 
-initAutoplayOnView(document);
+initMediaOnView();

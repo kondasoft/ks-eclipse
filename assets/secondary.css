@@ -20,6 +20,10 @@
     opacity var(--dialog-transition-duration) var(--dialog-transition-easing);
 }
 
+.dialog:not([open]) {
+  display: none !important;
+}
+
 html[data-theme="dark"] .dialog {
   box-shadow: 0 0 .75rem rgb(var(--color-background) / .5);
 }
