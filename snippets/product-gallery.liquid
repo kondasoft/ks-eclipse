@@ -193,7 +193,18 @@
     </div>
   </div>
   {% if product.media.size > 1 %}
-    <ul class="product-gallery-thumbnails">
+    {% liquid
+      assign thumb_columns = product.media.size
+      if thumb_columns < 4
+        assign thumb_columns = 4
+      endif
+      if thumb_columns > 8
+        assign thumb_columns = 8
+      endif
+    %}
+    <ul 
+      class="product-gallery-thumbnails" 
+      style="--thumb-columns: {{ thumb_columns }};">
       {% for media in product.media %}
         <li class="product-gallery-thumbnail-item">
           <button
