@@ -5,19 +5,22 @@ class ProductGallery extends HTMLElement {
   constructor() {
     super();
     this.items = [];
+    this.thumbs = [];
     this.prevButton = null;
     this.nextButton = null;
     this.activeIndex = 0;
     this.onPrevClick = this.onPrevClick.bind(this);
     this.onNextClick = this.onNextClick.bind(this);
+    this.onThumbClick = this.onThumbClick.bind(this);
   }
 
   connectedCallback() {
     this.items = Array.prototype.slice.call(this.querySelectorAll('[data-gallery-item]'));
+    this.thumbs = Array.prototype.slice.call(this.querySelectorAll('[data-gallery-thumb]'));
     this.prevButton = this.querySelector('[data-gallery-prev]');
     this.nextButton = this.querySelector('[data-gallery-next]');
 
-    if (!this.items.length || !this.prevButton || !this.nextButton) {
+    if (!this.items.length) {
       return;
     }
 
@@ -26,8 +29,18 @@ class ProductGallery extends HTMLElement {
       this.activeIndex = 0;
     }
 
-    this.prevButton.addEventListener('click', this.onPrevClick);
-    this.nextButton.addEventListener('click', this.onNextClick);
+    if (this.prevButton) {
+      this.prevButton.addEventListener('click', this.onPrevClick);
+    }
+
+    if (this.nextButton) {
+      this.nextButton.addEventListener('click', this.onNextClick);
+    }
+
+    this.thumbs.forEach((thumb) => {
+      thumb.addEventListener('click', this.onThumbClick);
+    });
+
     this.showItem(this.activeIndex);
   }
 
@@ -39,6 +52,10 @@ class ProductGallery extends HTMLElement {
     if (this.nextButton) {
       this.nextButton.removeEventListener('click', this.onNextClick);
     }
+
+    this.thumbs.forEach((thumb) => {
+      thumb.removeEventListener('click', this.onThumbClick);
+    });
   }
 
   onPrevClick() {
@@ -47,6 +64,15 @@ class ProductGallery extends HTMLElement {
 
   onNextClick() {
     this.showItem(this.activeIndex + 1);
+  }
+
+  onThumbClick(event) {
+    const index = Number(event.currentTarget.dataset.galleryThumb);
+    if (Number.isNaN(index)) {
+      return;
+    }
+
+    this.showItem(index);
   }
 
   isVideoAutoplayEnabled(video) {
@@ -140,8 +166,21 @@ class ProductGallery extends HTMLElement {
 
   updateButtons() {
     const hasMultipleItems = this.items.length > 1;
-    this.prevButton.disabled = !hasMultipleItems;
-    this.nextButton.disabled = !hasMultipleItems;
+    if (this.prevButton) {
+      this.prevButton.disabled = !hasMultipleItems;
+    }
+
+    if (this.nextButton) {
+      this.nextButton.disabled = !hasMultipleItems;
+    }
+  }
+
+  updateThumbs() {
+    this.thumbs.forEach((thumb, thumbIndex) => {
+      const isActive = thumbIndex === this.activeIndex;
+      thumb.classList.toggle('is-active', isActive);
+      thumb.setAttribute('aria-current', String(isActive));
+    });
   }
 
   showItem(index) {
@@ -162,6 +201,7 @@ class ProductGallery extends HTMLElement {
 
     this.activeIndex = normalizedIndex;
     this.updateButtons();
+    this.updateThumbs();
     this.playMediaInItem(this.items[normalizedIndex]);
   }
 }

@@ -8,7 +8,8 @@
     "policy_links": "Policy links",
     "payment_methods": "Payment methods",
     "previous_media": "Previous media",
-    "next_media": "Next media"
+    "next_media": "Next media",
+    "go_to_media": "Go to media {{ index }}"
   },
   "general": {
     "menu": "Menu",
