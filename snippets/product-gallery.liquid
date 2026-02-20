@@ -4,12 +4,8 @@
   <ul class="product-gallery-list">
     {% for media in product.media %}
       <li
-        class="product-gallery-item"
-        data-gallery-item
-        {% unless forloop.first %}
-          hidden
-        {% endunless %}
-      >
+        class="product-gallery-item{% if forloop.first %} is-active{% endif %}"
+        data-gallery-item>
         {% case media.media_type %}
           {% when 'image' %}
             {% liquid 
@@ -102,14 +98,16 @@
               assign video_url = ''
               assign video_src = ''
               assign video_loading = 'lazy'
+              assign iframe_autoplay = ''
 
               if media.host == 'youtube'
-                assign video_url = 'https://www.youtube.com/embed/' | append: media.external_id | append: '?rel=0'
+                assign video_url = 'https://www.youtube.com/embed/' | append: media.external_id | append: '?rel=0&enablejsapi=1'
               elsif media.host == 'vimeo'
-                assign video_url = 'https://player.vimeo.com/video/' | append: media.external_id | append: '?dnt=1'
+                assign video_url = 'https://player.vimeo.com/video/' | append: media.external_id | append: '?dnt=1&api=1'
               endif
 
               if section.settings.gallery_video_autoplay
+                assign iframe_autoplay = 'data-autoplay '
                 if media.host == 'youtube'
                   assign video_url = video_url | append: '&autoplay=1&mute=1'
                 elsif media.host == 'vimeo'
@@ -138,6 +136,7 @@
             %}
             <iframe 
               {{ video_src }}
+              {{ iframe_autoplay }}
               frameborder="0" 
               allow="autoplay; encrypted-media"
               allowfullscreen
@@ -177,12 +176,18 @@
       </li>
     {% endfor %}
   </ul>
-  <div class="product-gallery-controls" {% if product.media.size < 2 %}hidden{% endif %}>
-    <button type="button" data-gallery-prev aria-label="Previous media">
-      Prev
+  <div 
+    class="product-gallery-controls" 
+    {% if product.media.size < 2 %}hidden{% endif %}>
+    <button type="button" data-gallery-prev aria-label="{{ 'accessibility.previous_media' | t }}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
     </button>
-    <button type="button" data-gallery-next aria-label="Next media">
-      Next
+    <button type="button" data-gallery-next aria-label="{{ 'accessibility.next_media' | t }}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
     </button>
   </div>
 </product-gallery>

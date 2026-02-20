@@ -6,7 +6,9 @@
     "toggle_cart": "Toggle cart",
     "social_icons": "Social media links",
     "policy_links": "Policy links",
-    "payment_methods": "Payment methods"
+    "payment_methods": "Payment methods",
+    "previous_media": "Previous media",
+    "next_media": "Next media"
   },
   "general": {
     "menu": "Menu",
