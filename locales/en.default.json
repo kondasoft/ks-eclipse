@@ -1,6 +1,7 @@
 {
   "accessibility": {
     "skip_to_content": "Skip to content",
+    "skip_to_product_information": "Skip to product information",
     "toggle_navigation": "Toggle navigation",
     "toggle_search": "Toggle search",
     "toggle_cart": "Toggle cart",
@@ -9,7 +10,8 @@
     "payment_methods": "Payment methods",
     "previous_media": "Previous media",
     "next_media": "Next media",
-    "go_to_media": "Go to media {{ index }}"
+    "go_to_media": "Go to media {{ index }}",
+    "close": "Close"
   },
   "general": {
     "menu": "Menu",

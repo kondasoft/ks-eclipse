@@ -204,5 +204,24 @@
 
 <link rel="stylesheet" href="{{ 'secondary.css' | asset_url }}" media="print" onload="this.media='all'">
 
+<script>
+  window.themeRoutes = window.themeRoutes || {};
+  window.themeStrings = window.themeStrings || {};
+  window.themeRoutes.cart = {
+    get: '{{ routes.cart_url }}',
+    add: '{{ routes.cart_add_url }}',
+    update: '{{ routes.cart_update_url }}',
+    change: '{{ routes.cart_change_url }}',
+    clear: '{{ routes.cart_clear_url }}'
+  };
+  window.themeStrings.cart = {
+    add: '{{ 'cart.added_to_cart' | t }}',
+    update: '{{ 'cart.updated_cart' | t }}',
+    remove: '{{ 'cart.removed_from_cart' | t }}',
+    clear: '{{ 'cart.cleared_cart' | t }}',
+    error: '{{ 'cart.error' | t }}'
+  };
+</script>
+
 <script src="{{ 'theme.js' | asset_url }}" defer></script>
 <script src="{{ 'cart.js' | asset_url }}" defer></script>

@@ -1,0 +1,118 @@
+
+{% unless product.has_only_default_variant %}
+  <div
+    id="product-block-{{ block.id }}"
+    class="product-block section-spacing"
+    style="
+      --pt: {{ block.settings.pt }};
+      --pb: {{ block.settings.pb }};
+    "
+    data-type="{{ block.type }}"
+    {{ block.shopify_attributes }}
+  >
+    <product-options>
+      {% for option in product.options_with_values %}
+        {% liquid
+          assign has_swatch_values = false
+          for value in option.values
+            if value.swatch.color != blank or value.swatch.image != blank
+              assign has_swatch_values = true
+              break
+            endif
+          endfor
+        %}
+        {% if has_swatch_values %}
+          <fieldset>
+            <legend>
+              {{ option.name | append: ':' -}}
+              <span class="color-swatches-selected-value">{{ option.selected_value }}</span>
+            </legend>
+            <div class="color-swatches">
+              {% for value in option.values %}
+                <input
+                  class="visually-hidden"
+                  type="radio"
+                  name="product-option-{{ option.name | handleize }}-{{ product.id }}"
+                  id="product-option-{{ option.name | handleize }}-{{ value | handleize }}-{{ product.id }}"
+                  value="{{ value | escape }}"
+                  {% if option.selected_value == value %}
+                    checked
+                  {% endif %}
+                >
+                <label
+                  for="product-option-{{ option.name | handleize }}-{{ value | handleize }}-{{ product.id }}"
+                  data-tooltip="{{ value | escape }}"
+                >
+                  <span style="background-color: {{ value.swatch.color }};">
+                    {% if value.swatch.image %}
+                      <img
+                        class="img-fluid"
+                        src="{{ value.swatch.image | image_url: width: 64, height: 64, crop: 'center' }}"
+                        alt=""
+                        width="28"
+                        height="28"
+                        loading="lazy"
+                      >
+                    {% endif %}
+                  </span>
+                  <span class="visually-hidden">{{ value }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </fieldset>
+        {% elsif block.settings.style == 'buttons' %}
+          <fieldset>
+            <legend>
+              {{ option.name }}
+            </legend>
+            <div class="size-buttons">
+              {% for value in option.values %}
+                <input
+                  class="visually-hidden"
+                  type="radio"
+                  name="product-option-{{ option.name | handleize }}-{{ product.id }}"
+                  id="product-option-{{ option.name | handleize }}-{{ value | handleize }}-{{ product.id }}"
+                  value="{{ value | escape }}"
+                  data-option-position="{{ option.position }}"
+                  {% if option.selected_value == value %}
+                    checked
+                  {% endif %}
+                >
+                <label for="product-option-{{ option.name | handleize }}-{{ value | handleize }}-{{ product.id }}">
+                  {{ value }}
+                </label>
+              {% endfor %}
+            </div>
+          </fieldset>
+        {% else %}
+          <fieldset>
+            <legend>
+              {{ option.name }}
+            </legend>
+            <div class="input-wrapper">
+              <select
+                id="product-option-{{ option.name | handleize }}-{{ product.id }}"
+                name="product-option-{{ option.name | handleize }}-{{ product.id }}"
+                class="input"
+              >
+                {% for value in option.values %}
+                  <option
+                    value="{{ value | escape }}"
+                    {% if value == option.selected_value %}
+                      selected
+                    {% endif %}
+                  >
+                    {{ value }}
+                  </option>
+                {% endfor %}
+              </select>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </fieldset>
+        {% endif %}
+      {% endfor %}
+    </product-options>
+  </div>
+{% endunless %}

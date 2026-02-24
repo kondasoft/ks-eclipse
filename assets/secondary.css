@@ -274,6 +274,67 @@ theme-color-toggle label:has(input:focus-visible) {
   margin: 0.25rem 0 0;
   font-size: .875em;
 }
+
+
+/*
+  Theme notification
+*/
+.theme-notification {
+  --color: var(--color-accent);
+  position: fixed;
+  z-index: 10;
+  bottom: 1rem;
+  right: 1rem;
+  background-color: rgb(var(--color-background));
+  border-radius: var(--border-radius);
+  width: calc(100% - 2rem);
+  max-width: 360px;
+}
+
+.theme-notification-inner {
+  background-color: rgb(var(--color) / .05);
+  border: 1px solid rgb(var(--color) / var(--border-opacity));
+  /* box-shadow: 0 .25rem .5rem rgb(var(--color) / .15); */
+  color: rgb(var(--color));
+}
+
+.theme-notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid rgb(var(--color) / var(--border-opacity));
+}
+
+.theme-notification-header .heading {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.theme-notification-header .btn-icon {
+  margin: -.5rem -.75rem -.5rem 0;
+  color: rgb(var(--color));
+}
+
+.theme-notification-header .btn-icon:hover {
+  background-color: rgb(var(--color) / .1);
+}
+
+.theme-notification-header .btn-icon:active {
+  background-color: rgb(var(--color) / .2);
+}
+
+.theme-notification-header .btn-icon:focus-visible {
+  outline-color: rgb(var(--color));
+}
+
+.theme-notification-content {
+  padding: 1rem;
+}
+
+.theme-notification-content p:last-child {
+  margin: 0;
+}
   
 
 /*

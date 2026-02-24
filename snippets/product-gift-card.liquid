@@ -1,0 +1,130 @@
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('.product-gift-card-form');
+    const fieldsContainer = form.querySelector('.product-gift-card-form-fields');
+    const radioButtons = form.querySelectorAll('input[name="product-gift-card-form"]');
+    const messageTextarea = form.querySelector('#gift-card-form-message');
+    const messageHelperText = form.querySelector('.form-helper-text span');
+
+    radioButtons.forEach(radio => {
+      radio.addEventListener('change', () => {
+        if (radio.value === 'recipient-email' && radio.checked) {
+          fieldsContainer.hidden = false;
+          fieldsContainer.querySelectorAll('[data-required]').forEach(input => {
+            input.required = true; 
+          });
+          ensureHiddenInputs();
+        } else {
+          fieldsContainer.hidden = true;
+          fieldsContainer.querySelectorAll('[data-required]').forEach(input => {
+            input.required = false;
+            input.value = '';
+          });
+          removeHiddenInputs();
+          messageHelperText.textContent = '0/200';
+        }
+      });
+    });
+
+    const ensureHiddenInputs = () => {
+      // Add send flag
+      let sendFlag = form.querySelector('[name="properties[__shopify_send_gift_card_to_recipient]"]');
+      if (!sendFlag) {
+        sendFlag = document.createElement('input');
+        sendFlag.type = 'hidden';
+        sendFlag.name = 'properties[__shopify_send_gift_card_to_recipient]';
+        sendFlag.value = 'if_present';
+        form.appendChild(sendFlag);
+      }
+
+      // Add timezone offset
+      let offset = form.querySelector('[name="properties[__shopify_offset]"]');
+      if (!offset) {
+        offset = document.createElement('input');
+        offset.type = 'hidden';
+        offset.name = 'properties[__shopify_offset]';
+        offset.value = new Date().getTimezoneOffset();
+        form.appendChild(offset);
+      }
+    };
+
+    const removeHiddenInputs = () => {
+      form.querySelectorAll('[name="properties[__shopify_send_gift_card_to_recipient]"], [name="properties[__shopify_offset]"]').forEach(el => el.remove());
+    };
+
+    messageTextarea.addEventListener('input', () => {
+      const currentLength = messageTextarea.value.length;
+      messageHelperText.textContent = `${currentLength}/200`;
+    });
+  });
+</script>
+
+<div class="product-gift-card-form">
+  <h3 class="heading h5">
+    {{ 'product.gift_card.title' | t }}
+  </h3>
+  <label class="check-label">
+    <input type="radio" value="my-email" name="product-gift-card-form" checked>
+    <span>
+      {{ 'product.gift_card.my_email' | t }}
+    </span>
+  </label>
+  <label class="check-label">
+    <input type="radio" value="recipient-email" name="product-gift-card-form">
+    <span>
+      {{ 'product.gift_card.recipient_email' | t }}
+    </span>
+  </label>
+  <div class="product-gift-card-form-fields" hidden>
+    <div class="form-group">
+      <label for="gift-card-form-email">
+        {{ 'product.gift_card.recipient_email' | t}}
+        <span class="form-asterisk" aria-hidden="true">*</span>
+      </label>
+      <input 
+        id="gift-card-form-email"
+        type="email"
+        class="input"
+        name="properties[Recipient email]"
+        placeholder="john@domain.com"
+        data-required>
+    </div>
+    <div class="form-group">
+      <label for="gift-card-form-name">
+        {{ 'product.gift_card.recipient_name' | t}}
+      </label>
+      <input
+        id="gift-card-form-name"
+        type="text"
+        class="input"
+        name="properties[Recipient name]"
+        placeholder="John Doe">
+    </div>
+    <div class="form-group">
+      <label for="gift-card-form-message">
+        {{ 'product.gift_card.message' | t }}
+      </label>
+      <textarea
+        id="gift-card-form-message"
+        class="input"
+        name="properties[Message]"
+        maxlength="200"
+        rows="4"></textarea>
+      <div class="form-helper-text">
+        <span>0/200</span> 
+        {{ 'product.gift_card.message_chars_remaining' | t }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="gift-card-form-send-on">
+        {{ 'product.gift_card.send_on' | t }}
+      </label>
+      <input
+        id="gift-card-form-send-on"
+        type="date"
+        class="input"
+        name="properties[Send on]">
+    </div>
+  </div>
+</div>

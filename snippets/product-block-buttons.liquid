@@ -1,0 +1,103 @@
+{% liquid 
+  assign current_variant = product.selected_or_first_available_variant
+%}
+
+<div
+  id="product-block-{{ block.id }}"
+  class="product-block section-spacing"
+  style="
+    --pt: {{ block.settings.pt }};
+    --pb: {{ block.settings.pb }};
+  "
+  data-type="{{ block.type }}"
+  {{ block.shopify_attributes }}
+>
+
+  {%- if product.gift_card? -%}
+    {%- render 'product-gift-card', form: form -%}
+  {%- endif -%}
+
+  <div class="btn-atc-wrapper">
+    <product-qty-switcher
+      role="group"
+      aria-label="{{ 'product.quantity.label' | t }}"
+    >
+      <button
+        class="btn"
+        type="button"
+        name="decrease"
+        aria-label="{{ 'product.quantity.decrease' | t }}"
+        disabled
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+      <input
+        class="input"
+        type="number"
+        value="1"
+        min="1"
+        max="{{ qty_max }}"
+        aria-label="{{ 'product.quantity.label' | t }}"
+      >
+      <button
+        class="btn"
+        type="button"
+        name="increase"
+        aria-label="{{ 'product.quantity.increase' | t }}"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus">
+          <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+    </product-qty-switcher>
+    <product-form>
+      <div class="product-form-error alert alert-error" role="alert" hidden></div>
+      {% form 'product', product %}
+        <input type="hidden" name="id" value="123">
+        <input type="hidden" name="quantity" value="1">
+        <button
+          class="btn btn-atc btn-full {{ block.settings.atc_btn_style }} {{ block.settings.atc_btn_size }}"
+          type="submit"
+          name="add"
+          {% unless current_variant.available %}
+            disabled
+          {% endunless %}
+        >
+          <span>
+            {% if current_variant.available %}
+              {{ 'product.add_to_cart' | t }}
+            {% else %}
+              {{ 'product.sold_out' | t }}
+            {% endif %}
+          </span>
+        </button>
+      {% endform %}
+    </product-form>
+  </div>
+
+  {% if block.settings.show_buy_btn %}
+    <button
+      class="btn btn-buy btn-full {{ block.settings.buy_btn_style }} {{ block.settings.buy_btn_size }}"
+      name="buy"
+      type="button"
+      data-quantity="1"
+      {% unless current_variant.available %}
+        disabled
+      {% endunless %}
+    >
+      {{ 'product.buy_it_now' | t }}
+    </button>
+  {% endif %}
+
+  {% if block.settings.show_dynamic_buttons %}
+    <div class="product-dynamic-buttons">
+      {% form 'product', product %}
+        <input type="hidden" name="id" value="{{ current_variant.id }}">
+        {{ form | payment_button }}
+      {% endform %}
+    </div>
+  {% endif %}
+</div>
+  

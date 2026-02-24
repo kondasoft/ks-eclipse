@@ -15,7 +15,9 @@
       <div class="product-left">
         {% render 'product-gallery' %}
       </div>
-      <div class="product-right">
+      <div 
+        id="product-information-{{ section.id }}" 
+        class="product-right">
         {% liquid
           for block in section.blocks
             case block.type
@@ -377,7 +379,7 @@
       "settings": [
         {
           "type": "header",
-          "content": "Add to cart button"
+          "content": "\"Add to cart\" button"
         },
         {
           "type": "checkbox",
@@ -388,7 +390,7 @@
         {
           "type": "select",
           "id": "atc_btn_style",
-          "label": "\"Add to cart\" button style",
+          "label": "Button style",
           "default": "btn-primary",
           "options": [
             { "value": "btn-primary", "label": "Primary" },
@@ -396,8 +398,19 @@
           ]
         },
         {
+          "type": "select",
+          "id": "atc_btn_size",
+          "label": "Button size",
+          "default": "fs-md",
+          "options": [
+            { "value": "fs-sm", "label": "Small" },
+            { "value": "fs-md", "label": "Medium" },
+            { "value": "fs-lg", "label": "Large" }
+          ]
+        },
+        {
           "type": "header",
-          "content": "Buy it now button"
+          "content": "\"Buy it now\" button"
         },
         {
           "type": "checkbox",
@@ -408,12 +421,22 @@
         {
           "type": "select",
           "id": "buy_btn_style",
-          "label": "\"Buy it now\" button style",
+          "label": "Button style",
           "default": "btn-secondary",
           "options": [
             { "value": "btn-primary", "label": "Primary" },
-            { "value": "btn-secondary", "label": "Secondary" },
-            { "value": "btn-link", "label": "Link" }
+            { "value": "btn-secondary", "label": "Secondary" }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "buy_btn_size",
+          "label": "Button size",
+          "default": "fs-md",
+          "options": [
+            { "value": "fs-sm", "label": "Small" },
+            { "value": "fs-md", "label": "Medium" },
+            { "value": "fs-lg", "label": "Large" }
           ]
         },
         {
@@ -455,31 +478,11 @@
       "name": "Richtext",
       "settings": [
         {
-          "type": "text",
-          "id": "heading",
-          "label": "Heading",
-          "default": "Richtext Block"
-        },
-        {
-          "type": "select",
-          "id": "heading_size",
-          "label": "Heading size",
-          "default": "h3",
-          "options": [
-            { "value": "h1", "label": "H1" },
-            { "value": "h2", "label": "H2" },
-            { "value": "h3", "label": "H3" },
-            { "value": "h4", "label": "H4" },
-            { "value": "h5", "label": "H5" },
-            { "value": "h6", "label": "H6" }
-          ]
-        },
-        {
           "type": "richtext",
           "id": "description",
           "label": "Description",
-          "default": "<p>Optional description for this block</p>"
-        },
+          "default": "<p>Add custom text or inject a metafield to display product details.</p>"
+        }, 
         {
           "type": "select",
           "id": "description_size",

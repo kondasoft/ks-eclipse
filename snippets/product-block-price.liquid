@@ -56,7 +56,10 @@
   </div>
 
   {% if block.settings.show_payment_terms %}
-    {{ form | payment_terms }}
+     {% form 'product', product %}
+      <input type="hidden" name="id" value="{{ current_variant.id }}">
+      {{ form | payment_terms }}
+     {% endform %}
   {% endif %}
 
   {%- if block.settings.show_taxes_duties_text -%}

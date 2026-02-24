@@ -1,0 +1,20 @@
+{% liquid 
+  assign description = block.settings.description
+%}
+
+{% unless description == blank %}
+  <div
+    id="product-block-{{ block.id }}"
+    class="product-block section-spacing"
+    style="
+      --pt: {{ block.settings.pt }};
+      --pb: {{ block.settings.pb }};
+    "
+    data-type="{{ block.type }}"
+    {{ block.shopify_attributes }}
+  >
+    <div class="description rte {{ block.settings.description_size }}">
+      {{ description | replace: '<ul>', '<ul class="list-check">' }}
+    </div>
+  </div>
+{% endunless %}
