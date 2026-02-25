@@ -35,10 +35,9 @@ class ProductForm extends HTMLElement {
       const result = await Cart.add(formData);
       console.log('Product added to cart', result);
     } catch (error) {
-      console.error('Error adding product to cart', error);
       ThemeNotification.show(
-        'Unable to add to cart',
-        error && error.message ? error.message : 'Please try again.',
+        window.theme.strings.product.cartErrorTitle,
+        error.message,
         'error'
       );
     } finally {
@@ -50,6 +49,321 @@ class ProductForm extends HTMLElement {
 }
 customElements.define('product-form', ProductForm);
 
+/*
+  Product options
+*/
+class ProductOptions extends HTMLElement {
+  constructor() {
+    super();
+    this.optionInputs = [];
+    this.onOptionChange = this.onOptionChange.bind(this);
+  }
+
+  connectedCallback() {
+    this.optionInputs = Array.from(this.querySelectorAll('input[type="radio"], select'));
+    this.optionInputs.forEach((input) => {
+      input.addEventListener('change', this.onOptionChange);
+    });
+
+    this.onOptionChange();
+  }
+
+  disconnectedCallback() {
+    this.optionInputs.forEach((input) => {
+      input.removeEventListener('change', this.onOptionChange);
+    });
+  }
+
+  getSelectedOptions() {
+    const selectedOptions = [];
+    const checkedRadios = Array.from(this.querySelectorAll('input[type="radio"]:checked'));
+    const selects = Array.from(this.querySelectorAll('select'));
+
+    checkedRadios.forEach((radio) => {
+      selectedOptions.push(radio.value);
+    });
+
+    selects.forEach((select) => {
+      if (select.value !== '') {
+        selectedOptions.push(select.value);
+      }
+    });
+
+    return selectedOptions;
+  }
+
+  getVariants() {
+    const variantsScript = this.querySelector('script[data-product-variants]');
+    if (!variantsScript) {
+      return [];
+    }
+
+    try {
+      const variants = JSON.parse(variantsScript.textContent || '[]');
+      return Array.isArray(variants) ? variants : [];
+    } catch (_error) {
+      return [];
+    }
+  }
+
+  findSelectedVariant() {
+    const selectedOptions = this.getSelectedOptions();
+    if (!selectedOptions.length) {
+      return null;
+    }
+
+    const variants = this.getVariants();
+    return (
+      variants.find((variant) => {
+        const variantOptions = [variant.option1, variant.option2, variant.option3];
+        return selectedOptions.every((optionValue, optionIndex) => {
+          return variantOptions[optionIndex] === optionValue;
+        });
+      }) || null
+    );
+  }
+
+  getSectionId() {
+    return this.getAttribute('data-section-id');
+  }
+
+  onOptionChange() {
+    const selectedVariant = this.findSelectedVariant();
+
+    this.dispatchEvent(
+      new CustomEvent('product:variant-change', {
+        bubbles: true,
+        detail: {
+          variant: selectedVariant || null,
+          sectionId: this.getSectionId()
+        }
+      })
+    );
+  }
+}
+customElements.define('product-options', ProductOptions);
+
+/*
+  Product price
+*/
+class ProductPrice extends HTMLElement {
+  constructor() {
+    super();
+    this.sectionId = null;
+    this.currentVariantId = null;
+    this.priceElement = null;
+    this.comparePriceElement = null;
+    this.priceElements = [];
+    this.unitPriceElement = null;
+    this.saleBadgeElement = null;
+    this.priceDataById = new Map();
+    this.onVariantChange = this.onVariantChange.bind(this);
+  }
+
+  connectedCallback() {
+    this.sectionId = this.getAttribute('data-section-id');
+    this.currentVariantId = this.getAttribute('data-current-variant-id');
+    this.priceElement = this.querySelector('.price');
+    this.comparePriceElement = this.querySelector('[data-compare-price]');
+    this.priceElements = Array.from(this.querySelectorAll('[data-price]'));
+    this.unitPriceElement = this.querySelector('[data-unit-price]');
+    this.saleBadgeElement = this.querySelector('.badge-sale');
+    this.priceDataById = this.getPriceDataById();
+
+    document.addEventListener('product:variant-change', this.onVariantChange);
+
+    if (this.currentVariantId) {
+      this.updatePrice(this.currentVariantId);
+    }
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener('product:variant-change', this.onVariantChange);
+  }
+
+  getPriceDataById() {
+    const valuesScript = this.querySelector('script[data-product-price-values]');
+    if (!valuesScript) {
+      return new Map();
+    }
+
+    try {
+      const values = JSON.parse(valuesScript.textContent || '[]');
+      if (!Array.isArray(values)) {
+        return new Map();
+      }
+
+      return new Map(values.map((value) => [String(value.id), value]));
+    } catch (_error) {
+      return new Map();
+    }
+  }
+
+  onVariantChange(event) {
+    const detail = event.detail || {};
+    const variant = detail.variant || null;
+    const eventSectionId = detail.sectionId || null;
+
+    if (this.sectionId && eventSectionId && this.sectionId !== String(eventSectionId)) {
+      return;
+    }
+
+    if (!variant || !variant.id) {
+      return;
+    }
+
+    this.updatePrice(String(variant.id));
+  }
+
+  updatePrice(variantId) {
+    const priceData = this.priceDataById.get(String(variantId));
+    if (!priceData || !this.priceElement) {
+      return;
+    }
+
+    this.priceElement.dataset.hasPriceCompare = priceData.hasCompare ? 'true' : 'false';
+    this.priceElement.dataset.hasPriceUnit = priceData.hasUnit ? 'true' : 'false';
+    this.priceElement.dataset.available = priceData.available ? 'true' : 'false';
+
+    if (this.comparePriceElement) {
+      this.comparePriceElement.textContent = priceData.comparePrice || '';
+    }
+
+    this.priceElements.forEach((element) => {
+      element.textContent = priceData.price || '';
+    });
+
+    if (this.unitPriceElement) {
+      this.unitPriceElement.textContent = priceData.hasUnit ? priceData.unitPrice || '' : '';
+    }
+
+    if (this.saleBadgeElement) {
+      this.saleBadgeElement.textContent = priceData.saleBadge || '';
+    }
+  }
+}
+customElements.define('product-price', ProductPrice);
+
+
+/*
+  Product qty switcher
+*/
+class ProductQtySwitcher extends HTMLElement {
+  constructor() {
+    super();
+    this.input = null;
+    this.decreaseButton = null;
+    this.increaseButton = null;
+    this.onDecreaseClick = this.onDecreaseClick.bind(this);
+    this.onIncreaseClick = this.onIncreaseClick.bind(this);
+    this.onInputChange = this.onInputChange.bind(this);
+  }
+
+  connectedCallback() {
+    this.input = this.querySelector('input[name="quantity"]');
+    this.decreaseButton = this.querySelector('button[name="decrease"]');
+    this.increaseButton = this.querySelector('button[name="increase"]');
+
+    if (!this.input || !this.decreaseButton || !this.increaseButton) {
+      return;
+    }
+
+    this.decreaseButton.addEventListener('click', this.onDecreaseClick);
+    this.increaseButton.addEventListener('click', this.onIncreaseClick);
+    this.input.addEventListener('input', this.onInputChange);
+    this.input.addEventListener('change', this.onInputChange);
+    this.input.addEventListener('blur', this.onInputChange);
+
+    this.syncState();
+  }
+
+  disconnectedCallback() {
+    if (this.decreaseButton) {
+      this.decreaseButton.removeEventListener('click', this.onDecreaseClick);
+    }
+
+    if (this.increaseButton) {
+      this.increaseButton.removeEventListener('click', this.onIncreaseClick);
+    }
+
+    if (this.input) {
+      this.input.removeEventListener('input', this.onInputChange);
+      this.input.removeEventListener('change', this.onInputChange);
+      this.input.removeEventListener('blur', this.onInputChange);
+    }
+  }
+
+  getMin() {
+    const min = Number(this.input?.min);
+    return Number.isFinite(min) ? min : 1;
+  }
+
+  getMax() {
+    const max = Number(this.input?.max);
+    return Number.isFinite(max) && max > 0 ? max : null;
+  }
+
+  getStep() {
+    const step = Number(this.input?.step);
+    return Number.isFinite(step) && step > 0 ? step : 1;
+  }
+
+  getValue() {
+    const value = Number(this.input?.value);
+    return Number.isFinite(value) ? value : this.getMin();
+  }
+
+  normalizeValue(nextValue) {
+    const min = this.getMin();
+    const max = this.getMax();
+    let value = Number.isFinite(nextValue) ? nextValue : min;
+
+    if (value < min) {
+      value = min;
+    }
+
+    if (max !== null && value > max) {
+      value = max;
+    }
+
+    return value;
+  }
+
+  setValue(nextValue) {
+    const normalizedValue = this.normalizeValue(nextValue);
+    this.input.value = String(normalizedValue);
+    this.syncState();
+  }
+
+  syncState() {
+    const min = this.getMin();
+    const max = this.getMax();
+    const value = this.normalizeValue(this.getValue());
+    const disabled = this.input.disabled;
+
+    if (String(value) !== this.input.value) {
+      this.input.value = String(value);
+    }
+
+    this.decreaseButton.disabled = disabled || value <= min;
+    this.increaseButton.disabled = disabled || (max !== null && value >= max);
+  }
+
+  onDecreaseClick() {
+    const value = this.getValue();
+    this.setValue(value - this.getStep());
+  }
+
+  onIncreaseClick() {
+    const value = this.getValue();
+    this.setValue(value + this.getStep());
+  }
+
+  onInputChange() {
+    this.syncState();
+  }
+}
+customElements.define('product-qty-switcher', ProductQtySwitcher);
 
 /*
   Product gallery

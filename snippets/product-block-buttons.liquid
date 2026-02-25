@@ -1,5 +1,9 @@
 {% liquid 
   assign current_variant = product.selected_or_first_available_variant
+
+  if current_variant.inventory_management != null and current_variant.inventory_policy == 'deny'
+    assign qty_max = current_variant.inventory_quantity
+  endif
 %}
 
 <div
@@ -18,45 +22,44 @@
   {%- endif -%}
 
   <div class="btn-atc-wrapper">
-    <product-qty-switcher
-      role="group"
-      aria-label="{{ 'product.quantity.label' | t }}"
-    >
-      <button
-        class="btn"
-        type="button"
-        name="decrease"
-        aria-label="{{ 'product.quantity.decrease' | t }}"
-        disabled
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-      </button>
-      <input
-        class="input"
-        type="number"
-        value="1"
-        min="1"
-        max="{{ qty_max }}"
-        aria-label="{{ 'product.quantity.label' | t }}"
-      >
-      <button
-        class="btn"
-        type="button"
-        name="increase"
-        aria-label="{{ 'product.quantity.increase' | t }}"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus">
-          <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-      </button>
-    </product-qty-switcher>
     <product-form>
-      <div class="product-form-error alert alert-error" role="alert" hidden></div>
       {% form 'product', product %}
-        <input type="hidden" name="id" value="123">
-        <input type="hidden" name="quantity" value="1">
+        {% comment %} <input type="hidden" name="id" value="{{ current_variant.id }}"> {% endcomment %}
+        <product-qty-switcher
+          role="group"
+          aria-label="{{ 'product.quantity.label' | t }}"
+          >
+          <button
+            class="btn"
+            type="button"
+            name="decrease"
+            aria-label="{{ 'product.quantity.decrease' | t }}"
+            disabled
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+          <input
+            class="input"
+            type="number"
+            name="quantity"
+            value="1"
+            min="1"
+            max="{{ qty_max }}"
+            aria-label="{{ 'product.quantity.label' | t }}"
+          >
+          <button
+            class="btn"
+            type="button"
+            name="increase"
+            aria-label="{{ 'product.quantity.increase' | t }}"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus">
+              <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </product-qty-switcher>
         <button
           class="btn btn-atc btn-full {{ block.settings.atc_btn_style }} {{ block.settings.atc_btn_size }}"
           type="submit"

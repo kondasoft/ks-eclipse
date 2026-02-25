@@ -22,38 +22,85 @@
   data-type="{{ block.type }}"
   {{ block.shopify_attributes }}
 >
-  <div
-    class="price {{ block.settings.fs }}"
-    data-has-price-compare="{% if compare_price > price %}true{% else %}false{% endif %}"
-    data-has-price-unit="{% if unit_price > 0 %}true{% else %}false{% endif %}"
-    data-available="{% if available %}true{% else %}false{% endif %}"
+  <product-price
+    data-section-id="{{ section.id }}"
+    data-current-variant-id="{{ current_variant.id }}"
+  >
+    <div
+      class="price {{ block.settings.fs }}"
+      data-has-price-compare="{% if compare_price > price %}true{% else %}false{% endif %}"
+      data-has-price-unit="{% if unit_price > 0 %}true{% else %}false{% endif %}"
+      data-available="{% if available %}true{% else %}false{% endif %}"
     >
-    <s class="price-compare">
-      <span class="visually-hidden"> {{ 'product.regular_price' | t }} &nbsp; </span>
-      <span data-compare-price>{{ compare_price | money }}</span>
-    </s>
-    <span class="price-sale">
-      <span class="visually-hidden"> {{ 'product.sale_price' | t }} &nbsp; </span>
-      <span data-price>{{ price | money }}</span>
-    </span>
-    <span class="price-regular">
-      <span data-price>{{ price | money }}</span>
-    </span>
-    <span class="price-unit">
-      <span class="visually-hidden"> {{ 'product.unit_price' | t }} &nbsp; </span>
-      <span data-unit-price>({{ unit_price | unit_price_with_measurement: current_variant.unit_price_measurement }})</span>
-    </span>
-    <span
-      class="badge badge-sale"
-      data-discount-type="{{ badge_discount_type }}"
-      data-text="{{ 'product.sale_badge' | t }}"
-    >
-      {{ 'product.sale_badge' | t: value: sale_value }}
-    </span>
-    <span class="badge badge-sold-out">
-      {{ 'product.sold_out' | t }}
-    </span>
-  </div>
+      <s class="price-compare">
+        <span class="visually-hidden"> {{ 'product.regular_price' | t }} &nbsp; </span>
+        <span data-compare-price>{{ compare_price | money }}</span>
+      </s>
+      <span class="price-sale">
+        <span class="visually-hidden"> {{ 'product.sale_price' | t }} &nbsp; </span>
+        <span data-price>{{ price | money }}</span>
+      </span>
+      <span class="price-regular">
+        <span data-price>{{ price | money }}</span>
+      </span>
+      <span class="price-unit">
+        <span class="visually-hidden"> {{ 'product.unit_price' | t }} &nbsp; </span>
+        <span data-unit-price>({{ unit_price | unit_price_with_measurement: current_variant.unit_price_measurement }})</span>
+      </span>
+      <span
+        class="badge badge-sale"
+        data-discount-type="{{ badge_discount_type }}"
+        data-text="{{ 'product.sale_badge' | t }}"
+      >
+        {{ 'product.sale_badge' | t: value: sale_value }}
+      </span>
+      <span class="badge badge-sold-out">
+        {{ 'product.sold_out' | t }}
+      </span>
+    </div>
+    <script type="application/json" data-product-price-values>
+      [
+        {% for variant in product.variants %}
+          {% liquid
+            assign variant_compare_price = variant.compare_at_price
+            assign variant_price = variant.price
+            assign variant_unit_price = variant.unit_price
+            assign variant_has_compare = false
+            assign variant_has_unit = false
+            assign variant_sale_value = ''
+            assign variant_sale_label = ''
+            assign variant_unit_price_label = ''
+
+            if variant_compare_price > variant_price
+              assign variant_has_compare = true
+              if badge_discount_type == 'percentage'
+                assign variant_sale_value = variant_compare_price | minus: variant_price | times: 100.0 | divided_by: variant_compare_price | round | append: '%'
+              else
+                assign variant_sale_value = variant_compare_price | minus: variant_price | money_without_trailing_zeros
+              endif
+              assign variant_sale_label = 'product.sale_badge' | t: value: variant_sale_value
+            endif
+
+            if variant_unit_price > 0
+              assign variant_has_unit = true
+              assign variant_unit_price_value = variant_unit_price | unit_price_with_measurement: variant.unit_price_measurement
+              assign variant_unit_price_label = '(' | append: variant_unit_price_value | append: ')'
+            endif
+          %}
+          {
+            "id": {{ variant.id | json }},
+            "available": {{ variant.available | json }},
+            "hasCompare": {{ variant_has_compare | json }},
+            "hasUnit": {{ variant_has_unit | json }},
+            "price": {{ variant_price | money | json }},
+            "comparePrice": {{ variant_compare_price | money | json }},
+            "unitPrice": {{ variant_unit_price_label | json }},
+            "saleBadge": {{ variant_sale_label | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]
+    </script>
+  </product-price>
 
   {% if block.settings.show_payment_terms %}
      {% form 'product', product %}

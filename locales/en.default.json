@@ -58,6 +58,7 @@
     "duties_included": "Duties included.",
     "duties_and_taxes_included": "Duties and taxes included.",
     "shipping_policy_html": "<a href=\"{{ link }}\">Shipping<\/a> calculated at checkout.",
+    "cart_error_title": "Unable to add to cart",
     "quantity": {
       "label": "Quantity",
       "increase": "Increase quantity",

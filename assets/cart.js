@@ -19,7 +19,7 @@ class Cart {
       headers = { "Content-Type": "application/json" };
     }
 
-    const response = await fetch(`${window.themeRoutes.cart.add}.js`, {
+    const response = await fetch(`${window.theme.routes.cart.add}.js`, {
       method: "POST",
       headers,
       body,
@@ -29,7 +29,7 @@ class Cart {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.errors || 'Unable to add to cart');
+      throw new Error(errorData.description || 'Unable to add to cart');
     }
 
     return response.json();

@@ -427,18 +427,18 @@
   gap: .75rem;
 }
 
-.product-block[data-type="buttons"] .btn-atc-wrapper {
-  display: flex;
-  gap: .75rem;
-}
-
 .product-block[data-type="buttons"] product-form,
 .product-block[data-type="buttons"] form {
   display: block;
   width: 100%;
 }
 
-.product-block[data-type="buttons"] .btn-atc-wrapper product-qty-switcher {
+.product-block[data-type="buttons"] form {
+  display: flex;
+  gap: .75rem;
+}
+
+.product-block[data-type="buttons"] product-qty-switcher {
   width: 120px;
 }
 

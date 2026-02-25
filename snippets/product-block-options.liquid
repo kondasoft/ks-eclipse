@@ -10,7 +10,8 @@
     data-type="{{ block.type }}"
     {{ block.shopify_attributes }}
   >
-    <product-options>
+    <product-options
+      data-section-id="{{ section.id }}">
       {% for option in product.options_with_values %}
         {% liquid
           assign has_swatch_values = false
@@ -113,6 +114,9 @@
           </fieldset>
         {% endif %}
       {% endfor %}
+      <script type="application/json" data-product-variants>
+        {{ product.variants | json }}
+      </script>
     </product-options>
   </div>
 {% endunless %}
