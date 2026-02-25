@@ -80,7 +80,7 @@ class ProductForm extends HTMLElement {
 
     try {
       const formData = new FormData(this.form);
-      const result = await Cart.add(formData);
+      const result = await ThemeCart.add(formData);
       console.log('Product added to cart', result);
     } catch (error) {
       ThemeNotification.show(

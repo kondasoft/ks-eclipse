@@ -91,6 +91,7 @@
   padding: 0.5rem;
   cursor: pointer;
   border-radius: var(--border-radius);
+  outline-offset: -4px;
 }
 
 .product-gallery-controls button:hover {

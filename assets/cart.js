@@ -1,6 +1,17 @@
-class Cart {
-  constructor() {
-    
+class ThemeCart {
+  static sectionsToRender = ['cart-badge', 'cart-drawer'];
+  static defaultSectionsUrl = window.location.pathname;
+
+  static dispatchCartUpdated(action, result) {
+    document.dispatchEvent(
+      new CustomEvent('cart:updated', {
+        detail: {
+          action,
+          cart: result,
+          sections: result && result.sections ? result.sections : {}
+        }
+      })
+    );
   }
 
   static async get() {
@@ -14,15 +25,21 @@ class Cart {
 
     if (payload instanceof FormData) {
       body = payload;
+      body.append('sections', ThemeCart.sectionsToRender.join(','));
+      body.append('sections_url', ThemeCart.defaultSectionsUrl);
     } else {
-      body = JSON.stringify(payload);
-      headers = { "Content-Type": "application/json" };
+      body = JSON.stringify({
+        ...(payload || {}),
+        sections: ThemeCart.sectionsToRender,
+        sections_url: ThemeCart.defaultSectionsUrl
+      });
+      headers = { 'Content-Type': 'application/json' };
     }
 
     const response = await fetch(`${window.theme.routes.cart.add}.js`, {
-      method: "POST",
+      method: 'POST',
       headers,
-      body,
+      body
     });
 
     console.log('Cart add response', response);
@@ -32,7 +49,10 @@ class Cart {
       throw new Error(errorData.description || 'Unable to add to cart');
     }
 
-    return response.json();
+    const result = await response.json();
+    ThemeCart.dispatchCartUpdated('add', result);
+
+    return result;
   }
 
   static async update(payload) {
@@ -46,13 +66,45 @@ class Cart {
   static async remove(payload) {
     console.log('Removing from cart', payload);
   }
+}
 
-  async clear(payload) {
-    console.log('Clearing cart', payload);
+class CartBadge extends HTMLElement {
+  constructor() {
+    super();
+    this.onCartUpdated = this.onCartUpdated.bind(this);
+  }
+
+  connectedCallback() {
+    document.addEventListener('cart:updated', this.onCartUpdated);
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener('cart:updated', this.onCartUpdated);
+  }
+
+  onCartUpdated(event) {
+    const detail = event.detail || {};
+    const sections = detail.sections || {};
+    const sectionHtml = sections['cart-badge'];
+    if (!sectionHtml) {
+      return;
+    }
+
+    const parsedHtml = new DOMParser().parseFromString(sectionHtml, 'text/html');
+    const nextBadge = parsedHtml.querySelector('cart-badge[data-badge="cart"]') || parsedHtml.querySelector('cart-badge');
+    if (!nextBadge) {
+      return;
+    }
+
+    this.innerHTML = nextBadge.innerHTML;
+
+    const nextCount = nextBadge.getAttribute('data-count');
+    if (nextCount !== null) {
+      this.setAttribute('data-count', nextCount);
+    }
   }
 }
-window.Cart = Cart;
-window.themeCart = window.themeCart || new Cart();
+customElements.define('cart-badge', CartBadge);
 
 // class CartError extends Error {
 //   constructor(message, context) {

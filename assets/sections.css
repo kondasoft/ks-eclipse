@@ -66,6 +66,36 @@ a#header-logo {
   display: none;
 }
 
+#header .btn-icon {
+  position: relative;
+}
+
+#header .count-badge {
+  position: absolute;
+  top: .25rem;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  font-size: 0.725rem;
+  font-weight: bold;
+  border-radius: 50%;
+  background-color: rgb(var(--color-accent));
+  color: rgb(var(--color-background));
+  animation: count-badge 0.3s ease-out;
+}
+
+#header .count-badge[data-count="0"] {
+  opacity: 0 !important;
+}
+
+@keyframes count-badge {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
 
 /*
   Footer
