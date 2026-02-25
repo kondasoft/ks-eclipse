@@ -122,17 +122,17 @@ class ProductOptions extends HTMLElement {
 
   getSelectedOptions() {
     const selectedOptions = [];
-    const checkedRadios = Array.from(this.querySelectorAll('input[type="radio"]:checked'));
-    const selects = Array.from(this.querySelectorAll('select'));
+    const controls = Array.from(this.querySelectorAll('input[type="radio"]:checked, select'));
 
-    checkedRadios.forEach((radio) => {
-      selectedOptions.push(radio.value);
-    });
-
-    selects.forEach((select) => {
-      if (select.value !== '') {
-        selectedOptions.push(select.value);
+    controls.forEach((control) => {
+      if (control.tagName === 'SELECT') {
+        if (control.value !== '') {
+          selectedOptions.push(control.value);
+        }
+        return;
       }
+
+      selectedOptions.push(control.value);
     });
 
     return selectedOptions;
@@ -173,6 +173,22 @@ class ProductOptions extends HTMLElement {
     return this.getAttribute('data-section-id');
   }
 
+  updateSelectedOptionLabels() {
+    const swatchValueLabels = Array.from(this.querySelectorAll('[data-selected-option-value]'));
+
+    swatchValueLabels.forEach((label) => {
+      const fieldset = label.closest('fieldset');
+      if (!fieldset) {
+        return;
+      }
+
+      const checkedRadio = fieldset.querySelector('input[type="radio"]:checked');
+      if (checkedRadio) {
+        label.textContent = checkedRadio.value;
+      }
+    });
+  }
+
   updateVariantUrl(variant) {
     const url = new URL(window.location.href);
 
@@ -186,6 +202,7 @@ class ProductOptions extends HTMLElement {
   }
 
   onOptionChange() {
+    this.updateSelectedOptionLabels();
     const selectedVariant = this.findSelectedVariant();
     console.log('Selected variant', selectedVariant);
     this.updateVariantUrl(selectedVariant);

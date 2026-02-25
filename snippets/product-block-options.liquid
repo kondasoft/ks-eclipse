@@ -26,7 +26,7 @@
           <fieldset>
             <legend>
               {{ option.name | append: ':' -}}
-              <span class="color-swatches-selected-value">{{ option.selected_value }}</span>
+              <span data-selected-option-value>{{ option.selected_value }}</span>
             </legend>
             <div class="color-swatches">
               {% for value in option.values %}
