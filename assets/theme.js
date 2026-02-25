@@ -601,6 +601,7 @@ class ThemeDialog extends HTMLElement {
     this.dialog.addEventListener('cancel', this.onDialogCancel, { signal: this.listenerController.signal });
     this.dialog.addEventListener('click', this.onDialogClick, { signal: this.listenerController.signal });
     this.addEventListener('click', this.onInternalClick, { signal: this.listenerController.signal });
+    this.openFromUrlIfNeeded();
     this.isInitialized = true;
   }
 
@@ -631,12 +632,14 @@ class ThemeDialog extends HTMLElement {
   onTriggerClick(trigger, event) {
     event.preventDefault();
     this.lastTrigger = trigger;
+    this.openDialog();
+  }
 
+  openDialog() {
     if (this.dialog.open) {
       this.requestClose();
       return;
     }
-
     this.closeOtherOpenDialogs();
     this.dialog.classList.remove('is-closing');
     this.isClosing = false;
@@ -650,6 +653,26 @@ class ThemeDialog extends HTMLElement {
     }
 
     this.setExpandedState(this.dialog.open);
+  }
+
+  openFromUrlIfNeeded() {
+    if (this.dialog.id !== 'cart-dialog') {
+      return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const hash = window.location.hash;
+    const shouldOpenFromQuery =
+      params.get('cart') === 'open' ||
+      params.get('drawer') === 'cart' ||
+      params.get('dialog') === 'cart';
+    const shouldOpenFromHash = hash === '#cart-dialog' || hash === '#cart-drawer';
+
+    if (!shouldOpenFromQuery && !shouldOpenFromHash) {
+      return;
+    }
+
+    this.openDialog();
   }
 
   onDialogClose() {
