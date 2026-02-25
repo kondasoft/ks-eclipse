@@ -56,7 +56,9 @@
       ],
       "name": "FAQ",
       "settings": {
-        "color_scheme": "scheme-1",
+        "custom_color_schemes": false,
+        "light_color_scheme": "",
+        "dark_color_scheme": "",
         "container_width": 900,
         "open_first_item": true,
         "header_align": "center",
@@ -64,8 +66,8 @@
         "heading_size": "h2",
         "description": "<p> If you have any other questions, please <a href=\"\/pages\/contact\" target=\"_blank\" title=\"Contact\">get in touch with us<\/a>.<\/p>",
         "description_size": "fs-md",
-        "pt": 3,
-        "pb": 3
+        "pt": 25,
+        "pb": 25
       }
     }
   },

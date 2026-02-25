@@ -2,17 +2,118 @@
   "sections": {
     "product_gpN69x": {
       "type": "product",
+      "blocks": {
+        "vendor_hdMHgE": {
+          "type": "vendor",
+          "settings": {
+            "fs": "fs-sm",
+            "text_transform": "uppercase",
+            "pt": 0,
+            "pb": 2
+          }
+        },
+        "title_7pwRPp": {
+          "type": "title",
+          "settings": {
+            "heading_size": "h2",
+            "pt": 0,
+            "pb": 2
+          }
+        },
+        "rating_badge_XnR9eU": {
+          "type": "rating_badge",
+          "settings": {
+            "mode": "detailed",
+            "pt": 0,
+            "pb": 2
+          }
+        },
+        "price_QGmfij": {
+          "type": "price",
+          "settings": {
+            "fs": "fs-xl",
+            "badge_discount_type": "percentage",
+            "show_payment_terms": true,
+            "show_taxes_duties_text": true,
+            "pt": 4,
+            "pb": 7
+          }
+        },
+        "richtext_CT6caE": {
+          "type": "richtext",
+          "settings": {
+            "description": "<ul><li>100% UV400 protection to shield your eyes<\/li><li>Scratch-resistant lenses for lasting clarity<\/li><li>Lightweight metal frame with adjustable nose pads<\/li><li>Classic teardrop lens shape for a bold look<\/li><li>Available in multiple lens tints<\/li><\/ul>",
+            "description_size": "fs-md",
+            "pt": 0,
+            "pb": 0
+          }
+        },
+        "options_kc3JAp": {
+          "type": "options",
+          "settings": {
+            "style": "buttons",
+            "pt": 0,
+            "pb": 14
+          }
+        },
+        "buttons_Mm7gyc": {
+          "type": "buttons",
+          "settings": {
+            "show_qty_field": true,
+            "atc_btn_style": "btn-primary",
+            "atc_btn_size": "fs-md",
+            "show_buy_btn": true,
+            "buy_btn_style": "btn-secondary",
+            "buy_btn_size": "fs-md",
+            "show_dynamic_buttons": false,
+            "pt": 0,
+            "pb": 0
+          }
+        }
+      },
+      "block_order": [
+        "vendor_hdMHgE",
+        "title_7pwRPp",
+        "rating_badge_XnR9eU",
+        "price_QGmfij",
+        "richtext_CT6caE",
+        "options_kc3JAp",
+        "buttons_Mm7gyc"
+      ],
       "name": "Product",
       "settings": {
         "custom_color_schemes": false,
         "light_color_scheme": "",
         "dark_color_scheme": "",
-        "pt": 50,
-        "pb": 4
+        "gallery_video_autoplay": true,
+        "gallery_video_controls": false,
+        "gallery_video_loop": true,
+        "gallery_video_muted": true,
+        "pt": 15,
+        "pb": 25
       }
+    },
+    "17714241464beadc8c": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_review_widget_ptXDLC": {
+          "type": "shopify:\/\/apps\/judge-me-reviews\/blocks\/review_widget\/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {
+            "review_data": "sample_data",
+            "max_width": 1200,
+            "show_shop_reviews": false,
+            "empty_state": "empty_widget"
+          }
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_review_widget_ptXDLC"
+      ],
+      "settings": {}
     }
   },
   "order": [
-    "product_gpN69x"
+    "product_gpN69x",
+    "17714241464beadc8c"
   ]
 }

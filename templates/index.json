@@ -83,6 +83,15 @@
         "pb": 25
       }
     },
+    "separator_mgmCDL": {
+      "type": "separator",
+      "name": "Separator",
+      "settings": {
+        "wrap_container": true,
+        "pt": 0,
+        "pb": 0
+      }
+    },
     "basic_media_QjjY66": {
       "type": "basic-media",
       "name": "Basic media",
@@ -115,6 +124,7 @@
     "richtext_FUFaAX",
     "separator_1",
     "html_9n2q8X",
+    "separator_mgmCDL",
     "basic_media_QjjY66"
   ]
 }
