@@ -112,6 +112,7 @@ class ProductOptions extends HTMLElement {
     this.optionInputs.forEach((input) => {
       input.addEventListener('change', this.onOptionChange);
     });
+    this.handleOptionsAvailability();
   }
 
   disconnectedCallback() {
@@ -173,6 +174,93 @@ class ProductOptions extends HTMLElement {
     return this.getAttribute('data-section-id');
   }
 
+  getSelectedOptionsByPosition() {
+    const selectedOptions = {};
+    const checkedRadios = Array.from(this.querySelectorAll('input[type="radio"][data-option-position]:checked'));
+    const selects = Array.from(this.querySelectorAll('select[data-option-position]'));
+
+    checkedRadios.forEach((input) => {
+      const position = Number(input.dataset.optionPosition);
+      if (Number.isFinite(position) && position > 0) {
+        selectedOptions[position] = input.value;
+      }
+    });
+
+    selects.forEach((select) => {
+      const position = Number(select.dataset.optionPosition);
+      if (Number.isFinite(position) && position > 0 && select.value !== '') {
+        selectedOptions[position] = select.value;
+      }
+    });
+
+    return selectedOptions;
+  }
+
+  isOptionValueAvailable(position, value, selectedByPosition) {
+    const variants = this.getVariants();
+
+    return variants.some((variant) => {
+      if (!variant.available) {
+        return false;
+      }
+
+      const variantOptions = [variant.option1, variant.option2, variant.option3];
+
+      for (let index = 1; index <= 3; index += 1) {
+        const selectedValue = index === position ? value : selectedByPosition[index];
+        if (!selectedValue) {
+          continue;
+        }
+
+        if (variantOptions[index - 1] !== selectedValue) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }
+
+  handleOptionsAvailability() {
+    const selectedByPosition = this.getSelectedOptionsByPosition();
+
+    const radioInputs = Array.from(
+      this.querySelectorAll('input[type="radio"][data-option-position]')
+    );
+    radioInputs.forEach((input) => {
+      const position = Number(input.dataset.optionPosition);
+      if (!Number.isFinite(position) || position < 1) {
+        return;
+      }
+
+      const isAvailable = this.isOptionValueAvailable(position, input.value, selectedByPosition);
+      input.classList.toggle('disabled', !isAvailable);
+      if (isAvailable) {
+        input.removeAttribute('aria-disabled');
+      } else {
+        input.setAttribute('aria-disabled', 'true');
+      }
+    });
+
+    const selectInputs = Array.from(this.querySelectorAll('select[data-option-position]'));
+    selectInputs.forEach((select) => {
+      const position = Number(select.dataset.optionPosition);
+      if (!Number.isFinite(position) || position < 1) {
+        return;
+      }
+
+      Array.from(select.options).forEach((option) => {
+        const isAvailable = this.isOptionValueAvailable(position, option.value, selectedByPosition);
+        option.classList.toggle('disabled', !isAvailable);
+        if (isAvailable) {
+          option.removeAttribute('aria-disabled');
+        } else {
+          option.setAttribute('aria-disabled', 'true');
+        }
+      });
+    });
+  }
+
   updateSelectedOptionLabels() {
     const swatchValueLabels = Array.from(this.querySelectorAll('[data-selected-option-value]'));
 
@@ -203,6 +291,7 @@ class ProductOptions extends HTMLElement {
 
   onOptionChange() {
     this.updateSelectedOptionLabels();
+    this.handleOptionsAvailability();
     const selectedVariant = this.findSelectedVariant();
     console.log('Selected variant', selectedVariant);
     this.updateVariantUrl(selectedVariant);

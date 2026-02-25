@@ -36,6 +36,7 @@
                   name="product-option-{{ option.name | handleize }}-{{ product.id }}"
                   id="product-option-{{ option.name | handleize }}-{{ value | handleize }}-{{ product.id }}"
                   value="{{ value | escape }}"
+                  data-option-position="{{ option.position }}"
                   {% if option.selected_value == value %}
                     checked
                   {% endif %}
@@ -95,6 +96,7 @@
                 id="product-option-{{ option.name | handleize }}-{{ product.id }}"
                 name="product-option-{{ option.name | handleize }}-{{ product.id }}"
                 class="input"
+                data-option-position="{{ option.position }}"
               >
                 {% for value in option.values %}
                   <option
