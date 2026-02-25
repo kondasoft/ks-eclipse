@@ -122,6 +122,7 @@
               "option1": {{ variant.option1 | json }},
               "option2": {{ variant.option2 | json }},
               "option3": {{ variant.option3 | json }},
+              "featured_media_id": {{ variant.featured_media.id | json }},
               "available": {% if variant.available %}true{% else %}false{% endif %},
               "inventory_management": {{ variant.inventory_management | json }},
               "inventory_policy": {{ variant.inventory_policy | json }},

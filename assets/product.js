@@ -627,15 +627,18 @@ class ProductGallery extends HTMLElement {
     this.touchDeltaX = 0;
     this.touchDeltaY = 0;
     this.isTouchTracking = false;
+    this.sectionId = null;
     this.onPrevClick = this.onPrevClick.bind(this);
     this.onNextClick = this.onNextClick.bind(this);
     this.onThumbClick = this.onThumbClick.bind(this);
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
     this.onTouchEnd = this.onTouchEnd.bind(this);
+    this.onVariantChange = this.onVariantChange.bind(this);
   }
 
   connectedCallback() {
+    this.sectionId = this.getAttribute('data-section-id');
     this.items = Array.prototype.slice.call(this.querySelectorAll('[data-gallery-item]'));
     this.thumbs = Array.prototype.slice.call(this.querySelectorAll('[data-gallery-thumb]'));
     this.thumbsList = this.querySelector('.product-gallery-thumbnails');
@@ -671,6 +674,7 @@ class ProductGallery extends HTMLElement {
       this.main.addEventListener('touchcancel', this.onTouchEnd);
     }
 
+    document.addEventListener('product:variant-change', this.onVariantChange);
     this.showItem(this.activeIndex);
   }
 
@@ -693,6 +697,32 @@ class ProductGallery extends HTMLElement {
       this.main.removeEventListener('touchend', this.onTouchEnd);
       this.main.removeEventListener('touchcancel', this.onTouchEnd);
     }
+
+    document.removeEventListener('product:variant-change', this.onVariantChange);
+  }
+
+  onVariantChange(event) {
+    const detail = event.detail || {};
+    const variant = detail.variant || null;
+    const eventSectionId = detail.sectionId || null;
+
+    if (this.sectionId && eventSectionId && this.sectionId !== String(eventSectionId)) {
+      return;
+    }
+
+    if (!variant || !variant.featured_media_id) {
+      return;
+    }
+
+    const targetIndex = this.items.findIndex((item) => {
+      return item.dataset.mediaId === String(variant.featured_media_id);
+    });
+
+    if (targetIndex < 0) {
+      return;
+    }
+
+    this.showItem(targetIndex);
   }
 
   onPrevClick() {

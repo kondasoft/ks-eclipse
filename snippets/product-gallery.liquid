@@ -1,6 +1,7 @@
 <product-gallery
   id="product-gallery-{{ section.id }}"
   class="product-gallery"
+  data-section-id="{{ section.id }}"
   style="--gallery-aspect-ratio: {{ product.media.first.preview_image.aspect_ratio }};">
   {% if product.media.size > 0 %}
     <a 
@@ -13,6 +14,7 @@
         {% for media in product.media %}
           <li
             class="product-gallery-item{% if forloop.first %} is-active{% endif %}"
+            data-media-id="{{ media.id }}"
             data-gallery-item>
             {% case media.media_type %}
               {% when 'image' %}
@@ -250,4 +252,3 @@
       {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}   
     {% endif %}
   </product-gallery>
-
