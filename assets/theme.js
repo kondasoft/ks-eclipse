@@ -656,23 +656,25 @@ class ThemeDialog extends HTMLElement {
   }
 
   openFromUrlIfNeeded() {
-    if (this.dialog.id !== 'cart-dialog') {
+    if (!this.dialog.id) {
       return;
     }
 
+    const dialogName = this.dialog.id.endsWith('-dialog')
+      ? this.dialog.id.slice(0, -'-dialog'.length)
+      : this.dialog.id;
     const params = new URLSearchParams(window.location.search);
     const hash = window.location.hash;
-    const shouldOpenFromQuery =
-      params.get('cart') === 'open' ||
-      params.get('drawer') === 'cart' ||
-      params.get('dialog') === 'cart';
-    const shouldOpenFromHash = hash === '#cart-dialog' || hash === '#cart-drawer';
+    const shouldOpenFromQuery = params.get(dialogName) === 'open';
+    const shouldOpenFromHash = hash === `#${this.dialog.id}` || hash === `#${dialogName}`;
 
     if (!shouldOpenFromQuery && !shouldOpenFromHash) {
       return;
     }
 
-    this.openDialog();
+    window.setTimeout(() => {
+      this.openDialog();
+    }, 250);
   }
 
   onDialogClose() {

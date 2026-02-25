@@ -1,0 +1,27 @@
+<script>
+  (function redirectToCartDrawer() {
+    var fallbackUrl = new URL('/', window.location.origin);
+    var targetUrl = fallbackUrl;
+
+    if (document.referrer) {
+      try {
+        var referrerUrl = new URL(document.referrer);
+        var isSameOrigin = referrerUrl.origin === window.location.origin;
+        var isCartPage = referrerUrl.pathname === '/cart';
+
+        if (isSameOrigin && !isCartPage) {
+          targetUrl = referrerUrl;
+        }
+      } catch (_error) {
+        targetUrl = fallbackUrl;
+      }
+    }
+
+    targetUrl.searchParams.set('cart', 'open');
+    window.location.replace(targetUrl.toString());
+  })();
+</script>
+
+<noscript>
+  <meta http-equiv="refresh" content="0;url=/?cart=open">
+</noscript>
