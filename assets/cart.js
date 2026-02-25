@@ -1,6 +1,6 @@
 class ThemeCart {
   static sectionsToRender = ['cart-badge', 'cart-drawer'];
-  static defaultSectionsUrl = window.location.pathname;
+  static defaultSectionsUrl = `${window.location.pathname}${window.location.search}`;
 
   static dispatchCartUpdated(action, result) {
     document.dispatchEvent(
@@ -14,43 +14,66 @@ class ThemeCart {
     );
   }
 
+  static openDrawer() {
+    document.querySelector('#cart-dialog')?.showModal();
+  }
+
+  static dispatchCartError(action, error) {
+    document.dispatchEvent(
+      new CustomEvent('cart:error', {
+        detail: {
+          action,
+          error
+        }
+      })
+    );
+  }
+
+  static async parseError(response) {
+    const errorText = await response.text();
+
+    try {
+      const errorData = JSON.parse(errorText);
+      return errorData.description || errorData.message || 'Unable to update cart';
+    } catch (_error) {
+      return errorText || 'Unable to update cart';
+    }
+  }
+
   static async get() {
     console.log('Getting cart');
   }
 
   static async add(payload) {
-    console.log('Adding to cart', payload);
-
-    let body, headers
+    let body;
 
     if (payload instanceof FormData) {
       body = payload;
-      body.append('sections', ThemeCart.sectionsToRender.join(','));
-      body.append('sections_url', ThemeCart.defaultSectionsUrl);
+      body.set('sections', ThemeCart.sectionsToRender.join(','));
+      body.set('sections_url', ThemeCart.defaultSectionsUrl);
     } else {
       body = JSON.stringify({
         ...(payload || {}),
         sections: ThemeCart.sectionsToRender,
         sections_url: ThemeCart.defaultSectionsUrl
       });
-      headers = { 'Content-Type': 'application/json' };
     }
 
     const response = await fetch(`${window.theme.routes.cart.add}.js`, {
       method: 'POST',
-      headers,
       body
     });
 
-    console.log('Cart add response', response);
-
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.description || 'Unable to add to cart');
+      const message = await ThemeCart.parseError(response);
+      const error = new Error(message);
+      ThemeCart.dispatchCartError('add', error);
+      throw error;
     }
 
     const result = await response.json();
     ThemeCart.dispatchCartUpdated('add', result);
+    ThemeCart.openDrawer();
 
     return result;
   }
@@ -65,6 +88,10 @@ class ThemeCart {
 
   static async remove(payload) {
     console.log('Removing from cart', payload);
+  }
+
+  static async clear(payload) {
+    console.log('Clearing cart', payload);
   }
 }
 
