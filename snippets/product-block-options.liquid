@@ -115,7 +115,20 @@
         {% endif %}
       {% endfor %}
       <script type="application/json" data-product-variants>
-        {{ product.variants | json }}
+        [
+          {% for variant in product.variants %}
+            {
+              "id": {{ variant.id | json }},
+              "option1": {{ variant.option1 | json }},
+              "option2": {{ variant.option2 | json }},
+              "option3": {{ variant.option3 | json }},
+              "available": {% if variant.available %}true{% else %}false{% endif %},
+              "inventory_management": {{ variant.inventory_management | json }},
+              "inventory_policy": {{ variant.inventory_policy | json }},
+              "inventory_quantity": {{ variant.inventory_quantity | default: 0 | json }}
+            }{% unless forloop.last %},{% endunless %}
+          {% endfor %}
+        ]
       </script>
     </product-options>
   </div>

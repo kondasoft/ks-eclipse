@@ -6,21 +6,69 @@ class ProductForm extends HTMLElement {
     super();
     this.form = null;
     this.submitButton = null;
+    this.submitButtonLabel = null;
     this.variantInput = null;
     this.quantityInput = null;
     this.onSubmit = this.onSubmit.bind(this);
+    this.onVariantChange = this.onVariantChange.bind(this);
   }
 
   connectedCallback() {
     this.form = this.querySelector('form');
     this.submitButton = this.form.querySelector('button[type="submit"]');
+    this.submitButtonLabel = this.submitButton.querySelector('span');
     this.variantInput = this.form.querySelector('input[name="id"]');
     this.quantityInput = this.form.querySelector('input[name="quantity"]');
     this.form.addEventListener('submit', this.onSubmit);
+    document.addEventListener('product:variant-change', this.onVariantChange);
   }
 
   disconnectedCallback() {
     this.form.removeEventListener('submit', this.onSubmit);
+    document.removeEventListener('product:variant-change', this.onVariantChange);
+  }
+
+  getSectionId() {
+    return this.getAttribute('data-section-id');
+  }
+
+  updateSubmitButtonState(variant) {
+    const productStrings =
+      window.theme && window.theme.strings && window.theme.strings.product
+        ? window.theme.strings.product
+        : {};
+
+    let buttonText = productStrings.unavailable || 'Unavailable';
+    let disabled = true;
+
+    if (variant && variant.available) {
+      buttonText = productStrings.addToCart || 'Add to cart';
+      disabled = false;
+    } else if (variant && !variant.available) {
+      buttonText = productStrings.soldOut || 'Sold out';
+    }
+
+    this.submitButton.disabled = disabled;
+    this.submitButtonLabel.textContent = buttonText;
+  }
+
+  onVariantChange(event) {
+    const detail = event.detail || {};
+    const variant = detail.variant || null;
+    const eventSectionId = detail.sectionId || null;
+    const sectionId = this.getSectionId();
+
+    if (sectionId && eventSectionId && sectionId !== String(eventSectionId)) {
+      return;
+    }
+
+    if (!variant || !variant.id) {
+      this.updateSubmitButtonState(null);
+      return;
+    }
+
+    this.variantInput.value = String(variant.id);
+    this.updateSubmitButtonState(variant);
   }
 
   async onSubmit(event) {
@@ -64,8 +112,6 @@ class ProductOptions extends HTMLElement {
     this.optionInputs.forEach((input) => {
       input.addEventListener('change', this.onOptionChange);
     });
-
-    this.onOptionChange();
   }
 
   disconnectedCallback() {
@@ -127,8 +173,22 @@ class ProductOptions extends HTMLElement {
     return this.getAttribute('data-section-id');
   }
 
+  updateVariantUrl(variant) {
+    const url = new URL(window.location.href);
+
+    if (variant && variant.id) {
+      url.searchParams.set('variant', String(variant.id));
+    } else {
+      url.searchParams.delete('variant');
+    }
+
+    window.history.replaceState({}, '', url.toString());
+  }
+
   onOptionChange() {
     const selectedVariant = this.findSelectedVariant();
+    console.log('Selected variant', selectedVariant);
+    this.updateVariantUrl(selectedVariant);
 
     this.dispatchEvent(
       new CustomEvent('product:variant-change', {
@@ -244,6 +304,133 @@ class ProductPrice extends HTMLElement {
 }
 customElements.define('product-price', ProductPrice);
 
+/*
+  Product buy button
+*/
+class ProductBuyButton extends HTMLElement {
+  constructor() {
+    super();
+    this.button = null;
+    this.loadingTimeout = null;
+    this.onVariantChange = this.onVariantChange.bind(this);
+    this.onQuantityChange = this.onQuantityChange.bind(this);
+    this.onClick = this.onClick.bind(this);
+  }
+
+  connectedCallback() {
+    this.button = this.querySelector('button[name="buy"]');
+    if (!this.button) {
+      return;
+    }
+
+    this.button.addEventListener('click', this.onClick);
+    document.addEventListener('product:variant-change', this.onVariantChange);
+    document.addEventListener('product:quantity-change', this.onQuantityChange);
+  }
+
+  disconnectedCallback() {
+    if (this.button) {
+      this.button.removeEventListener('click', this.onClick);
+    }
+
+    if (this.loadingTimeout) {
+      window.clearTimeout(this.loadingTimeout);
+      this.loadingTimeout = null;
+    }
+
+    document.removeEventListener('product:variant-change', this.onVariantChange);
+    document.removeEventListener('product:quantity-change', this.onQuantityChange);
+  }
+
+  getSectionId() {
+    return this.getAttribute('data-section-id');
+  }
+
+  updateButtonState(variant) {
+    let disabled = true;
+
+    if (variant && variant.available) {
+      disabled = false;
+    }
+
+    this.button.disabled = disabled;
+  }
+
+  getVariantId() {
+    const variantId = this.getAttribute('data-variant-id');
+    return variantId && variantId !== '' ? variantId : null;
+  }
+
+  getQuantity() {
+    const quantity = Number(this.getAttribute('data-quantity'));
+    if (!Number.isFinite(quantity) || quantity < 1) {
+      return 1;
+    }
+
+    return quantity;
+  }
+
+  onClick() {
+    const variantId = this.getVariantId();
+    if (!variantId) {
+      return;
+    }
+
+    const quantity = this.getQuantity();
+    this.button.disabled = true;
+    this.button.setAttribute('aria-busy', 'true');
+    this.button.classList.add('is-loading');
+
+    if (this.loadingTimeout) {
+      window.clearTimeout(this.loadingTimeout);
+    }
+
+    this.loadingTimeout = window.setTimeout(() => {
+      this.button.disabled = false;
+      this.button.removeAttribute('aria-busy');
+      this.button.classList.remove('is-loading');
+      this.loadingTimeout = null;
+    }, 3000);
+
+    window.location.href = `/cart/${encodeURIComponent(variantId)}:${encodeURIComponent(quantity)}`;
+  }
+
+  onVariantChange(event) {
+    const detail = event.detail || {};
+    const variant = detail.variant || null;
+    const eventSectionId = detail.sectionId || null;
+    const sectionId = this.getSectionId();
+
+    if (sectionId && eventSectionId && sectionId !== String(eventSectionId)) {
+      return;
+    }
+
+    if (variant && variant.id) {
+      this.setAttribute('data-variant-id', String(variant.id));
+    }
+
+    this.updateButtonState(variant);
+  }
+
+  onQuantityChange(event) {
+    const detail = event.detail || {};
+    const quantity = detail.quantity || null;
+    const eventSectionId = detail.sectionId || null;
+    const sectionId = this.getSectionId();
+
+    if (sectionId && eventSectionId && sectionId !== String(eventSectionId)) {
+      return;
+    }
+
+    if (!Number.isFinite(Number(quantity)) || Number(quantity) < 1) {
+      return;
+    }
+
+    this.setAttribute('data-quantity', String(quantity));
+  }
+}
+customElements.define('product-buy-button', ProductBuyButton);
+
 
 /*
   Product qty switcher
@@ -254,9 +441,11 @@ class ProductQtySwitcher extends HTMLElement {
     this.input = null;
     this.decreaseButton = null;
     this.increaseButton = null;
+    this.lastEmittedQuantity = null;
     this.onDecreaseClick = this.onDecreaseClick.bind(this);
     this.onIncreaseClick = this.onIncreaseClick.bind(this);
     this.onInputChange = this.onInputChange.bind(this);
+    this.onVariantChange = this.onVariantChange.bind(this);
   }
 
   connectedCallback() {
@@ -273,6 +462,7 @@ class ProductQtySwitcher extends HTMLElement {
     this.input.addEventListener('input', this.onInputChange);
     this.input.addEventListener('change', this.onInputChange);
     this.input.addEventListener('blur', this.onInputChange);
+    document.addEventListener('product:variant-change', this.onVariantChange);
 
     this.syncState();
   }
@@ -291,6 +481,59 @@ class ProductQtySwitcher extends HTMLElement {
       this.input.removeEventListener('change', this.onInputChange);
       this.input.removeEventListener('blur', this.onInputChange);
     }
+
+    document.removeEventListener('product:variant-change', this.onVariantChange);
+  }
+
+  getSectionId() {
+    return this.getAttribute('data-section-id');
+  }
+
+  emitQuantityChange(quantity) {
+    if (this.lastEmittedQuantity === quantity) {
+      return;
+    }
+
+    this.lastEmittedQuantity = quantity;
+    this.dispatchEvent(
+      new CustomEvent('product:quantity-change', {
+        bubbles: true,
+        detail: {
+          quantity,
+          sectionId: this.getSectionId()
+        }
+      })
+    );
+  }
+
+  updateMaxFromVariant(variant) {
+    if (
+      variant &&
+      variant.inventory_management !== null &&
+      variant.inventory_policy === 'deny' &&
+      Number.isFinite(Number(variant.inventory_quantity))
+    ) {
+      const min = this.getMin();
+      const max = Math.max(Number(variant.inventory_quantity), min);
+      this.input.max = String(max);
+    } else {
+      this.input.removeAttribute('max');
+    }
+
+    this.setValue(this.getValue());
+  }
+
+  onVariantChange(event) {
+    const detail = event.detail || {};
+    const variant = detail.variant || null;
+    const eventSectionId = detail.sectionId || null;
+    const sectionId = this.getSectionId();
+
+    if (sectionId && eventSectionId && sectionId !== String(eventSectionId)) {
+      return;
+    }
+
+    this.updateMaxFromVariant(variant);
   }
 
   getMin() {
@@ -347,6 +590,7 @@ class ProductQtySwitcher extends HTMLElement {
 
     this.decreaseButton.disabled = disabled || value <= min;
     this.increaseButton.disabled = disabled || (max !== null && value >= max);
+    this.emitQuantityChange(value);
   }
 
   onDecreaseClick() {

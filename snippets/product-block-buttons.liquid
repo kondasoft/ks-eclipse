@@ -22,10 +22,12 @@
   {%- endif -%}
 
   <div class="btn-atc-wrapper">
-    <product-form>
+    <product-form 
+      data-section-id="{{ section.id }}">
       {% form 'product', product %}
-        {% comment %} <input type="hidden" name="id" value="{{ current_variant.id }}"> {% endcomment %}
+        <input type="hidden" name="id" value="{{ current_variant.id }}">
         <product-qty-switcher
+          data-section-id="{{ section.id }}"
           role="group"
           aria-label="{{ 'product.quantity.label' | t }}"
           >
@@ -81,17 +83,21 @@
   </div>
 
   {% if block.settings.show_buy_btn %}
-    <button
-      class="btn btn-buy btn-full {{ block.settings.buy_btn_style }} {{ block.settings.buy_btn_size }}"
-      name="buy"
-      type="button"
-      data-quantity="1"
-      {% unless current_variant.available %}
-        disabled
-      {% endunless %}
-    >
-      {{ 'product.buy_it_now' | t }}
-    </button>
+    <product-buy-button 
+      data-section-id="{{ section.id }}"
+      data-variant-id="{{ current_variant.id }}"
+      data-quantity="1">
+      <button
+        class="btn btn-buy btn-full {{ block.settings.buy_btn_style }} {{ block.settings.buy_btn_size }}"
+        name="buy"
+        type="button"
+        {% unless current_variant.available %}
+          disabled
+        {% endunless %}
+      >
+        <span>{{ 'product.buy_it_now' | t }}</span>
+      </button>
+    </product-buy-button>
   {% endif %}
 
   {% if block.settings.show_dynamic_buttons %}
