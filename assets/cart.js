@@ -1,5 +1,5 @@
 class ThemeCart {
-  static sectionsToRender = ['cart-badge', 'cart-drawer'];
+  static sectionsToRender = ['cart-badge', 'cart-dialog'];
   static defaultSectionsUrl = `${window.location.pathname}${window.location.search}`;
 
   static dispatchCartUpdated(action, result) {
@@ -83,11 +83,37 @@ class ThemeCart {
   }
 
   static async change(payload) {
-    console.log('Changing cart', payload);
+    const response = await fetch(`${window.theme.routes.cart.change}.js`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ...(payload || {}),
+        sections: ThemeCart.sectionsToRender,
+        sections_url: ThemeCart.defaultSectionsUrl
+      })
+    });
+
+    if (!response.ok) {
+      const message = await ThemeCart.parseError(response);
+      const error = new Error(message);
+      ThemeCart.dispatchCartError('change', error);
+      throw error;
+    }
+
+    const result = await response.json();
+    ThemeCart.dispatchCartUpdated('change', result);
+
+    return result;
   }
 
   static async remove(payload) {
-    console.log('Removing from cart', payload);
+    return ThemeCart.change({
+      ...(payload || {}),
+      quantity: 0
+    });
   }
 
   static async clear(payload) {
@@ -132,6 +158,258 @@ class CartBadge extends HTMLElement {
   }
 }
 customElements.define('cart-badge', CartBadge);
+
+class CartItems extends HTMLElement {
+  constructor() {
+    super();
+    this.removingKeys = new Set();
+    this.onCartUpdated = this.onCartUpdated.bind(this);
+    this.onClick = this.onClick.bind(this);
+  }
+
+  connectedCallback() {
+    document.addEventListener('cart:updated', this.onCartUpdated);
+    this.addEventListener('click', this.onClick);
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener('cart:updated', this.onCartUpdated);
+    this.removeEventListener('click', this.onClick);
+  }
+
+  onClick(event) {
+    const removeButton = event.target.closest('button[data-line-item-key]');
+    if (!removeButton || !this.contains(removeButton)) {
+      return;
+    }
+
+    event.preventDefault();
+    this.removeLineItem(removeButton);
+  }
+
+  async removeLineItem(button) {
+    const lineItemKey = button.getAttribute('data-line-item-key');
+    if (!lineItemKey || this.removingKeys.has(lineItemKey)) {
+      return;
+    }
+
+    this.removingKeys.add(lineItemKey);
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+
+    try {
+      await ThemeCart.remove({ id: lineItemKey });
+    } finally {
+      this.removingKeys.delete(lineItemKey);
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+    }
+  }
+
+  onCartUpdated(event) {
+    const detail = event.detail || {};
+    const sections = detail.sections || {};
+    const sectionHtml = sections['cart-dialog'] || sections['cart-drawer'];
+    if (!sectionHtml) {
+      return;
+    }
+
+    const parsedHtml = new DOMParser().parseFromString(sectionHtml, 'text/html');
+    const nextItems = parsedHtml.querySelector('cart-items');
+    if (!nextItems) {
+      return;
+    }
+
+    this.innerHTML = nextItems.innerHTML;
+
+    const currentDialog = this.closest('#cart-dialog');
+    const nextDialog = parsedHtml.querySelector('#cart-dialog');
+    const nextEmpty = nextDialog && nextDialog.getAttribute('data-cart-empty');
+    if (currentDialog && nextEmpty !== null) {
+      currentDialog.setAttribute('data-cart-empty', nextEmpty);
+    }
+  }
+}
+customElements.define('cart-items', CartItems);
+
+class CartItemQtySwitcher extends HTMLElement {
+  constructor() {
+    super();
+    this.input = null;
+    this.decreaseButton = null;
+    this.increaseButton = null;
+    this.isUpdating = false;
+    this.queuedQuantity = null;
+    this.lastCommittedQuantity = null;
+    this.onDecreaseClick = this.onDecreaseClick.bind(this);
+    this.onIncreaseClick = this.onIncreaseClick.bind(this);
+    this.onInputChange = this.onInputChange.bind(this);
+    this.onInputCommit = this.onInputCommit.bind(this);
+  }
+
+  connectedCallback() {
+    this.input = this.querySelector('input[name="updates[]"]');
+    this.decreaseButton = this.querySelector('button[name="decrease"]');
+    this.increaseButton = this.querySelector('button[name="increase"]');
+
+    this.lastCommittedQuantity = this.getValue();
+
+    this.decreaseButton.addEventListener('click', this.onDecreaseClick);
+    this.increaseButton.addEventListener('click', this.onIncreaseClick);
+    this.input.addEventListener('input', this.onInputChange);
+    this.input.addEventListener('change', this.onInputCommit);
+    this.input.addEventListener('blur', this.onInputCommit);
+
+    this.syncState();
+  }
+
+  disconnectedCallback() {
+    this.decreaseButton.removeEventListener('click', this.onDecreaseClick);
+    this.increaseButton.removeEventListener('click', this.onIncreaseClick);
+    this.input.removeEventListener('input', this.onInputChange);
+    this.input.removeEventListener('change', this.onInputCommit);
+    this.input.removeEventListener('blur', this.onInputCommit);
+  }
+
+  getLineItemKey() {
+    return this.input?.dataset?.lineItemKey || null;
+  }
+
+  getMin() {
+    const min = Number(this.input?.min);
+    return Number.isFinite(min) ? min : 0;
+  }
+
+  getMax() {
+    const rawMax = this.input?.getAttribute('max');
+    if (rawMax === null || rawMax === '') {
+      return null;
+    }
+
+    const max = Number(rawMax);
+    return Number.isFinite(max) && max >= this.getMin() ? max : null;
+  }
+
+  getStep() {
+    const step = Number(this.input?.step);
+    return Number.isFinite(step) && step > 0 ? step : 1;
+  }
+
+  getValue() {
+    const value = Number(this.input?.value);
+    return Number.isFinite(value) ? value : this.getMin();
+  }
+
+  normalizeValue(nextValue) {
+    const min = this.getMin();
+    const max = this.getMax();
+    let value = Number.isFinite(nextValue) ? nextValue : min;
+
+    if (value < min) {
+      value = min;
+    }
+
+    if (max !== null && value > max) {
+      value = max;
+    }
+
+    return value;
+  }
+
+  setValue(nextValue) {
+    if (!this.input) {
+      return;
+    }
+
+    this.input.value = String(this.normalizeValue(nextValue));
+  }
+
+  syncState() {
+    if (!this.input || !this.decreaseButton || !this.increaseButton) {
+      return;
+    }
+
+    const min = this.getMin();
+    const max = this.getMax();
+    const value = this.normalizeValue(this.getValue());
+
+    if (String(value) !== this.input.value) {
+      this.input.value = String(value);
+    }
+
+    this.decreaseButton.disabled = this.isUpdating || value <= min;
+    this.increaseButton.disabled = this.isUpdating || (max !== null && value >= max);
+    this.input.disabled = this.isUpdating;
+  }
+
+  async requestQuantity(nextQuantity) {
+    const lineItemKey = this.getLineItemKey();
+    if (!lineItemKey) {
+      return;
+    }
+
+    const quantity = this.normalizeValue(nextQuantity);
+
+    if (!this.isUpdating && quantity === this.lastCommittedQuantity) {
+      this.setValue(quantity);
+      this.syncState();
+      return;
+    }
+
+    if (this.isUpdating) {
+      this.queuedQuantity = quantity;
+      return;
+    }
+
+    this.isUpdating = true;
+    this.queuedQuantity = null;
+    this.syncState();
+
+    try {
+      await ThemeCart.change({
+        id: lineItemKey,
+        quantity
+      });
+      this.lastCommittedQuantity = quantity;
+    } catch (_error) {
+      this.setValue(this.lastCommittedQuantity);
+    } finally {
+      this.isUpdating = false;
+      this.syncState();
+    }
+
+    if (this.queuedQuantity !== null && this.queuedQuantity !== this.lastCommittedQuantity) {
+      const queuedQuantity = this.queuedQuantity;
+      this.queuedQuantity = null;
+      this.requestQuantity(queuedQuantity);
+    }
+  }
+
+  onDecreaseClick(event) {
+    event.preventDefault();
+    const quantity = this.getValue() - this.getStep();
+    this.setValue(quantity);
+    this.syncState();
+    this.requestQuantity(quantity);
+  }
+
+  onIncreaseClick(event) {
+    event.preventDefault();
+    const quantity = this.getValue() + this.getStep();
+    this.setValue(quantity);
+    this.syncState();
+    this.requestQuantity(quantity);
+  }
+
+  onInputChange() {
+    this.syncState();
+  }
+
+  onInputCommit() {
+    this.requestQuantity(this.getValue());
+  }
+}
+customElements.define('cart-item-qty-switcher', CartItemQtySwitcher);
 
 // class CartError extends Error {
 //   constructor(message, context) {

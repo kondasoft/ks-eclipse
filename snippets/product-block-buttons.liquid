@@ -27,6 +27,7 @@
       {% form 'product', product %}
         <input type="hidden" name="id" value="{{ current_variant.id }}">
         <product-qty-switcher
+          class="qty-switcher"
           data-section-id="{{ section.id }}"
           role="group"
           aria-label="{{ 'product.quantity.label' | t }}"

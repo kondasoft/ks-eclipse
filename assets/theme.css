@@ -913,13 +913,14 @@ shopify-accelerated-checkout {
 /*
   QTY (quantity) switcher
 */
-product-qty-switcher {
+.qty-switcher {
+  --width: 7rem;
   display: block;
   position: relative;
-  flex-shrink: 0;
+  width: var(--width);
 }
 
-product-qty-switcher .input {
+.qty-switcher .input {
   text-align: center;
   -moz-appearance: textfield;
   appearance: textfield;
@@ -930,13 +931,13 @@ product-qty-switcher .input {
   align-items: center;
 }
 
-product-qty-switcher .input::-webkit-outer-spin-button,
-product-qty-switcher .input::-webkit-inner-spin-button {
+.qty-switcher .input::-webkit-outer-spin-button,
+.qty-switcher .input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-product-qty-switcher .btn {
+.qty-switcher .btn {
   position: absolute;
   top: 0;
   width: 2.5em;
@@ -955,22 +956,22 @@ product-qty-switcher .btn {
   padding: 0;
 }
 
-product-qty-switcher .btn[name="decrease"] {
+.qty-switcher .btn[name="decrease"] {
   left: 0;
   border-top-left-radius: var(--border-radius);
   border-bottom-left-radius: var(--border-radius);
 }
 
-product-qty-switcher .btn[name="increase"] {
+.qty-switcher .btn[name="increase"] {
   right: 0;
   border-top-right-radius: var(--border-radius);
   border-bottom-right-radius: var(--border-radius);
 }
 
-product-qty-switcher .btn:not(:disabled):hover {
+.qty-switcher .btn:not(:disabled):hover {
   outline-color: transparent;
 }
 
-product-qty-switcher .btn:focus-visible {
+.qty-switcher .btn:focus-visible {
   outline-color: currentColor;
 }

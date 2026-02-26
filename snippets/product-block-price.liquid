@@ -33,18 +33,18 @@
       data-available="{% if available %}true{% else %}false{% endif %}"
     >
       <s class="price-compare">
-        <span class="visually-hidden"> {{ 'product.regular_price' | t }} &nbsp; </span>
+        <span class="visually-hidden"> {{ 'product.price.regular' | t }} &nbsp; </span>
         <span data-compare-price>{{ compare_price | money }}</span>
       </s>
       <span class="price-sale">
-        <span class="visually-hidden"> {{ 'product.sale_price' | t }} &nbsp; </span>
+        <span class="visually-hidden"> {{ 'product.price.sale' | t }} &nbsp; </span>
         <span data-price>{{ price | money }}</span>
       </span>
       <span class="price-regular">
         <span data-price>{{ price | money }}</span>
       </span>
       <span class="price-unit">
-        <span class="visually-hidden"> {{ 'product.unit_price' | t }} &nbsp; </span>
+        <span class="visually-hidden"> {{ 'product.price.unit' | t }} &nbsp; </span>
         <span data-unit-price>({{ unit_price | unit_price_with_measurement: current_variant.unit_price_measurement }})</span>
       </span>
       <span

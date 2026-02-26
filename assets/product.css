@@ -206,6 +206,13 @@
   }
 }
 
+@media (min-width: 600px) {
+  .product-gallery-item {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+  }
+}
+
 
 /*
   Product vendor [block]

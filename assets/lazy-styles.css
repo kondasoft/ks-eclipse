@@ -478,17 +478,15 @@ theme-color-toggle label:has(input:focus-visible) {
 /*
   Cart dialog
 */
-#cart-dialog form {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
 #cart-dialog[data-cart-empty="true"] .dialog-body {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+#cart-dialog .cart-items {
+  display: flex;
 }
 
 #cart-dialog .cart-empty-wrapper {
@@ -503,16 +501,95 @@ theme-color-toggle label:has(input:focus-visible) {
 }
 
 @keyframes cart-empty-icon {
-  from {
-    transform: translatex(-.5rem);
-  }
-  to {
-    transform: translatex(.5rem);
-  }
+  from { transform: translatex(-.5rem); }
+  to { transform: translatex(.5rem); }
 }
 
 #cart-dialog .cart-empty-message {
   margin: 0 0 1.25rem;
+}
+
+#cart-dialog .cart-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1 1 auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#cart-dialog .cart-item {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1rem;
+}
+
+#cart-dialog .cart-item .img-wrapper {
+}
+
+#cart-dialog .cart-item .img-wrapper img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+#cart-dialog .cart-item-header {
+  position: relative;
+  margin: .125rem 0 .25rem;
+}
+
+#cart-dialog .cart-item-header .heading {
+  margin: 0 3rem 0 0;
+}
+
+#cart-dialog .cart-item-header .heading a {
+  text-decoration: none;
+  color: inherit;
+}
+
+#cart-dialog .cart-item-header .heading a:hover {
+  text-decoration: underline;
+}
+
+#cart-dialog .cart-item-header .btn-icon {
+  position: absolute;
+  top: 50%;
+  right: -.5rem;
+  transform: translateY(-50%);
+}
+
+#cart-dialog .cart-item-subtext {
+  margin: 0 0 .125rem;
+  opacity: 0.75;
+}
+
+#cart-dialog .cart-item-price .price-compare {
+  opacity: 0.5;
+}
+
+#cart-dialog .cart-item-qty-switcher-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: space-between;
+  margin: 1rem 0 .5rem;
+}
+
+#cart-dialog .cart-item .qty-switcher {
+}
+
+#cart-dialog .cart-item-price {
+  margin: 0;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: .25rem;
+  align-items: center;
+  line-height: 1;
 }
 
 #cart-dialog[data-cart-empty="true"] .dialog-footer {

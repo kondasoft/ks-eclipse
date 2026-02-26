@@ -41,10 +41,7 @@
     }
   },
   "product": {
-    "regular_price": "Regular price",
-    "sale_price": "Sale price",
-    "unit_price": "Unit price",
-    "price_from": "From",
+    
     "sold_out": "Sold out",
     "add_to_cart": "Add to cart",
     "buy_it_now": "Buy it now",
@@ -59,6 +56,12 @@
     "duties_and_taxes_included": "Duties and taxes included.",
     "shipping_policy_html": "<a href=\"{{ link }}\">Shipping<\/a> calculated at checkout.",
     "cart_error_title": "Unable to add to cart",
+    "price": {
+      "regular": "Regular price",
+      "sale": "Sale price",
+      "unit": "Unit price",
+      "from": "From",
+    },
     "quantity": {
       "label": "Quantity",
       "increase": "Increase quantity",
@@ -78,7 +81,11 @@
     "title": "Cart",
     "empty": "Your cart is currently empty.",
     "checkout": "Checkout",
-    "continue_shopping": "Continue shopping"
+    "continue_shopping": "Continue shopping",
+    "property_view_file": "View file",
+    "remove_item": "Remove {{ item }} from cart",
+    "applied_discounts": "Applied discounts",
+    "subtotal": "Subtotal",
   },
   "search": {
     "title": "Search",

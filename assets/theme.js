@@ -698,6 +698,10 @@ class ThemeDialog extends HTMLElement {
   }
 
   onDialogClick(event) {
+    if (event.target !== this.dialog) {
+      return;
+    }
+
     var rect = this.dialog.getBoundingClientRect();
     var clickedOutside = event.clientX < rect.left ||
       event.clientX > rect.right ||

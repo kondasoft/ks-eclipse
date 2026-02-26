@@ -4,18 +4,18 @@
     class="drawer drawer-right dialog" 
     data-cart-empty="{{ cart.empty? }}"
     aria-labelledby="cart-dialog-title">
-    {% form 'cart', cart %}
-      <div class="dialog-header">
-        <h2 id="cart-dialog-title" class="dialog-title">
-          {{ 'cart.title' | t }}
-        </h2>
-        <button type="button" class="btn-icon dialog-close" data-dialog-close>  
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
-            <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-      <div class="dialog-body">
+    <div class="dialog-header">
+      <h2 id="cart-dialog-title" class="dialog-title">
+        {{ 'cart.title' | t }}
+      </h2>
+      <button type="button" class="btn-icon dialog-close" data-dialog-close>  
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
+          <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="dialog-body">
+      <cart-items class="cart-items">
         {% if cart.empty? %}
           <div class="cart-empty-wrapper">
             {% if settings.cart_icon == 'cart' %}
@@ -38,20 +38,179 @@
             </button>
           </div>
         {% else %}
-          Cart items
+          <ul class="cart-items-list">
+            {% for line_item in cart.items %}
+              {% liquid 
+                if line_item.variant.inventory_management != null and line_item.variant.inventory_policy == 'deny'
+                  assign line_item_qty_max = line_item.variant.inventory_quantity
+                endif
+              %}
+              <li class="cart-item">
+                <div class="cart-item-left">
+                  <a href="{{ line_item.url }}" tabindex="-1">
+                    <div class="img-wrapper">
+                      <img 
+                        src="{{ line_item.image | image_url: width: 600 }}" 
+                        alt="{{ line_item.image.alt | escape }}"
+                        class="img-fluid"
+                        width="{{ line_item.image.width }}"
+                        height="{{ line_item.image.height }}"
+                        loading="lazy"
+                      >
+                    </div>
+                  </a>
+                </div>
+                <div class="cart-item-right">
+                  <div class="cart-item-header">
+                    <h3 class="heading h6">
+                      <a href="{{ line_item.url }}">
+                        {{ line_item.product.title }}
+                      </a>
+                    </h3>
+                      <button
+                      class="btn btn-icon"
+                      type="button"
+                      data-line-item-key="{{ line_item.key }}"
+                      aria-label="{{ 'cart.remove_item' | t: item: line_item.product.title }}"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2">
+                        <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line>
+                      </svg>
+                    </button>
+                  </div>
+                  {% unless line_item.product.has_only_default_variant %}
+                    <p class="cart-item-subtext fs-sm">
+                      {{ line_item.variant.title }}
+                    </p>
+                  {% endunless %}
+                  {% unless line_item.selling_plan_allocation == null %}
+                    <p class="cart-item-subtext fs-sm">
+                      {{ line_item.selling_plan_allocation.selling_plan.name }}
+                    </p>
+                  {% endunless %}
+                  {% unless line_item.properties == empty %}
+                    <ul class="cart-item-properties fs-sm">
+                      {% for property in line_item.properties %}
+                        {% assign first_character_in_key = property.first | slice: 0 %}
+                        {% unless first_character_in_key == '_' %}
+                          <li>
+                            {% if property.last contains 'https' %}
+                              {{ property.first }}:
+                              <a href="{{ property.last }}" target="_blank" class="link">
+                                {{ 'cart.property_view_file' | t }}
+                              </a>
+                            {% else %}
+                              {{ property.first }}: {{ property.last }}
+                            {% endif %}
+                          </li>
+                        {% endunless %}
+                      {% endfor %}
+                    </ul>
+                  {% endunless %}
+                  {% if line_item.line_level_discount_allocations.size > 0 %}
+                    <ul
+                      class="cart-item-discounts alert list-unstyled fs-sm"
+                      data-alert-type="success"
+                      aria-label="{{ 'cart.applied_discounts' | t }}"
+                    >
+                      {%- for discount in line_item.line_level_discount_allocations -%}
+                        <li class="">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag">
+                            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+                          </svg>
+                          {{ discount.discount_application.title }}
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  {% endif %}
+                  <div class="cart-item-qty-switcher-wrapper">
+                    <cart-item-qty-switcher
+                      class="qty-switcher"
+                      role="group"
+                      aria-label="{{ 'product.quantity.label' | t }}"
+                    >
+                      <button
+                        class="btn"
+                        type="button"
+                        name="decrease"
+                        aria-label="{{ 'product.quantity.decrease' | t }}"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus">
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                      </button>
+                      <input
+                        class="input"
+                        name="updates[]"
+                        type="number"
+                        value="{{ line_item.quantity }}"
+                        min="0"
+                        max="{{ line_item_qty_max }}"
+                        aria-label="{{ 'product.quantity.label' | t }}"
+                        data-line-item-key="{{ line_item.key }}"
+                      >
+                      <button
+                        class="btn"
+                        type="button"
+                        name="increase"
+                        aria-label="{{ 'product.quantity.increase' | t }}"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus">
+                          <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                      </button>
+                    </cart-item-qty-switcher>
+                    <p class="cart-item-price price">
+                      {% if line_item.original_line_price > line_item.final_line_price %}
+                        <s class="price-compare">
+                          <span class="visually-hidden"> {{ 'product.price.regular' | t }} &nbsp; </span>
+                          <span>{{ line_item.original_line_price | money }}</span>
+                        </s>
+                        <span class="price-sale">
+                          <span class="visually-hidden"> {{ 'product.price.sale' | t }} &nbsp; </span>
+                          <span>{{ line_item.final_line_price | money }}</span>
+                        </span>
+                      {% elsif line_item.variant.compare_at_price > line_item.variant.price %}
+                        <s class="price-compare">
+                          <span class="visually-hidden"> {{ 'product.price.regular' | t }} &nbsp; </span>
+                          <span>{{ line_item.variant.compare_at_price | money }}</span>
+                        </s>
+                        <span class="price-sale">
+                          <span class="visually-hidden"> {{ 'product.price.sale' | t }} &nbsp; </span>
+                          <span>{{ line_item.final_line_price | money }}</span>
+                        </span>
+                      {% else %}
+                        <span class="price-regular">
+                          {{ line_item.final_line_price | money }}
+                        </span>
+                      {% endif %}
+                      {% if line_item.unit_price > 0 %}
+                        <span class="price-unit">
+                          <span class="visually-hidden"> {{ 'product.price.unit' | t }} &nbsp; </span>
+                          <span>({{ line_item.unit_price | unit_price_with_measurement: line_item.unit_price_measurement }})</span>
+                        </span>
+                      {% endif %}
+                    </p>
+                  </div>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
         {% endif %}
-      </div>
-      <div class="dialog-footer">
+      </cart-items>
+    </div>
+    <div class="dialog-footer">
+      {% form 'cart', cart %}
         <button 
           type="submit" 
           name="checkout" 
-          class="btn btn-full btn-with-icon fs-lg">
+          class="btn btn-primary btn-full btn-with-icon fs-lg">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
           </svg>
           {{ 'cart.checkout' | t }}
         </button>
-      </div>
-    {% endform %}
+      {% endform %}
+    </div>
   </dialog>
 </theme-dialog>
