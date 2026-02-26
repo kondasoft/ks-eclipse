@@ -109,8 +109,7 @@
                   {% endunless %}
                   {% if line_item.line_level_discount_allocations.size > 0 %}
                     <ul
-                      class="cart-item-discounts alert list-unstyled fs-sm"
-                      data-alert-type="success"
+                      class="cart-item-discounts alert alert-success list-unstyled fs-sm"
                       aria-label="{{ 'cart.applied_discounts' | t }}"
                     >
                       {%- for discount in line_item.line_level_discount_allocations -%}

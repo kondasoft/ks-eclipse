@@ -447,7 +447,7 @@
 }
 
 .product-block[data-type="buttons"] product-qty-switcher {
-  width: 120px;
+  flex-shrink: 0;
 }
 
 /*

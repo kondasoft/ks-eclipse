@@ -1,6 +1,7 @@
 class ThemeCart {
   static sectionsToRender = ['cart-badge', 'cart-dialog'];
   static defaultSectionsUrl = `${window.location.pathname}${window.location.search}`;
+  static loadingCount = 0;
 
   static dispatchCartUpdated(action, result) {
     document.dispatchEvent(
@@ -16,6 +17,24 @@ class ThemeCart {
 
   static openDrawer() {
     document.querySelector('#cart-dialog')?.showModal();
+  }
+
+  static setLoading(isLoading) {
+    const dialog = document.querySelector('#cart-dialog');
+    if (!dialog) {
+      return;
+    }
+
+    if (isLoading) {
+      ThemeCart.loadingCount += 1;
+      dialog.classList.add('is-loading');
+      return;
+    }
+
+    ThemeCart.loadingCount = Math.max(0, ThemeCart.loadingCount - 1);
+    if (ThemeCart.loadingCount === 0) {
+      dialog.classList.remove('is-loading');
+    }
   }
 
   static dispatchCartError(action, error) {
@@ -59,23 +78,28 @@ class ThemeCart {
       });
     }
 
-    const response = await fetch(`${window.theme.routes.cart.add}.js`, {
-      method: 'POST',
-      body
-    });
+    ThemeCart.setLoading(true);
+    try {
+      const response = await fetch(`${window.theme.routes.cart.add}.js`, {
+        method: 'POST',
+        body
+      });
 
-    if (!response.ok) {
-      const message = await ThemeCart.parseError(response);
-      const error = new Error(message);
-      ThemeCart.dispatchCartError('add', error);
-      throw error;
+      if (!response.ok) {
+        const message = await ThemeCart.parseError(response);
+        const error = new Error(message);
+        ThemeCart.dispatchCartError('add', error);
+        throw error;
+      }
+
+      const result = await response.json();
+      ThemeCart.dispatchCartUpdated('add', result);
+      ThemeCart.openDrawer();
+
+      return result;
+    } finally {
+      ThemeCart.setLoading(false);
     }
-
-    const result = await response.json();
-    ThemeCart.dispatchCartUpdated('add', result);
-    ThemeCart.openDrawer();
-
-    return result;
   }
 
   static async update(payload) {
@@ -83,30 +107,35 @@ class ThemeCart {
   }
 
   static async change(payload) {
-    const response = await fetch(`${window.theme.routes.cart.change}.js`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        ...(payload || {}),
-        sections: ThemeCart.sectionsToRender,
-        sections_url: ThemeCart.defaultSectionsUrl
-      })
-    });
+    ThemeCart.setLoading(true);
+    try {
+      const response = await fetch(`${window.theme.routes.cart.change}.js`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...(payload || {}),
+          sections: ThemeCart.sectionsToRender,
+          sections_url: ThemeCart.defaultSectionsUrl
+        })
+      });
 
-    if (!response.ok) {
-      const message = await ThemeCart.parseError(response);
-      const error = new Error(message);
-      ThemeCart.dispatchCartError('change', error);
-      throw error;
+      if (!response.ok) {
+        const message = await ThemeCart.parseError(response);
+        const error = new Error(message);
+        ThemeCart.dispatchCartError('change', error);
+        throw error;
+      }
+
+      const result = await response.json();
+      ThemeCart.dispatchCartUpdated('change', result);
+
+      return result;
+    } finally {
+      ThemeCart.setLoading(false);
     }
-
-    const result = await response.json();
-    ThemeCart.dispatchCartUpdated('change', result);
-
-    return result;
   }
 
   static async remove(payload) {
