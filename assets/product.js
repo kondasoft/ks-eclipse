@@ -73,6 +73,7 @@ class ProductForm extends HTMLElement {
 
   async onSubmit(event) {
     event.preventDefault();
+    const submitter = event.submitter instanceof HTMLElement ? event.submitter : this.submitButton;
 
     this.submitButton.disabled = true;
     this.submitButton.setAttribute('aria-busy', 'true');
@@ -80,7 +81,7 @@ class ProductForm extends HTMLElement {
 
     try {
       const formData = new FormData(this.form);
-      const result = await ThemeCart.add(formData);
+      const result = await ThemeCart.add(formData, { returnFocusTarget: submitter });
       console.log('Product added to cart', result);
     } catch (error) {
       ThemeNotification.show(

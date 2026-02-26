@@ -15,8 +15,20 @@ class ThemeCart {
     );
   }
 
-  static openDrawer() {
-    document.querySelector('#cart-dialog')?.showModal();
+  static openDrawer(focusReturnTarget) {
+    const dialog = document.querySelector('#cart-dialog');
+    if (!dialog) {
+      return;
+    }
+
+    const nextFocusTarget = focusReturnTarget instanceof HTMLElement ? focusReturnTarget : document.activeElement;
+    const dialogHost = dialog.closest('theme-dialog');
+
+    if (dialogHost && nextFocusTarget instanceof HTMLElement && !dialog.contains(nextFocusTarget)) {
+      dialogHost.lastTrigger = nextFocusTarget;
+    }
+
+    dialog.showModal();
   }
 
   static setLoading(isLoading) {
@@ -63,8 +75,9 @@ class ThemeCart {
     console.log('Getting cart');
   }
 
-  static async add(payload) {
+  static async add(payload, options) {
     let body;
+    const config = options || {};
 
     if (payload instanceof FormData) {
       body = payload;
@@ -94,7 +107,7 @@ class ThemeCart {
 
       const result = await response.json();
       ThemeCart.dispatchCartUpdated('add', result);
-      ThemeCart.openDrawer();
+      ThemeCart.openDrawer(config.returnFocusTarget);
 
       return result;
     } finally {
@@ -366,9 +379,14 @@ class CartItemQtySwitcher extends HTMLElement {
       this.input.value = String(value);
     }
 
-    this.decreaseButton.disabled = this.isUpdating || value <= min;
-    this.increaseButton.disabled = this.isUpdating || (max !== null && value >= max);
-    this.input.disabled = this.isUpdating;
+    this.decreaseButton.disabled = value <= min;
+    this.increaseButton.disabled = max !== null && value >= max;
+
+    if (this.isUpdating) {
+      this.setAttribute('aria-busy', 'true');
+    } else {
+      this.removeAttribute('aria-busy');
+    }
   }
 
   async requestQuantity(nextQuantity) {
