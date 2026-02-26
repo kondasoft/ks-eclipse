@@ -496,6 +496,7 @@ theme-color-toggle label:has(input:focus-visible) {
 
 #cart-dialog .cart-items {
   display: flex;
+  margin-bottom: 1.75rem;
 }
 
 #cart-dialog .cart-empty-wrapper {
@@ -579,6 +580,20 @@ theme-color-toggle label:has(input:focus-visible) {
 #cart-dialog .cart-item-price .price-compare {
   opacity: 0.5;
 }
+#cart-dialog .cart-item .cart-discounts-list {
+  padding: .25rem .75rem;
+  margin: .75rem 0;
+}
+
+#cart-dialog .cart-item .cart-discounts-list li {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+#cart-dialog .cart-item .cart-discounts-list li svg {
+  flex-shrink: 0;
+}
 
 #cart-dialog .cart-item-qty-switcher-wrapper {
   display: flex;
@@ -601,26 +616,68 @@ theme-color-toggle label:has(input:focus-visible) {
   line-height: 1;
 }
 
-#cart-dialog .cart-item-discounts {
-  padding: .25rem .75rem;
-  margin: .75rem 0;
+#cart-dialog .cart-note {
+  display: block;
 }
 
-#cart-dialog .cart-item-discounts li {
+#cart-dialog[data-cart-empty="true"] .cart-note {
+  display: none;
+}
+
+#cart-dialog .cart-note form {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: .5rem;
-}
-
-#cart-dialog .cart-item-discounts li svg {
-  flex-shrink: 0;
 }
 
 #cart-dialog[data-cart-empty="true"] .dialog-footer {
   display: none;
 }
 
-#cart-dialog .dialog-footer .btn {
+#cart-dialog .dialog-footer .cart-discounts-list {
+  padding: .25rem .75rem;
+  margin: 0 0 .75rem;
+}
+
+#cart-dialog .dialog-footer .cart-discounts-list li {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+#cart-dialog .dialog-footer .cart-discounts-list li svg {
+  flex-shrink: 0;
+}
+
+#cart-dialog .cart-subtotal-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 0 .75rem;
+}
+
+#cart-dialog .cart-subtotal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .25rem;
+}
+
+#cart-dialog .cart-subtotal .price-compare {
+  opacity: 0.5;
+}
+
+#cart-dialog .cart-taxes-shipping {
+  opacity: 0.75;
+  margin: -.375rem  0 1rem;
+}
+
+#cart-dialog .dialog-footer button[name="checkout"] {
   width: 100%;
   text-align: center;
+}
+
+#cart-dialog .payment-icons {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0 -.25rem;
 }

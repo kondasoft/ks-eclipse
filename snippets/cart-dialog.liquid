@@ -67,7 +67,7 @@
                         {{ line_item.product.title }}
                       </a>
                     </h3>
-                      <button
+                    <button
                       class="btn btn-icon"
                       type="button"
                       data-line-item-key="{{ line_item.key }}"
@@ -109,7 +109,7 @@
                   {% endunless %}
                   {% if line_item.line_level_discount_allocations.size > 0 %}
                     <ul
-                      class="cart-item-discounts alert alert-success list-unstyled fs-sm"
+                      class="cart-discounts-list alert alert-success list-unstyled fs-sm"
                       aria-label="{{ 'cart.applied_discounts' | t }}"
                     >
                       {%- for discount in line_item.line_level_discount_allocations -%}
@@ -198,8 +198,94 @@
           </ul>
         {% endif %}
       </cart-items>
+      {% if settings.cart_note %}
+        <details 
+          id="cart-dialog-note-details"
+          class="theme-collapse-details"
+          {% if cart.item_count == 0 %}hidden{% endif %}
+        >
+          <summary class="theme-collapse-summary">
+            <span>{{ 'cart.note.title' | t }}</span>
+            <span class="theme-collapse-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </span>
+          </summary>
+          <div class="theme-collapse-content">
+            <cart-note
+              class="cart-note">
+              {% form 'cart', cart %}
+                <textarea
+                  id="cart-note-input"
+                  class="input"
+                  rows="3"
+                  name="note"
+                  placeholder="{{ 'cart.note.label' | t }}"
+                  aria-label="{{ 'cart.note.label' | t }}"
+                >{{ cart.note }}</textarea>
+                <button
+                  type="submit"
+                  class="btn btn-primary fs-sm btn-full"
+                  data-text-note-saved="{{ 'cart.note.saved' | t }}"
+                  data-text-btn-save="{{ 'cart.note.button' | t }}"
+                >
+                  <span>{{ 'cart.note.button' | t }}</span>
+                </button>
+              {% endform %}
+            </cart-note>
+          </div>
+        </details>
+      {% endif %}
     </div>
     <div class="dialog-footer">
+      <cart-applied-discounts>
+        {% if cart.cart_level_discount_applications.size > 0 %}
+          <ul
+            class="cart-discounts-list alert alert-success list-unstyled fs-sm"
+            aria-label="{{ 'cart.applied_discounts' | t }}"
+          >
+            {% for discount in cart.cart_level_discount_applications %}
+              <li class="">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag">
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+                {{ discount.title }}
+                (-{{ discount.total_allocated_amount | money }})
+              </li>
+            {% endfor %}
+          </ul>
+        {%- endif -%}
+      </cart-applied-discounts>
+      <p
+        class="cart-subtotal-wrapper fs-lg"
+        role="status"
+        aria-atomic="true"
+        aria-live="polite"
+      >
+        <span> {{ 'cart.subtotal' | t }}: </span>
+        <cart-subtotal class="cart-subtotal">
+          {% if cart.items_subtotal_price > cart.total_price %}
+            <s class="price-compare">
+              <span class="visually-hidden"> {{ 'product.price.regular' | t }} &nbsp; </span>
+              <span>{{ cart.items_subtotal_price | money }}</span>
+            </s>
+            <span class="price-sale">
+              <span class="visually-hidden"> {{ 'product.price.sale' | t }} &nbsp; </span>
+              <span>{{ cart.total_price | money }}</span>
+            </span>
+          {% else %}
+            <span class="price-regular">
+              {{ cart.total_price | money }}
+            </span>
+          {% endif %}
+        </cart-subtotal>
+      </p>
+      {% if settings.cart_taxes_and_shipping %}
+        <p class="cart-taxes-shipping fs-sm">
+          {% render 'cart-taxes-shipping-text' %}
+        </p>
+      {% endif %}
       {% form 'cart', cart %}
         <button 
           type="submit" 
@@ -208,9 +294,20 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
           </svg>
-          {{ 'cart.checkout' | t }}
+          <span>{{ 'cart.checkout' | t }}</span>
         </button>
+        {% if settings.cart_dynamic_checkout and additional_checkout_buttons %}
+          <div class="additional-checkout-buttons">
+            {{ content_for_additional_checkout_buttons }}
+          </div>
+        {% endif %}
+        {% if settings.cart_payment_terms %}
+          {{ form | payment_terms }}
+        {% endif %}
       {% endform %}
+      {% if settings.cart_payment_icons %}
+        {% render 'payment-icons' %}
+      {% endif %}
     </div>
   </dialog>
 </theme-dialog>

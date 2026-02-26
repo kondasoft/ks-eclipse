@@ -165,22 +165,6 @@
         "step": 5,
         "unit": "%"
       },
-      {
-        "type": "select",
-        "id": "cart_icon",
-        "label": "Cart icon",
-        "default": "cart",
-        "options": [
-          {
-            "value": "cart",
-            "label": "Cart"
-          },
-          {
-            "value": "bag",
-            "label": "Bag"
-          }
-        ]
-      }
     ]
   },
   {
@@ -270,6 +254,57 @@
         "type": "checkbox",
         "id": "menu_color_toggle",
         "label": "Show color toggle in menu",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_icon",
+        "label": "Cart icon",
+        "default": "cart",
+        "options": [
+          {
+            "value": "cart",
+            "label": "Cart"
+          },
+          {
+            "value": "bag",
+            "label": "Bag"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_note",
+        "label": "Show cart note",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_taxes_and_shipping",
+        "label": "Show taxes and shipping text",
+        "default": true
+      }, 
+      {
+        "type": "checkbox",
+        "id": "cart_dynamic_checkout",
+        "label": "Show dynamic checkout buttons",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_payment_terms",
+        "label": "Show payment terms",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_payment_icons",
+        "label": "Show payment icons",
         "default": true
       }
     ]

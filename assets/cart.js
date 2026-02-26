@@ -116,7 +116,35 @@ class ThemeCart {
   }
 
   static async update(payload) {
-    console.log('Updating cart', payload);
+    ThemeCart.setLoading(true);
+    try {
+      const response = await fetch(`${window.theme.routes.cart.update}.js`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...(payload || {}),
+          sections: ThemeCart.sectionsToRender,
+          sections_url: ThemeCart.defaultSectionsUrl
+        })
+      });
+
+      if (!response.ok) {
+        const message = await ThemeCart.parseError(response);
+        const error = new Error(message);
+        ThemeCart.dispatchCartError('update', error);
+        throw error;
+      }
+
+      const result = await response.json();
+      ThemeCart.dispatchCartUpdated('update', result);
+
+      return result;
+    } finally {
+      ThemeCart.setLoading(false);
+    }
   }
 
   static async change(payload) {
@@ -251,7 +279,7 @@ class CartItems extends HTMLElement {
   onCartUpdated(event) {
     const detail = event.detail || {};
     const sections = detail.sections || {};
-    const sectionHtml = sections['cart-dialog'] || sections['cart-drawer'];
+    const sectionHtml = sections['cart-dialog'];
     if (!sectionHtml) {
       return;
     }
@@ -275,6 +303,10 @@ class CartItems extends HTMLElement {
 customElements.define('cart-items', CartItems);
 
 class CartItemQtySwitcher extends HTMLElement {
+  static activeSwitcherIndex = null;
+  static shouldRestoreFocusOnNextUpdate = false;
+  static isCartUpdatedListenerBound = false;
+
   constructor() {
     super();
     this.input = null;
@@ -287,12 +319,18 @@ class CartItemQtySwitcher extends HTMLElement {
     this.onIncreaseClick = this.onIncreaseClick.bind(this);
     this.onInputChange = this.onInputChange.bind(this);
     this.onInputCommit = this.onInputCommit.bind(this);
+    this.onFocusIn = this.onFocusIn.bind(this);
   }
 
   connectedCallback() {
+    CartItemQtySwitcher.bindCartUpdatedListener();
     this.input = this.querySelector('input[name="updates[]"]');
     this.decreaseButton = this.querySelector('button[name="decrease"]');
     this.increaseButton = this.querySelector('button[name="increase"]');
+
+    if (!this.input || !this.decreaseButton || !this.increaseButton) {
+      return;
+    }
 
     this.lastCommittedQuantity = this.getValue();
 
@@ -301,20 +339,62 @@ class CartItemQtySwitcher extends HTMLElement {
     this.input.addEventListener('input', this.onInputChange);
     this.input.addEventListener('change', this.onInputCommit);
     this.input.addEventListener('blur', this.onInputCommit);
+    this.addEventListener('focusin', this.onFocusIn);
 
     this.syncState();
   }
 
   disconnectedCallback() {
-    this.decreaseButton.removeEventListener('click', this.onDecreaseClick);
-    this.increaseButton.removeEventListener('click', this.onIncreaseClick);
-    this.input.removeEventListener('input', this.onInputChange);
-    this.input.removeEventListener('change', this.onInputCommit);
-    this.input.removeEventListener('blur', this.onInputCommit);
+    if (this.decreaseButton) {
+      this.decreaseButton.removeEventListener('click', this.onDecreaseClick);
+    }
+    if (this.increaseButton) {
+      this.increaseButton.removeEventListener('click', this.onIncreaseClick);
+    }
+    if (this.input) {
+      this.input.removeEventListener('input', this.onInputChange);
+      this.input.removeEventListener('change', this.onInputCommit);
+      this.input.removeEventListener('blur', this.onInputCommit);
+    }
+    this.removeEventListener('focusin', this.onFocusIn);
+  }
+
+  static bindCartUpdatedListener() {
+    if (CartItemQtySwitcher.isCartUpdatedListenerBound) {
+      return;
+    }
+
+    document.addEventListener('cart:updated', () => {
+      if (!CartItemQtySwitcher.shouldRestoreFocusOnNextUpdate) {
+        return;
+      }
+
+      CartItemQtySwitcher.shouldRestoreFocusOnNextUpdate = false;
+      const activeSwitcherIndex = CartItemQtySwitcher.activeSwitcherIndex;
+      if (!Number.isInteger(activeSwitcherIndex) || activeSwitcherIndex < 0) {
+        return;
+      }
+
+      window.requestAnimationFrame(() => {
+        const switchers = Array.from(document.querySelectorAll('cart-items cart-item-qty-switcher'));
+        if (!switchers.length) {
+          return;
+        }
+
+        const nextIndex = Math.min(activeSwitcherIndex, switchers.length - 1);
+        const nextSwitcher = switchers[nextIndex];
+        const nextInput = nextSwitcher ? nextSwitcher.querySelector('input[name="updates[]"]') : null;
+        if (nextInput) {
+          nextInput.focus({ preventScroll: true });
+        }
+      });
+    });
+
+    CartItemQtySwitcher.isCartUpdatedListenerBound = true;
   }
 
   getLineItemKey() {
-    return this.input?.dataset?.lineItemKey || null;
+    return this.getAttribute('data-line-item-key') || this.input?.dataset?.lineItemKey || null;
   }
 
   getMin() {
@@ -408,6 +488,7 @@ class CartItemQtySwitcher extends HTMLElement {
       return;
     }
 
+    CartItemQtySwitcher.shouldRestoreFocusOnNextUpdate = true;
     this.isUpdating = true;
     this.queuedQuantity = null;
     this.syncState();
@@ -419,6 +500,7 @@ class CartItemQtySwitcher extends HTMLElement {
       });
       this.lastCommittedQuantity = quantity;
     } catch (_error) {
+      CartItemQtySwitcher.shouldRestoreFocusOnNextUpdate = false;
       this.setValue(this.lastCommittedQuantity);
     } finally {
       this.isUpdating = false;
@@ -455,8 +537,254 @@ class CartItemQtySwitcher extends HTMLElement {
   onInputCommit() {
     this.requestQuantity(this.getValue());
   }
+
+  onFocusIn() {
+    const cartItems = this.closest('cart-items');
+    if (!cartItems) {
+      CartItemQtySwitcher.activeSwitcherIndex = null;
+      return;
+    }
+
+    const switchers = Array.from(cartItems.querySelectorAll('cart-item-qty-switcher'));
+    const index = switchers.indexOf(this);
+    CartItemQtySwitcher.activeSwitcherIndex = index >= 0 ? index : null;
+  }
 }
 customElements.define('cart-item-qty-switcher', CartItemQtySwitcher);
+
+class CartNote extends HTMLElement {
+  constructor() {
+    super();
+    this.form = null;
+    this.input = null;
+    this.submitButton = null;
+    this.isSaving = false;
+    this.savedTimeoutId = null;
+    this.defaultButtonText = '';
+    this.savedButtonText = '';
+    this.onSubmit = this.onSubmit.bind(this);
+    this.onInput = this.onInput.bind(this);
+    this.onCartUpdated = this.onCartUpdated.bind(this);
+  }
+
+  connectedCallback() {
+    this.form = this.querySelector('form');
+    this.input = this.querySelector('textarea[name="note"]');
+    this.submitButton = this.querySelector('button[type="submit"]');
+
+    this.defaultButtonText = this.submitButton.dataset.textBtnSave || this.submitButton.querySelector('span').textContent.trim();
+    this.savedButtonText = this.submitButton.dataset.textNoteSaved || this.defaultButtonText;
+
+    this.form.addEventListener('submit', this.onSubmit);
+    this.input.addEventListener('input', this.onInput);
+    document.addEventListener('cart:updated', this.onCartUpdated);
+  }
+
+  disconnectedCallback() {
+    this.form.removeEventListener('submit', this.onSubmit);
+    this.input.removeEventListener('input', this.onInput);
+    document.removeEventListener('cart:updated', this.onCartUpdated);
+
+    if (this.savedTimeoutId) {
+      window.clearTimeout(this.savedTimeoutId);
+      this.savedTimeoutId = null;
+    }
+  }
+
+  setButtonState(text, isBusy) {
+    if (!this.submitButton) {
+      return;
+    }
+
+    this.submitButton.querySelector('span').textContent = text;
+    this.submitButton.disabled = isBusy;
+
+    if (isBusy) {
+      this.submitButton.classList.add('is-loading');
+      this.submitButton.setAttribute('aria-busy', 'true');
+    } else {
+      this.submitButton.classList.remove('is-loading');
+      this.submitButton.removeAttribute('aria-busy');
+    }
+  }
+
+  showDefaultButtonText() {
+    if (this.savedTimeoutId) {
+      window.clearTimeout(this.savedTimeoutId);
+      this.savedTimeoutId = null;
+    }
+
+    this.setButtonState(this.defaultButtonText, false);
+  }
+
+  showSavedButtonText() {
+    this.setButtonState(this.savedButtonText, false);
+
+    if (this.savedTimeoutId) {
+      window.clearTimeout(this.savedTimeoutId);
+    }
+
+    this.savedTimeoutId = window.setTimeout(() => {
+      this.savedTimeoutId = null;
+      this.setButtonState(this.defaultButtonText, false);
+    }, 2000);
+  }
+
+  async onSubmit(event) {
+    event.preventDefault();
+
+    if (!this.input || this.isSaving) {
+      return;
+    }
+
+    this.isSaving = true;
+    this.setButtonState(this.defaultButtonText, true);
+
+    try {
+      await ThemeCart.update({
+        note: this.input.value
+      });
+      this.showSavedButtonText();
+    } finally {
+      this.isSaving = false;
+      this.submitButton.disabled = false;
+      this.submitButton.classList.remove('is-loading');
+      this.submitButton.removeAttribute('aria-busy');
+    }
+  }
+
+  onInput() {
+    if (this.isSaving) {
+      return;
+    }
+
+    this.showDefaultButtonText();
+  }
+
+  onCartUpdated(event) {
+    const detail = event.detail || {};
+    const sections = detail.sections || {};
+    const sectionHtml = sections['cart-dialog'];
+    if (!sectionHtml) {
+      return;
+    }
+
+    const parsedHtml = new DOMParser().parseFromString(sectionHtml, 'text/html');
+    const currentNoteDetails = document.querySelector('#cart-dialog-note-details');
+    const nextNoteDetails = parsedHtml.querySelector('#cart-dialog-note-details');
+    if (!currentNoteDetails || !nextNoteDetails) {
+      return;
+    }
+
+    const shouldHide = nextNoteDetails.hasAttribute('hidden');
+    currentNoteDetails.toggleAttribute('hidden', shouldHide);
+    if (shouldHide) {
+      currentNoteDetails.removeAttribute('open');
+    }
+  }
+}
+customElements.define('cart-note', CartNote);
+
+class CartSubtotal extends HTMLElement {
+  constructor() {
+    super();
+    this.onCartUpdated = this.onCartUpdated.bind(this);
+  }
+
+  connectedCallback() {
+    document.addEventListener('cart:updated', this.onCartUpdated);
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener('cart:updated', this.onCartUpdated);
+  }
+
+  onCartUpdated(event) {
+    const detail = event.detail || {};
+    const sections = detail.sections || {};
+    const sectionHtml = sections['cart-dialog'];
+    if (!sectionHtml) {
+      return;
+    }
+
+    const parsedHtml = new DOMParser().parseFromString(sectionHtml, 'text/html');
+    const nextSubtotal = parsedHtml.querySelector('cart-subtotal');
+    if (!nextSubtotal) {
+      return;
+    }
+
+    this.innerHTML = nextSubtotal.innerHTML;
+  }
+}
+customElements.define('cart-subtotal', CartSubtotal);
+
+class CartAppliedDiscounts extends HTMLElement {
+  constructor() {
+    super();
+    this.onCartUpdated = this.onCartUpdated.bind(this);
+  }
+
+  connectedCallback() {
+    document.addEventListener('cart:updated', this.onCartUpdated);
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener('cart:updated', this.onCartUpdated);
+  }
+
+  onCartUpdated(event) {
+    const detail = event.detail || {};
+    const sections = detail.sections || {};
+    const sectionHtml = sections['cart-dialog'] || sections['cart-drawer'];
+    if (!sectionHtml) {
+      return;
+    }
+
+    const parsedHtml = new DOMParser().parseFromString(sectionHtml, 'text/html');
+    const nextAppliedDiscounts = parsedHtml.querySelector('cart-applied-discounts');
+    if (!nextAppliedDiscounts) {
+      return;
+    }
+
+    this.innerHTML = nextAppliedDiscounts.innerHTML;
+  }
+}
+customElements.define('cart-applied-discounts', CartAppliedDiscounts);
+
+function initCartCheckoutLoadingState() {
+  document.addEventListener('submit', (event) => {
+    console.log('Form submitted', event);
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement)) {
+      return;
+    }
+
+    const submitter = event.submitter;
+    if (!(submitter instanceof HTMLButtonElement)) {
+      return;
+    }
+
+    if (submitter.name !== 'checkout') {
+      return;
+    }
+
+    const dialog = form.closest('#cart-dialog');
+    if (!dialog) {
+      return;
+    }
+
+    dialog.classList.add('is-loading');
+    submitter.classList.add('is-loading');
+    submitter.setAttribute('aria-busy', 'true');
+
+    window.setTimeout(() => {
+      dialog.classList.remove('is-loading');
+      submitter.classList.remove('is-loading');
+      submitter.removeAttribute('aria-busy');
+    }, 3000);
+  });
+}
+initCartCheckoutLoadingState();
 
 // class CartError extends Error {
 //   constructor(message, context) {

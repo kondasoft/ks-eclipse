@@ -1,0 +1,38 @@
+ 
+{%- if cart.duties_included and cart.taxes_included -%}
+  {%- if shop.shipping_policy.body == blank -%}
+    {{ 'cart.taxes_shipping.duties_and_taxes_included_shipping_at_checkout_without_policy' | t }}
+  {%- else -%}
+    {{
+      'cart.taxes_shipping.duties_and_taxes_included_shipping_at_checkout_with_policy_html'
+      | t: link: shop.shipping_policy.url
+    }}
+  {%- endif -%}
+{%- elsif cart.duties_included == false and cart.taxes_included -%}
+  {%- if shop.shipping_policy.body == blank -%}
+    {{ 'cart.taxes_shipping.taxes_included_shipping_at_checkout_without_policy' | t }}
+  {%- else -%}
+    {{
+      'cart.taxes_shipping.taxes_included_shipping_at_checkout_with_policy_html'
+      | t: link: shop.shipping_policy.url
+    }}
+  {%- endif -%}
+{%- elsif cart.duties_included and cart.taxes_included == false -%}
+  {%- if shop.shipping_policy.body == blank -%}
+    {{ 'cart.taxes_shipping.duties_included_taxes_at_checkout_shipping_at_checkout_without_policy' | t }}
+  {%- else -%}
+    {{
+      'cart.taxes_shipping.duties_included_taxes_at_checkout_shipping_at_checkout_with_policy_html'
+      | t: link: shop.shipping_policy.url
+    }}
+  {%- endif -%}
+{%- elsif cart.duties_included == false and cart.taxes_included == false -%}
+  {%- if shop.shipping_policy.body == blank -%}
+    {{ 'cart.taxes_shipping.taxes_at_checkout_shipping_at_checkout_without_policy' | t }}
+  {%- else -%}
+    {{
+      'cart.taxes_shipping.taxes_at_checkout_shipping_at_checkout_with_policy_html'
+      | t: link: shop.shipping_policy.url
+    }}
+  {%- endif -%}
+{%- endif -%}

@@ -235,6 +235,7 @@ button:disabled,
 }
 
 .btn-primary:focus-visible {
+  background-color: rgb(var(--color-btn-primary-background) / max(calc(var(--color-btn-primary-background-opacity) * .85), .05));
   outline-color: rgb(var(--color-btn-primary-border));
 }
 
@@ -255,6 +256,7 @@ button:disabled,
 }
 
 .btn-secondary:focus-visible {
+  background-color: rgb(var(--color-btn-secondary-background) / max(calc(var(--color-btn-secondary-background-opacity) * .85), .05));
   outline-color: rgb(var(--color-btn-secondary-border));
 }
 
@@ -318,9 +320,10 @@ button:disabled,
 
 .btn.is-loading {
   position: relative;
+  pointer-events: none;
 }
 
-.btn.is-loading span {
+.btn.is-loading > * {
   opacity: 0;
 }
 
