@@ -38,7 +38,7 @@
             </li>
           {% endfor %}
         </ul>
-        {% render 'pagination', paginate: paginate, infinite: section.settings.infinite_pagination %}
+        {% render 'pagination', paginate: paginate %}
       {% endpaginate %}
     {% endif %}
   </div>
@@ -112,7 +112,7 @@
     },
      {
       "type": "header",
-      "content": "Product card",
+      "content": "Product card"
     },
     {
       "type": "text_alignment",
@@ -131,7 +131,7 @@
         { "value": "fs-xl", "label": "Extra Large" }
 
       ],
-      "default": "fs-md",
+      "default": "fs-md"
     },
     {
       "type": "checkbox",
@@ -146,14 +146,20 @@
       "default": true
     },
     {
+      "type": "checkbox",
+      "id": "card_show_form",
+      "label": "Show \"Add to cart\" form",
+      "default": true
+    },
+    {
       "type": "select",
       "id": "card_atc_btn_style",
       "label": "\"Add to cart\" button style",
       "options": [
         { "value": "btn-primary", "label": "Primary" },
-        { "value": "btn-secondary", "label": "Secondary" },
+        { "value": "btn-secondary", "label": "Secondary" }
       ],
-      "default": "btn-secondary",
+      "default": "btn-secondary"
     },
     {
       "type": "header",
@@ -176,7 +182,7 @@
       "max": 50,
       "step": 1,
       "default": 0
-    },
+    }
   ],
   "enabled_on": {
     "templates": ["collection"]

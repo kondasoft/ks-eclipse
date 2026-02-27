@@ -47,8 +47,12 @@
             {% else %}
               <li>
                 <a
+                  role="link"
                   aria-disabled="true"
-                  aria-current="{% if paginate.current_page == part.title %}page{% endif %}"
+                  tabindex="-1"
+                  {% if paginate.current_page == part.title %}
+                    aria-current="page"
+                  {% endif %}
                 >
                   {{ part.title }}
                 </a>
@@ -59,7 +63,7 @@
             <li>
               <a
                 href="{{ paginate.next.url }}{{ anchor }}"
-                aria-label="{{ paginate.next.title }}"
+                aria-label="{{ 'general.pagination.next' | t }}"
                 data-new-page="{{ paginate.current_page | plus: 1 }}"
               >
                 <span aria-hidden="true">&raquo;</span>

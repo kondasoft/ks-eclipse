@@ -63,62 +63,64 @@
       {% endif %}
     </p>
   </div>
-  <product-card-form class="product-card-form">
-    {% form 'product', product %}
-      {% if product.has_only_default_variant %}
-        <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
-      {% else %}
-        <div class="input-wrapper">
-          <select
-            name="id"
-            class="input input-sm"
-            aria-label="{{ 'product.select_variant' | t }}"
-            {% unless product.available %}
-              disabled
-            {% endunless %}
-          >
-            {% if product.available == false %}
-              <option value="">{{ 'product.sold_out' | t }}</option>
-            {% else %}
-              {% for variant in product.variants %}
-                <option
-                  value="{{ variant.id }}"
-                  {%- if variant.image -%}
-                    data-variant-image-400="{{ variant.image | image_url: width: 400 }}"
-                    data-variant-image-800="{{ variant.image | image_url: width: 800 }}"
-                  {%- endif -%}
-                  {% unless variant.available %}
-                    disabled
-                  {% endunless %}
-                >
-                  {{ variant.title }}
-                  {% if product.price_varies %}
-                    - {{ variant.price | money }}
-                  {% endif %}
-                  {% unless variant.available %}({{ 'product.sold_out' | t }}){% endunless %}
-                </option>
-              {% endfor %}
-            {% endif %}
-          </select>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </div>
-      {% endif %}
-      <button
-        class="btn btn-sm btn-full {{ section.settings.card_atc_btn_style }}"
-        type="submit"
-        name="add"
-        {% unless product.available %}
-          disabled
-        {% endunless %}
-      >
-        {% if product.available %}
-          <span>{{ 'product.add_to_cart' | t }}</span>
+  {% if section.settings.card_show_form %}
+    <product-card-form class="product-card-form">
+      {% form 'product', product %}
+        {% if product.has_only_default_variant %}
+          <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
         {% else %}
-          <span>{{ 'product.sold_out' | t }}</span>
+          <div class="input-wrapper">
+            <select
+              name="id"
+              class="input input-sm"
+              aria-label="{{ 'product.select_variant' | t }}"
+              {% unless product.available %}
+                disabled
+              {% endunless %}
+            >
+              {% if product.available == false %}
+                <option value="">{{ 'product.sold_out' | t }}</option>
+              {% else %}
+                {% for variant in product.variants %}
+                  <option
+                    value="{{ variant.id }}"
+                    {%- if variant.image -%}
+                      data-variant-image-400="{{ variant.image | image_url: width: 400 }}"
+                      data-variant-image-800="{{ variant.image | image_url: width: 800 }}"
+                    {%- endif -%}
+                    {% unless variant.available %}
+                      disabled
+                    {% endunless %}
+                  >
+                    {{ variant.title }}
+                    {% if product.price_varies %}
+                      - {{ variant.price | money }}
+                    {% endif %}
+                    {% unless variant.available %}({{ 'product.sold_out' | t }}){% endunless %}
+                  </option>
+                {% endfor %}
+              {% endif %}
+            </select>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
         {% endif %}
-      </button>
-    {% endform %}
-  </product-card-form>
+        <button
+          class="btn btn-sm btn-full {{ section.settings.card_atc_btn_style }}"
+          type="submit"
+          name="add"
+          {% unless product.available %}
+            disabled
+          {% endunless %}
+        >
+          {% if product.available %}
+            <span>{{ 'product.add_to_cart' | t }}</span>
+          {% else %}
+            <span>{{ 'product.sold_out' | t }}</span>
+          {% endif %}
+        </button>
+      {% endform %}
+    </product-card-form>
+  {% endif %}
 </div>
