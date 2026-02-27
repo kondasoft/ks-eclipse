@@ -3,7 +3,8 @@
   lang="{{ request.locale.iso_code }}"
   data-theme="{{ settings.default_theme }}"
   data-default-theme="{{ settings.default_theme }}"
-  data-design-mode="{{ request.design_mode }}">
+  data-design-mode="{{ request.design_mode }}"
+  data-cart-item-count="{{ cart.item_count }}">
   <head>
     {% render 'theme-head' %}
     {{ content_for_header }}

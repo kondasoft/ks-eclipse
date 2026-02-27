@@ -87,13 +87,13 @@ a#header-logo {
   animation: count-badge 0.3s ease-out;
 }
 
-#header .count-badge[data-count="0"] {
-  opacity: 0 !important;
-}
-
 @keyframes count-badge {
   from { transform: scale(0); opacity: 0; }
   to { transform: none; opacity: 1; }
+}
+
+html[data-cart-item-count="0"] #header .count-badge[data-cart-badge] {
+  opacity: 0 !important;
 }
 
 

@@ -476,47 +476,40 @@ class CartNote extends HTMLElement {
 }
 customElements.define('cart-note', CartNote);
 
-function updateCartElements() {
-  document.addEventListener('cart:updated', (event) => {
-    const sections = event.detail?.sections || {};
+document.addEventListener('cart:updated', (event) => {
+  const sections = event.detail?.sections || {};
 
-    const elementConfigs = [
-      { selector: '[data-cart-badge]', section: 'cart-badge', querySelector: 'cart-badge' },
-      { selector: '[data-cart-subtotal]', section: 'cart-dialog', querySelector: 'cart-subtotal' },
-      { selector: '[data-cart-applied-discounts]', section: 'cart-dialog', querySelector: 'cart-applied-discounts' },
-    ];
+  const elementConfigs = [
+    { selector: '[data-cart-badge]', section: 'cart-badge' },
+    { selector: '[data-cart-items]', section: 'cart-dialog' },
+    { selector: '[data-cart-subtotal]', section: 'cart-dialog' },
+    { selector: '[data-cart-applied-discounts]', section: 'cart-dialog' },
+  ];
 
-    elementConfigs.forEach(({ selector, section, querySelector }) => {
-      const sectionHtml = sections[section];
-      if (!sectionHtml) return;
+  elementConfigs.forEach(({ selector, section }) => {
+    const sectionHtml = sections[section];
+    if (!sectionHtml) return;
 
-      const nextElement = new DOMParser().parseFromString(sectionHtml, 'text/html').querySelector(querySelector);
-      if (!nextElement) return;
+    const nextElement = new DOMParser().parseFromString(sectionHtml, 'text/html').querySelector(selector);
+    if (!nextElement) return;
 
-      document.querySelectorAll(selector).forEach((element) => {
-        element.innerHTML = nextElement.innerHTML;
-      });
+    document.querySelectorAll(selector).forEach((element) => {
+      element.innerHTML = nextElement.innerHTML;
     });
-
-    // Update cart items container if it exists
-    const cartItemsHtml = sections['cart-dialog'];
-    if (cartItemsHtml) {
-      const nextItems = new DOMParser().parseFromString(cartItemsHtml, 'text/html').querySelector('[data-cart-items]');
-      if (nextItems) {
-        document.querySelectorAll('[data-cart-items]').forEach((element) => {
-          element.innerHTML = nextItems.innerHTML;
-          // Sync data-cart-empty attribute
-          const nextDialog = new DOMParser().parseFromString(cartItemsHtml, 'text/html').querySelector('#cart-dialog');
-          const currentDialog = element.closest('#cart-dialog');
-          if (currentDialog && nextDialog?.hasAttribute('data-cart-empty')) {
-            currentDialog.setAttribute('data-cart-empty', nextDialog.getAttribute('data-cart-empty'));
-          }
-        });
-      }
-    }
   });
-}
-updateCartElements();
+
+  const cartDialogHtml = sections['cart-dialog'];
+  
+  if (cartDialogHtml) {
+    const nextDialog = new DOMParser().parseFromString(cartDialogHtml, 'text/html').querySelector('#cart-dialog');
+    const itemCount = nextDialog?.getAttribute('data-item-count');
+    
+    if (itemCount !== null) {
+      document.querySelector('#cart-dialog')?.setAttribute('data-item-count', itemCount);
+      document.documentElement.setAttribute('data-cart-item-count', itemCount);
+    }
+  }
+});
 
 function initCartCheckoutLoadingState() {
   document.addEventListener('submit', (event) => {

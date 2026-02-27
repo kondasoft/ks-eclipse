@@ -482,13 +482,6 @@ theme-color-toggle label:has(input:focus-visible) {
   transition: opacity .2s ease-out;
 }
 
-#cart-dialog[data-cart-empty="true"] .dialog-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
 #cart-dialog.is-loading .dialog-body {
   opacity: 0.5;
   pointer-events: none;
@@ -497,6 +490,15 @@ theme-color-toggle label:has(input:focus-visible) {
 #cart-dialog .cart-items {
   display: flex;
   margin-bottom: 1.75rem;
+}
+
+html[data-cart-item-count="0"] #cart-dialog .cart-items {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin: 0;
 }
 
 #cart-dialog .cart-empty-wrapper {
@@ -620,7 +622,7 @@ theme-color-toggle label:has(input:focus-visible) {
   display: block;
 }
 
-#cart-dialog[data-cart-empty="true"] .cart-note {
+html[data-cart-item-count="0"] #cart-dialog .cart-note {
   display: none;
 }
 
@@ -630,7 +632,7 @@ theme-color-toggle label:has(input:focus-visible) {
   gap: .5rem;
 }
 
-#cart-dialog[data-cart-empty="true"] .dialog-footer {
+html[data-cart-item-count="0"] #cart-dialog .dialog-footer {
   display: none;
 }
 

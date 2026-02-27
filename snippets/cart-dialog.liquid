@@ -1,8 +1,8 @@
 <theme-dialog>
   <dialog 
     id="cart-dialog" 
-    class="drawer drawer-right dialog" 
-    data-cart-empty="{{ cart.empty? }}"
+    class="drawer drawer-right dialog"
+    data-item-count="{{ cart.item_count }}"
     aria-labelledby="cart-dialog-title">
     <div class="dialog-header">
       <h2 id="cart-dialog-title" class="dialog-title">
@@ -15,7 +15,9 @@
       </button>
     </div>
     <div class="dialog-body">
-      <div class="cart-items">
+      <div 
+        class="cart-items"
+        data-cart-items>
         {% if cart.empty? %}
           <div class="cart-empty-wrapper">
             {% if settings.cart_icon == 'cart' %}
