@@ -84,11 +84,7 @@ class ProductForm extends HTMLElement {
       const result = await ThemeCart.add(formData, { returnFocusTarget: submitter });
       console.log('Product added to cart', result);
     } catch (error) {
-      ThemeNotification.show(
-        window.theme.strings.product.cartErrorTitle,
-        error.message,
-        'error'
-      );
+      console.error('Error adding product to cart', error);
     } finally {
       this.submitButton.disabled = false;
       this.submitButton.removeAttribute('aria-busy');

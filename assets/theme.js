@@ -485,69 +485,6 @@ class ThemeTooltip {
 }
 ThemeTooltip.init();
 
-
-/*
-  Notification
-*/
-class ThemeNotification extends HTMLElement {
-  constructor() {
-    super();
-    this.closeButton = null;
-    this.titleElement = null;
-    this.contentElement = null;
-    this.close = this.close.bind(this);
-  }
-
-  connectedCallback() {
-    this.closeButton = this.querySelector('[data-theme-notification-close]');
-    this.titleElement = this.querySelector('[data-theme-notification-title]');
-    this.contentElement = this.querySelector('.theme-notification-content');
-    this.closeButton.addEventListener('click', this.close);
-  }
-
-  disconnectedCallback() {
-    this.closeButton.removeEventListener('click', this.close);
-  }
-
-  close() {
-    this.classList.remove('alert-success', 'alert-error', 'alert-warning');
-    this.hidden = true;
-  }
-
-  show(title, description, type) {
-    this.classList.remove('alert-success', 'alert-error', 'alert-warning');
-
-    if (this.titleElement) {
-      this.titleElement.textContent = title || '';
-    }
-
-    if (this.contentElement) {
-      this.contentElement.textContent = description || '';
-    }
-
-    if (type) {
-      this.classList.add('alert-' + type);
-    }
-
-    this.hidden = false;
-
-    setTimeout(() => {
-      this.close();
-    }, 5000);
-  }
-
-  static show(title, description, type) {
-    var notification = document.querySelector('theme-notification');
-    if (!notification) {
-      return;
-    }
-
-    notification.show(title, description, type);
-  }
-}
-customElements.define('theme-notification', ThemeNotification);
-
-
 /*
   Dialog
 */

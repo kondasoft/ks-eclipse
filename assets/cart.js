@@ -73,7 +73,6 @@ class ThemeCart {
       const response = await fetch(url, options);
 
       if (!response.ok) {
-        console.error(`Cart ${action} request failed with status ${response.status}`, response);
         const errorText = await response.text();
         let message;
 
@@ -84,17 +83,7 @@ class ThemeCart {
           message = errorText || 'Unable to update cart';
         }
 
-        const error = new Error(message);
-        
-        document.dispatchEvent(
-          new CustomEvent('cart:error', {
-            detail: {
-              action,
-              error
-            }
-          })
-        );
-        throw error;
+        throw new Error(message);
       }
 
       const result = await response.json();
@@ -110,6 +99,19 @@ class ThemeCart {
       );
 
       return result;
+    } catch (error) {
+      const cartError = error instanceof Error ? error : new Error('Unable to update cart');
+      
+      document.dispatchEvent(
+        new CustomEvent('cart:error', {
+          detail: {
+            action,
+            error: cartError
+          }
+        })
+      );
+      
+      throw cartError;
     } finally {
       ThemeCart.setLoading(false);
     }
@@ -123,13 +125,15 @@ class ThemeCart {
     const config = options || {};
     const body = ThemeCart.buildRequestBody(payload);
 
-    const result = await ThemeCart.mutate('add', {
-      method: 'POST',
-      body
-    });
-
-    ThemeCart.openDrawer(config.returnFocusTarget);
-    return result;
+    try {
+      const result = await ThemeCart.mutate('add', {
+        method: 'POST',
+        body
+      });
+      return result;
+    } finally {
+      ThemeCart.openDrawer(config.returnFocusTarget);
+    }
   }
 
   static async update(payload) {
@@ -160,6 +164,101 @@ class ThemeCart {
     });
   }
 }
+
+class CartAlert extends HTMLElement {
+  constructor() {
+    super();
+    this.messageElement = null;
+    this.messageTextElement = null;
+    this.a11yElement = null;
+    this.hideTimeoutId = null;
+    this.boundHandlers = {
+      cartError: (event) => this.handleCartError(event),
+      cartUpdated: (event) => this.handleCartUpdated(event)
+    };
+  }
+
+  connectedCallback() {
+    this.messageElement = this.querySelector('.cart-alert-message');
+    this.messageTextElement = this.messageElement?.querySelector('span');
+    this.a11yElement = this.querySelector('.cart-alert-a11y');
+
+    document.addEventListener('cart:error', this.boundHandlers.cartError);
+    document.addEventListener('cart:updated', this.boundHandlers.cartUpdated);
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener('cart:error', this.boundHandlers.cartError);
+    document.removeEventListener('cart:updated', this.boundHandlers.cartUpdated);
+    this.clearHideTimeout();
+  }
+
+  handleCartError(event) {
+    const message = event.detail?.error?.message;
+    if (!message) return;
+
+    this.show(message);
+  }
+
+  handleCartUpdated() {
+    this.hide();
+    
+    const message = window.theme?.strings?.accessibility?.cart_updated;
+    if (message && this.a11yElement) {
+      this.a11yElement.textContent = message;
+      
+      window.setTimeout(() => {
+        if (this.a11yElement) {
+          this.a11yElement.textContent = '';
+        }
+      }, 3000);
+    }
+  }
+
+  show(message) {
+    this.clearHideTimeout();
+
+    if (this.messageTextElement) {
+      this.messageTextElement.textContent = message;
+    }
+    
+    if (this.messageElement) {
+      this.messageElement.removeAttribute('hidden');
+    }
+
+    if (this.a11yElement) {
+      this.a11yElement.textContent = message;
+    }
+
+    this.hideTimeoutId = window.setTimeout(() => {
+      this.hide();
+    }, 5000);
+  }
+
+  hide() {
+    this.clearHideTimeout();
+
+    if (this.messageTextElement) {
+      this.messageTextElement.textContent = '';
+    }
+    
+    if (this.messageElement) {
+      this.messageElement.setAttribute('hidden', '');
+    }
+
+    if (this.a11yElement) {
+      this.a11yElement.textContent = '';
+    }
+  }
+
+  clearHideTimeout() {
+    if (this.hideTimeoutId) {
+      window.clearTimeout(this.hideTimeoutId);
+      this.hideTimeoutId = null;
+    }
+  }
+}
+customElements.define('cart-alert', CartAlert);
 
 class CartItemRemove extends HTMLElement {
   constructor() {
@@ -281,7 +380,7 @@ class CartItemQtySwitcher extends HTMLElement {
     }
 
     window.requestAnimationFrame(() => {
-      const switchers = Array.from(document.querySelectorAll('cart-items cart-item-qty-switcher'));
+      const switchers = Array.from(document.querySelectorAll('[data-cart-items] cart-item-qty-switcher'));
       const nextSwitcher = switchers[Math.min(activeSwitcherIndex, switchers.length - 1)];
       nextSwitcher?.querySelector('input[name="updates[]"]')?.focus({ preventScroll: true });
     });
@@ -378,7 +477,7 @@ class CartItemQtySwitcher extends HTMLElement {
   }
 
   handleFocusIn() {
-    const cartItems = this.closest('cart-items');
+    const cartItems = this.closest('[data-cart-items]');
     if (!cartItems) {
       CartItemQtySwitcher.activeSwitcherIndex = null;
       return;

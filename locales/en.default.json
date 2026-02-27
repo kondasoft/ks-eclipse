@@ -11,7 +11,8 @@
     "previous_media": "Previous media",
     "next_media": "Next media",
     "go_to_media": "Go to media {{ index }}",
-    "close": "Close"
+    "close": "Close",
+    "cart_updated": "Cart updated.",
   },
   "general": {
     "menu": "Menu",
