@@ -642,3 +642,76 @@ html[data-cart-item-count="0"] #cart-dialog .dialog-footer {
   justify-content: center;
   margin: 1rem 0 -.25rem;
 }
+
+
+/*
+  Pagination
+*/
+.pagination-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+}
+
+.pagination-counter {
+  margin: 0 0 0.75rem;
+}
+
+.pagination-line {
+  max-width: min(400px, 75vw);
+  border-radius: 50rem;
+  background-color: rgb(var(--color-accent) / 0.15);
+  height: 2px;
+  width: 100%;
+  display: inline-flex;
+  margin: 0 0 1.25rem;
+}
+
+.pagination-line span {
+  background-color: rgb(var(--color-accent) / 1);
+  display: block;
+  height: 2px;
+  width: 100%;
+  border-radius: 50rem;
+}
+
+ul.pagination {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+ul.pagination li a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--border-radius);
+  background-color: transparent;
+  border: 1px solid rgb(var(--color-foreground) / var(--border-opacity));
+  color: rgb(var(--color-foreground));
+  text-decoration: none;
+  outline-offset: 0;
+  transition: all 0.2s ease-out;
+}
+
+ul.pagination li a:hover {
+  color: rgb(var(--color-foreground));
+  background-color: rgb(var(--color-foreground) / 0.05);
+  border-color: rgb(var(--color-foreground) / calc(var(--border-opacity) * 2));
+}
+
+ul.pagination li a:active {
+  background-color: rgb(var(--color-foreground) / 0.1);
+  color: rgb(var(--color-foreground));
+}
+
+ul.pagination li a[aria-current="page"] {
+  background-color: rgb(var(--color-accent) / 0.1);
+  color: rgb(var(--color-accent));
+  border-color: rgb(var(--color-accent) / 1);
+}

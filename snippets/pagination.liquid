@@ -1,0 +1,73 @@
+ 
+{% liquid
+  assign page_start = paginate.current_offset | plus: 1
+
+  if paginate.current_page < paginate.pages
+    assign page_end = paginate.page_size | plus: paginate.current_offset
+  else
+    assign last_page_diff = paginate.page_size | plus: paginate.current_offset | minus: paginate.items
+    assign page_end = paginate.page_size | plus: paginate.current_offset | minus: last_page_diff
+  endif
+
+  assign pagination_progress = page_end | times: 1.0 | divided_by: paginate.items | times: 100 | round
+%}
+
+{% if paginate.items > 0 %}
+  <div class="pagination-wrapper">
+    <p class="pagination-counter fs-sm">
+      {{ 'general.pagination.page_of' | t: page_start: page_start, page_end: page_end, total: paginate.items }}
+    </p>
+    <div class="pagination-line" aria-hidden="true">
+      <span style="width: {{ pagination_progress }}%"></span>
+    </div>
+    {% if paginate.pages > 1 %}
+      <nav aria-label="{{ 'general.pagination.title' | t }}">
+        <ul class="pagination">
+          {% if paginate.previous %}
+            <li>
+              <a
+                href="{{ paginate.previous.url }}{{ anchor }}"
+                aria-label="{{ 'general.pagination.previous' | t }}"
+                data-new-page="{{ paginate.current_page | minus: 1 }}"
+              >
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+          {% endif %}
+          {% for part in paginate.parts -%}
+            {% if part.is_link %}
+              <li>
+                <a
+                  href="{{ part.url }}{{ anchor }}"
+                  data-new-page="{{ part.title }}"
+                >
+                  {{ part.title }}
+                </a>
+              </li>
+            {% else %}
+              <li>
+                <a
+                  aria-disabled="true"
+                  aria-current="{% if paginate.current_page == part.title %}page{% endif %}"
+                >
+                  {{ part.title }}
+                </a>
+              </li>
+            {% endif %}
+          {% endfor %}
+          {% if paginate.next %}
+            <li>
+              <a
+                href="{{ paginate.next.url }}{{ anchor }}"
+                aria-label="{{ paginate.next.title }}"
+                data-new-page="{{ paginate.current_page | plus: 1 }}"
+              >
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+  </div>
+{% endif %}

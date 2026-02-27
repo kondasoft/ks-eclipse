@@ -55,13 +55,11 @@
                 <div class="cart-item-left">
                   <a href="{{ line_item.url }}" tabindex="-1">
                     <div class="img-wrapper">
-                      <img 
-                        src="{{ line_item.image | image_url: width: 600 }}" 
+                      <img
+                        src="{{ line_item.image | image_url: width: 400 }}"
                         alt="{{ line_item.image.alt | escape }}"
-                        class="img-fluid"
                         width="{{ line_item.image.width }}"
                         height="{{ line_item.image.height }}"
-                        loading="lazy"
                       >
                     </div>
                   </a>
@@ -299,7 +297,7 @@
         <button 
           type="submit" 
           name="checkout" 
-          class="btn btn-primary btn-full btn-with-icon fs-lg">
+          class="btn btn-primary btn-full btn-with-icon btn-lg">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
           </svg>

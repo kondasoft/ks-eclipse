@@ -877,3 +877,97 @@ function initMediaOnView() {
 }
 
 initMediaOnView();
+
+/*
+  Product card form
+*/
+class ProductCardForm extends HTMLElement {
+  constructor() {
+    super();
+    this.form = null;
+    this.submitButton = null;
+    this.variantSelect = null;
+    this.cardImage = null;
+    this.defaultImageSrc = '';
+    this.defaultImageSrcset = '';
+    this.boundHandlers = {
+      submit: (e) => this.handleSubmit(e),
+      variantChange: () => this.handleVariantChange()
+    };
+  }
+
+  connectedCallback() {
+    this.form = this.querySelector('form');
+    if (!this.form) {
+      return;
+    }
+
+    this.submitButton = this.form.querySelector('button[type="submit"]');
+    this.variantSelect = this.form.querySelector('select[name="id"]');
+    this.cardImage = this.closest('.product-card')?.querySelector('.product-card-img') || null;
+
+    if (this.cardImage) {
+      this.defaultImageSrc = this.cardImage.getAttribute('src') || '';
+      this.defaultImageSrcset = this.cardImage.getAttribute('srcset') || '';
+    }
+
+    this.form.addEventListener('submit', this.boundHandlers.submit);
+
+    if (this.variantSelect) {
+      this.variantSelect.addEventListener('change', this.boundHandlers.variantChange);
+      this.handleVariantChange();
+    }
+  }
+
+  disconnectedCallback() {
+    this.form?.removeEventListener('submit', this.boundHandlers.submit);
+    this.variantSelect?.removeEventListener('change', this.boundHandlers.variantChange);
+  }
+
+  handleVariantChange() {
+    if (!this.variantSelect || !this.cardImage) {
+      return;
+    }
+
+    const selectedOption = this.variantSelect.options[this.variantSelect.selectedIndex];
+    const src400 = selectedOption?.getAttribute('data-variant-image-400')?.trim() || selectedOption?.dataset?.variantImage400?.trim() || '';
+    const src800 = selectedOption?.getAttribute('data-variant-image-800')?.trim() || selectedOption?.dataset?.variantImage800?.trim() || '';
+
+    if (!src400 && !src800) {
+      this.cardImage.setAttribute('src', this.defaultImageSrc);
+      this.cardImage.setAttribute('srcset', this.defaultImageSrcset);
+      return;
+    }
+
+    const nextSrc = src800 || src400;
+    const nextSrcset = [
+      src400 ? `${src400} 400w` : null,
+      src800 ? `${src800} 800w` : null
+    ].filter(Boolean).join(', ');
+
+    this.cardImage.setAttribute('src', nextSrc);
+    this.cardImage.setAttribute('srcset', nextSrcset);
+  }
+
+  async handleSubmit(event) {
+    event.preventDefault();
+    const submitter = event.submitter instanceof HTMLElement ? event.submitter : this.submitButton;
+
+    this.submitButton.disabled = true;
+    this.submitButton.setAttribute('aria-busy', 'true');
+    this.submitButton.classList.add('is-loading');
+
+    try {
+      const formData = new FormData(this.form);
+      const result = await ThemeCart.add(formData, { returnFocusTarget: submitter });
+      console.log('Product added to cart', result);
+    } catch (error) {
+      console.error('Error adding product to cart', error);
+    } finally {
+      this.submitButton.disabled = false;
+      this.submitButton.removeAttribute('aria-busy');
+      this.submitButton.classList.remove('is-loading');
+    }
+  }
+}
+customElements.define('product-card-form', ProductCardForm);

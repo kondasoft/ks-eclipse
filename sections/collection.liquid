@@ -1,0 +1,191 @@
+ {% liquid
+  assign limit = section.settings.limit
+  if shop.domain contains 'ks-'
+    assign limit = 12
+  endif
+%}
+
+<div
+  id="collection-{{ collection.id }}"
+  class="collection section-styling section-spacing"
+  style="
+    --pt: {{ section.settings.pt }};
+    --pb: {{ section.settings.pb }};
+  "
+  {% if section.settings.custom_color_schemes %}
+    data-light-color-scheme="{{ section.settings.light_color_scheme }}"
+    data-dark-color-scheme="{{ section.settings.dark_color_scheme }}"
+  {% endif %}
+>
+  <div class="container">
+    {% if collection.products.size == 0 %}
+      <div class="collection-grid-empty alert">
+        {{ 'collection.empty_html' | t }}
+      </div>
+    {% else %}
+      {% paginate collection.products by limit %}
+        <ul
+          class="collection-grid"
+          style="
+            --mobile-cols: {{ section.settings.mobile_cols }};
+            --desktop-cols: {{ section.settings.desktop_cols }};
+          "
+          aria-labelledby="collection-heading-{{ collection.id }}"
+        >
+          {% for product in collection.products %}
+            <li class="collection-item">
+              {% render 'product-card', product: product %}
+            </li>
+          {% endfor %}
+        </ul>
+        {% render 'pagination', paginate: paginate, infinite: section.settings.infinite_pagination %}
+      {% endpaginate %}
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection",
+  "tag": "section",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_schemes",
+      "label": "Custom color schemes",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "light_color_scheme",
+      "label": "Light color scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "dark_color_scheme",
+      "label": "Dark color scheme",
+      "default": "scheme-3",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "header",
+      "content": "General"
+    },
+     {
+      "type": "range",
+      "id": "limit",
+      "label": "Products per page",
+      "min": 2,
+      "max": 50,
+      "default": 40,
+      "step": 1
+    },  
+    {
+      "type": "header",
+      "content": "Columns",
+      "info": "Customize the number of products displayed per row on mobile and desktop devices."
+    },
+    {
+      "type": "range",
+      "id": "mobile_cols",
+      "label": "Mobile columns",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "desktop_cols",
+      "label": "Desktop columns",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+     {
+      "type": "header",
+      "content": "Product card",
+    },
+    {
+      "type": "text_alignment",
+      "id": "card_text_alignment",
+      "label": "Text alignment",
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "card_heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "fs-sm", "label": "Small" },
+        { "value": "fs-md", "label": "Medium" },
+        { "value": "fs-lg", "label": "Large" },
+        { "value": "fs-xl", "label": "Extra Large" }
+
+      ],
+      "default": "fs-md",
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_vendor",
+      "label": "Show vendor",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_rating",
+      "label": "Show rating",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "card_atc_btn_style",
+      "label": "\"Add to cart\" button style",
+      "options": [
+        { "value": "btn-primary", "label": "Primary" },
+        { "value": "btn-secondary", "label": "Secondary" },
+      ],
+      "default": "btn-secondary",
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range", 
+      "id": "pt",
+      "label": "Top",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "pb",
+      "label": "Bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 0
+    },
+  ],
+  "enabled_on": {
+    "templates": ["collection"]
+  },
+  "presets": [
+    {
+      "name": "Collection",
+      "category": "Collection"
+    }
+  ]
+}
+{% endschema %}

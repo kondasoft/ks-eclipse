@@ -84,6 +84,9 @@ body {
 /*
   Utility classes
 */
+.fs-xs {
+  font-size: .75em;
+}
 .fs-sm {
   font-size: .875em;
 }
@@ -243,6 +246,7 @@ button:disabled,
   background-color: rgb(var(--color-btn-secondary-background) / var(--color-btn-secondary-background-opacity));
   border: 1px solid rgb(var(--color-btn-secondary-border));
   color: rgb(var(--color-btn-secondary-foreground));
+  outline-offset: 0;
 }
 
 .btn-secondary:hover {
@@ -260,12 +264,12 @@ button:disabled,
   outline-color: rgb(var(--color-btn-secondary-border));
 }
 
-.btn.fs-sm {
+.btn.btn-sm {
   padding: .4em .75em;
   font-size: .875em;
 }
 
-.btn.fs-lg {
+.btn.btn-lg {
   padding: .6em 1.25em;
   font-size: 1.125em;
 }
@@ -387,12 +391,12 @@ button:disabled,
 }
 
 .input.input-sm {
-  padding: .25em .75em;
+  padding: .4em .75em;
   font-size: .875em;
 }
 
 .input.input-lg {
-  padding: .75em 1.25em;
+  padding: .6em 1.25em;
   font-size: 1.125em;
 }
 
@@ -591,6 +595,11 @@ input[type="file"]::file-selector-button:hover {
 
 .alert p:last-child {
   margin-bottom: 0;
+}
+
+.alert a[href] {
+  color: currentColor;
+  text-decoration: underline;
 }
 
 .alert-success {
@@ -1039,4 +1048,99 @@ shopify-accelerated-checkout {
 
 .product-trust-icons-item .rte {
   margin: 0;
+}
+
+
+/*
+  Product card
+*/
+.product-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  height: calc(100% - 1rem);
+}
+
+.product-card .img-wrapper {
+  margin-bottom: .6rem;
+}
+
+.product-card .img-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--border-radius);
+  transition: all .2s ease-out;
+}
+
+.product-card:hover .img-wrapper img {
+  opacity: .85;
+}
+
+.product-card-inner {
+  flex-grow: 1;
+}
+
+.product-card .heading a {
+  text-decoration: none;
+}
+
+.product-card .heading a:focus-visible {
+  outline: none;
+}
+
+.product-card .heading a::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--border-radius);
+  outline: 2px solid transparent;
+  outline-offset: 0.25rem;
+  transition: all 0.2s ease-out;
+  z-index: 1;
+}
+
+.product-card .heading a:focus-visible::after {
+  outline-color: currentColor;
+}
+
+.product-card-vendor {
+  opacity: .75;
+  text-transform: uppercase;
+  letter-spacing: calc(var(--letter-spacing) * 2);
+  margin: 0 0 .25em;
+}
+
+.product-card-rating .product-rating-badge {
+  display: inline-flex;
+  margin-bottom: .375em;
+}
+
+.product-card .price {
+  display: inline-flex;
+  gap: .5rem;
+  margin: 0;
+}
+
+.product-card .price-compare {
+  opacity: .5;
+}
+
+.product-card-form {
+  display: block;
+  margin: 1rem 0 0;
+  position: relative;
+  z-index: 1;
+}
+
+.product-card-form form {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
 }

@@ -45,9 +45,37 @@
       "home": "Home",
       "collections": "Collections"
     },
+    "pagination": {
+      "title": "Pagination",
+      "previous": "Previous",
+      "next": "Next",
+      "page_of": "{{ page_start }} - {{ page_end }} of {{ total }} items",
+    },
+  },
+  "collection": {
+    "empty_html": "No products found, please adjust your filters or <a href=\"\/collections\/all\">browse all products<\/a>.",
+    "sort_by": "Sort by",
+    "count_products": {
+      "one": "{{ count }} product",
+      "other": "{{ count }} products"
+    },
+    "filters": {
+      "btn_text": "Filters",
+      "title": "Filters",
+      "reset": "Reset",
+      "from": "From",
+      "to": "To",
+      "view_more": "View more",
+      "remove_filter": "Remove filter",
+      "remove_all": "Remove all",
+      "show_all": "Show all",
+      "view_results": {
+        "one": "View {{ count }} product",
+        "other": "View {{ count }} products"
+      }
+    }
   },
   "product": {
-    
     "sold_out": "Sold out",
     "add_to_cart": "Add to cart",
     "buy_it_now": "Buy it now",

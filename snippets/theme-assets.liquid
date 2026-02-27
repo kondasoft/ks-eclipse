@@ -197,7 +197,10 @@
 <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}">
 <link rel="stylesheet" href="{{ 'sections.css' | asset_url }}">
 
-{% if template.name == 'product' %}
+{% if template.name == 'collection' %}
+  <link rel="stylesheet" href="{{ 'collection.css' | asset_url }}">
+  <script src="{{ 'collection.js' | asset_url }}" defer></script>
+{% elsif template.name == 'product' %}
   <link rel="stylesheet" href="{{ 'product.css' | asset_url }}">
   <script src="{{ 'product.js' | asset_url }}" defer></script>
 {% endif %}

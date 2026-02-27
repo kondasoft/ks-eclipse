@@ -1,0 +1,124 @@
+<div class="product-card {{ section.settings.card_text_alignment | prepend: 'text-' }}">
+  <div class="img-wrapper">
+    <img
+      src="{{ product.featured_image | image_url: width: 800 }}"
+      srcset="
+        {{ product.featured_image | image_url: width: 400 }} 400w,
+        {{ product.featured_image | image_url: width: 800 }} 800w
+      "      
+      sizes="(max-width: 599px) 400px, 800px"
+      alt="{{ product.featured_image.alt | escape }}"
+      width="{{ product.featured_image.width }}"
+      height="{{ product.featured_image.height }}"
+      class="product-card-img img-fluid"
+      loading="lazy"
+    >
+  </div>
+  <div class="product-card-inner">
+    {% if section.settings.card_show_vendor %}
+      <p class="product-card-vendor fs-xs">
+        {{ product.vendor }}
+      </p>
+    {% endif %}
+    <h3 class="heading {{ section.settings.card_heading_size }}">
+      <a href="{{ product.url | within: collection }}">
+        {{ product.title }}
+      </a>
+    </h3>
+    {% if section.settings.card_show_rating %}
+      <div class="product-card-rating">
+        {% render 'product-rating-badge', product: product %}
+      </div>
+    {% endif %}
+  </div>
+  <div class="product-card-price">
+    <p class="price">
+      {% if product.compare_at_price > product.price %}
+        <s class="price-compare">
+          <span class="visually-hidden"> {{ 'product.price.regular' | t }} &nbsp; </span>
+          <span data-compare-price>{{ product.compare_at_price | money }}</span>
+        </s>
+        <span class="price-sale">
+          <span class="visually-hidden"> {{ 'product.price.sale' | t }} &nbsp; </span>
+          <span class="price-from">
+            {{ 'product.price.from' | t }}
+          </span>
+          <span data-price> {{ product.price | money }}</span>
+        </span>
+      {% else %}
+        <span class="price-regular">
+          {% if product.price_varies %}
+            <span class="price-from">
+              {{ 'product.price.from' | t }}
+            </span>
+          {% endif %}
+          <span data-price>{{ product.price | money }}</span>
+        </span>
+      {% endif %}
+      {% if product.selected_or_first_available_variant.unit_price > 0 %}
+        <span class="price-unit">
+          <span class="visually-hidden"> {{ 'product.price.unit' | t }} &nbsp; </span>
+          <span data-unit-price>({{ product.selected_or_first_available_variant.unit_price | unit_price_with_measurement: product.selected_or_first_available_variant.unit_price_measurement }})</span>
+        </span>
+      {% endif %}
+    </p>
+  </div>
+  <product-card-form class="product-card-form">
+    {% form 'product', product %}
+      {% if product.has_only_default_variant %}
+        <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
+      {% else %}
+        <div class="input-wrapper">
+          <select
+            name="id"
+            class="input input-sm"
+            aria-label="{{ 'product.select_variant' | t }}"
+            {% unless product.available %}
+              disabled
+            {% endunless %}
+          >
+            {% if product.available == false %}
+              <option value="">{{ 'product.sold_out' | t }}</option>
+            {% else %}
+              {% for variant in product.variants %}
+                <option
+                  value="{{ variant.id }}"
+                  {%- if variant.image -%}
+                    data-variant-image-400="{{ variant.image | image_url: width: 400 }}"
+                    data-variant-image-800="{{ variant.image | image_url: width: 800 }}"
+                  {%- endif -%}
+                  {% unless variant.available %}
+                    disabled
+                  {% endunless %}
+                >
+                  {{ variant.title }}
+                  {% if product.price_varies %}
+                    - {{ variant.price | money }}
+                  {% endif %}
+                  {% unless variant.available %}({{ 'product.sold_out' | t }}){% endunless %}
+                </option>
+              {% endfor %}
+            {% endif %}
+          </select>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+      {% endif %}
+      <button
+        class="btn btn-sm btn-full {{ section.settings.card_atc_btn_style }}"
+        type="submit"
+        name="add"
+        {% unless product.available %}
+          disabled
+        {% endunless %}
+      >
+        {% if product.available %}
+          <span>{{ 'product.add_to_cart' | t }}</span>
+        {% else %}
+          <span>{{ 'product.sold_out' | t }}</span>
+        {% endif %}
+      </button>
+    {% endform %}
+  </product-card-form>
+</div>
