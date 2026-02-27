@@ -159,143 +159,39 @@ class ThemeCart {
       body: ThemeCart.buildRequestBody({})
     });
   }
-
-  static updateElements(event, elementConfigs) {
-    const detail = event.detail || {};
-    const sections = detail.sections || {};
-
-    elementConfigs.forEach(({ selector, sectionNames = ['cart-dialog'] }) => {
-      let sectionHtml = null;
-      for (const sectionName of sectionNames) {
-        sectionHtml = sections[sectionName];
-        if (sectionHtml) break;
-      }
-
-      if (!sectionHtml) {
-        return;
-      }
-
-      const parsedHtml = new DOMParser().parseFromString(sectionHtml, 'text/html');
-      document.querySelectorAll(selector).forEach((element) => {
-        const nextElement = parsedHtml.querySelector(selector);
-        if (nextElement) {
-          element.innerHTML = nextElement.innerHTML;
-        }
-      });
-    });
-  }
 }
 
-class CartBadge extends HTMLElement {
+class CartItemRemove extends HTMLElement {
   constructor() {
     super();
-    this.onCartUpdated = this.onCartUpdated.bind(this);
+    this.isRemoving = false;
   }
 
   connectedCallback() {
-    document.addEventListener('cart:updated', this.onCartUpdated);
+    this.addEventListener('click', (e) => this.handleRemove(e));
   }
 
-  disconnectedCallback() {
-    document.removeEventListener('cart:updated', this.onCartUpdated);
-  }
+  async handleRemove(event) {
+    if (this.isRemoving) return;
 
-  onCartUpdated(event) {
-    const detail = event.detail || {};
-    const sections = detail.sections || {};
-    const sectionHtml = sections['cart-badge'];
-    if (!sectionHtml) {
-      return;
-    }
-
-    const parsedHtml = new DOMParser().parseFromString(sectionHtml, 'text/html');
-    const nextBadge = parsedHtml.querySelector('cart-badge[data-badge="cart"]') || parsedHtml.querySelector('cart-badge');
-    if (!nextBadge) {
-      return;
-    }
-
-    this.innerHTML = nextBadge.innerHTML;
-
-    const nextCount = nextBadge.getAttribute('data-count');
-    if (nextCount !== null) {
-      this.setAttribute('data-count', nextCount);
-    }
-  }
-}
-customElements.define('cart-badge', CartBadge);
-
-class CartItems extends HTMLElement {
-  constructor() {
-    super();
-    this.removingKeys = new Set();
-    this.onCartUpdated = this.onCartUpdated.bind(this);
-    this.onClick = this.onClick.bind(this);
-  }
-
-  connectedCallback() {
-    document.addEventListener('cart:updated', this.onCartUpdated);
-    this.addEventListener('click', this.onClick);
-  }
-
-  disconnectedCallback() {
-    document.removeEventListener('cart:updated', this.onCartUpdated);
-    this.removeEventListener('click', this.onClick);
-  }
-
-  onClick(event) {
-    const removeButton = event.target.closest('button[data-line-item-key]');
-    if (!removeButton || !this.contains(removeButton)) {
-      return;
-    }
+    const key = this.getAttribute('data-line-item-key');
+    if (!key) return;
 
     event.preventDefault();
-    this.removeLineItem(removeButton);
-  }
-
-  async removeLineItem(button) {
-    const lineItemKey = button.getAttribute('data-line-item-key');
-    if (!lineItemKey || this.removingKeys.has(lineItemKey)) {
-      return;
-    }
-
-    this.removingKeys.add(lineItemKey);
-    button.disabled = true;
-    button.setAttribute('aria-busy', 'true');
+    this.isRemoving = true;
+    this.toggleAttribute('disabled', true);
+    this.toggleAttribute('aria-busy', true);
 
     try {
-      await ThemeCart.remove({ id: lineItemKey });
+      await ThemeCart.remove({ id: key });
     } finally {
-      this.removingKeys.delete(lineItemKey);
-      button.disabled = false;
-      button.removeAttribute('aria-busy');
-    }
-  }
-
-  onCartUpdated(event) {
-    const detail = event.detail || {};
-    const sections = detail.sections || {};
-    const sectionHtml = sections['cart-dialog'];
-    if (!sectionHtml) {
-      return;
-    }
-
-    const parsedHtml = new DOMParser().parseFromString(sectionHtml, 'text/html');
-    const nextItems = parsedHtml.querySelector('cart-items');
-    if (!nextItems) {
-      return;
-    }
-
-    this.innerHTML = nextItems.innerHTML;
-
-    const currentDialog = this.closest('#cart-dialog');
-    const nextDialog = parsedHtml.querySelector('#cart-dialog');
-    const nextEmpty = nextDialog && nextDialog.getAttribute('data-cart-empty');
-    if (currentDialog && nextEmpty !== null) {
-      currentDialog.setAttribute('data-cart-empty', nextEmpty);
+      this.isRemoving = false;
+      this.toggleAttribute('disabled', false);
+      this.toggleAttribute('aria-busy', false);
     }
   }
 }
-customElements.define('cart-items', CartItems);
+customElements.define('cart-item-remove', CartItemRemove);
 
 class CartItemQtySwitcher extends HTMLElement {
   static activeSwitcherIndex = null;
@@ -497,17 +393,12 @@ customElements.define('cart-item-qty-switcher', CartItemQtySwitcher);
 class CartNote extends HTMLElement {
   constructor() {
     super();
-    this.form = null;
-    this.input = null;
-    this.submitButton = null;
     this.isSaving = false;
     this.savedTimeoutId = null;
-    this.defaultButtonText = '';
-    this.savedButtonText = '';
     
     this.boundHandlers = {
       submit: (e) => this.handleSubmit(e),
-      input: () => this.handleInput(),
+      input: () => !this.isSaving && this.setButtonState(this.submitButton?.dataset.textBtnSave || 'Save', false),
       cartUpdated: (e) => this.handleCartUpdated(e)
     };
   }
@@ -517,43 +408,36 @@ class CartNote extends HTMLElement {
     this.input = this.querySelector('textarea[name="note"]');
     this.submitButton = this.querySelector('button[type="submit"]');
 
-    this.defaultButtonText = this.submitButton.dataset.textBtnSave || this.submitButton.querySelector('span').textContent.trim();
-    this.savedButtonText = this.submitButton.dataset.textNoteSaved || this.defaultButtonText;
-
-    this.form.addEventListener('submit', this.boundHandlers.submit);
-    this.input.addEventListener('input', this.boundHandlers.input);
+    this.form?.addEventListener('submit', this.boundHandlers.submit);
+    this.input?.addEventListener('input', this.boundHandlers.input);
     document.addEventListener('cart:updated', this.boundHandlers.cartUpdated);
   }
 
   disconnectedCallback() {
-    this.form.removeEventListener('submit', this.boundHandlers.submit);
-    this.input.removeEventListener('input', this.boundHandlers.input);
+    this.form?.removeEventListener('submit', this.boundHandlers.submit);
+    this.input?.removeEventListener('input', this.boundHandlers.input);
     document.removeEventListener('cart:updated', this.boundHandlers.cartUpdated);
     this.clearSavedTimeout();
   }
 
   async handleSubmit(event) {
     event.preventDefault();
-
     if (!this.input || this.isSaving) return;
 
     this.isSaving = true;
-    this.setButtonState(this.defaultButtonText, true);
+    this.setButtonState('Saving...', true);
 
     try {
       await ThemeCart.update({ note: this.input.value });
-      this.showSavedButtonText();
+      this.setButtonState(this.submitButton.dataset.textNoteSaved || 'Saved!', false);
+      
+      this.clearSavedTimeout();
+      this.savedTimeoutId = window.setTimeout(() => {
+        this.clearSavedTimeout();
+        this.setButtonState(this.submitButton.dataset.textBtnSave || 'Save', false);
+      }, 2000);
     } finally {
       this.isSaving = false;
-      this.submitButton.disabled = false;
-      this.submitButton.classList.remove('is-loading');
-      this.submitButton.removeAttribute('aria-busy');
-    }
-  }
-
-  handleInput() {
-    if (!this.isSaving) {
-      this.showDefaultButtonText();
     }
   }
 
@@ -561,39 +445,21 @@ class CartNote extends HTMLElement {
     const sectionHtml = event.detail?.sections?.['cart-dialog'];
     if (!sectionHtml) return;
 
-    const parsedHtml = new DOMParser().parseFromString(sectionHtml, 'text/html');
+    const nextNoteDetails = new DOMParser().parseFromString(sectionHtml, 'text/html').querySelector('#cart-dialog-note-details');
     const currentNoteDetails = document.querySelector('#cart-dialog-note-details');
-    const nextNoteDetails = parsedHtml.querySelector('#cart-dialog-note-details');
     
     if (!currentNoteDetails || !nextNoteDetails) return;
 
     const shouldHide = nextNoteDetails.hasAttribute('hidden');
     currentNoteDetails.toggleAttribute('hidden', shouldHide);
-    if (shouldHide) {
-      currentNoteDetails.removeAttribute('open');
-    }
+    if (shouldHide) currentNoteDetails.removeAttribute('open');
   }
 
   setButtonState(text, isBusy) {
     this.submitButton.querySelector('span').textContent = text;
-    this.submitButton.disabled = isBusy;
+    this.submitButton.toggleAttribute('disabled', isBusy);
     this.submitButton.classList.toggle('is-loading', isBusy);
     this.submitButton.toggleAttribute('aria-busy', isBusy);
-  }
-
-  showDefaultButtonText() {
-    this.clearSavedTimeout();
-    this.setButtonState(this.defaultButtonText, false);
-  }
-
-  showSavedButtonText() {
-    this.setButtonState(this.savedButtonText, false);
-    this.clearSavedTimeout();
-    
-    this.savedTimeoutId = window.setTimeout(() => {
-      this.savedTimeoutId = null;
-      this.setButtonState(this.defaultButtonText, false);
-    }, 2000);
   }
 
   clearSavedTimeout() {
@@ -605,62 +471,55 @@ class CartNote extends HTMLElement {
 }
 customElements.define('cart-note', CartNote);
 
+function updateCartElements() {
+  document.addEventListener('cart:updated', (event) => {
+    const sections = event.detail?.sections || {};
 
-class CartSubtotal extends HTMLElement {
-  constructor() {
-    super();
-    this.boundHandlers = {
-      cartUpdated: (e) => ThemeCart.updateElements(e, [{ selector: 'cart-subtotal' }])
-    };
-  }
+    const elementConfigs = [
+      { selector: '[data-cart-badge]', section: 'cart-badge', querySelector: 'cart-badge' },
+      { selector: '[data-cart-subtotal]', section: 'cart-dialog', querySelector: 'cart-subtotal' },
+      { selector: '[data-cart-applied-discounts]', section: 'cart-dialog', querySelector: 'cart-applied-discounts' },
+    ];
 
-  connectedCallback() {
-    document.addEventListener('cart:updated', this.boundHandlers.cartUpdated);
-  }
+    elementConfigs.forEach(({ selector, section, querySelector }) => {
+      const sectionHtml = sections[section];
+      if (!sectionHtml) return;
 
-  disconnectedCallback() {
-    document.removeEventListener('cart:updated', this.boundHandlers.cartUpdated);
-  }
+      const nextElement = new DOMParser().parseFromString(sectionHtml, 'text/html').querySelector(querySelector);
+      if (!nextElement) return;
+
+      document.querySelectorAll(selector).forEach((element) => {
+        element.innerHTML = nextElement.innerHTML;
+      });
+    });
+
+    // Update cart items container if it exists
+    const cartItemsHtml = sections['cart-dialog'];
+    if (cartItemsHtml) {
+      const nextItems = new DOMParser().parseFromString(cartItemsHtml, 'text/html').querySelector('[data-cart-items]');
+      if (nextItems) {
+        document.querySelectorAll('[data-cart-items]').forEach((element) => {
+          element.innerHTML = nextItems.innerHTML;
+          // Sync data-cart-empty attribute
+          const nextDialog = new DOMParser().parseFromString(cartItemsHtml, 'text/html').querySelector('#cart-dialog');
+          const currentDialog = element.closest('#cart-dialog');
+          if (currentDialog && nextDialog?.hasAttribute('data-cart-empty')) {
+            currentDialog.setAttribute('data-cart-empty', nextDialog.getAttribute('data-cart-empty'));
+          }
+        });
+      }
+    }
+  });
 }
-customElements.define('cart-subtotal', CartSubtotal);
-
-class CartAppliedDiscounts extends HTMLElement {
-  constructor() {
-    super();
-    this.boundHandlers = {
-      cartUpdated: (e) => ThemeCart.updateElements(e, [{ selector: 'cart-applied-discounts', sectionNames: ['cart-dialog', 'cart-drawer'] }])
-    };
-  }
-
-  connectedCallback() {
-    document.addEventListener('cart:updated', this.boundHandlers.cartUpdated);
-  }
-
-  disconnectedCallback() {
-    document.removeEventListener('cart:updated', this.boundHandlers.cartUpdated);
-  }
-}
-customElements.define('cart-applied-discounts', CartAppliedDiscounts);
+updateCartElements();
 
 function initCartCheckoutLoadingState() {
   document.addEventListener('submit', (event) => {
-    console.log('Form submitted', event);
     const form = event.target;
-    if (!(form instanceof HTMLFormElement)) {
-      return;
-    }
-
+    const dialog = form?.closest('#cart-dialog');
     const submitter = event.submitter;
-    if (!(submitter instanceof HTMLButtonElement)) {
-      return;
-    }
-
-    if (submitter.name !== 'checkout') {
-      return;
-    }
-
-    const dialog = form.closest('#cart-dialog');
-    if (!dialog) {
+    
+    if (!(form instanceof HTMLFormElement) || !dialog || submitter?.name !== 'checkout') {
       return;
     }
 

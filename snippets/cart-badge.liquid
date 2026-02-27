@@ -1,7 +1,8 @@
-<cart-badge
-  class="count-badge"
-  data-badge="cart"
-  data-count="{{ cart.item_count }}"
->
-  {{ cart.item_count }}
-</cart-badge>
+<div data-cart-badge>
+  <div
+    class="count-badge"
+    data-count="{{ cart.item_count }}"
+  >
+    {{ cart.item_count }}
+  </div>
+</div>
