@@ -634,12 +634,16 @@ input[type="file"]::file-selector-button:hover {
   transition: all .2s ease;
 }
 
-.theme-collapse-details:has(:focus-visible) {
+.theme-collapse-details:hover {
+  border-color: rgb(var(--color-foreground) / calc(var(--border-opacity) * 2));
+}
+
+.theme-collapse-details:has(> .theme-collapse-summary:focus-visible) {
   outline-color: currentColor;
 }
 
 .theme-collapse-details[open] {
-  border-color: rgb(var(--color-accent) / calc(var(--border-opacity) * 2));
+  border-color: rgb(var(--color-foreground) / calc(var(--border-opacity) * 2));
 }
 
 .theme-collapse-summary {
@@ -656,7 +660,7 @@ input[type="file"]::file-selector-button:hover {
 }
 
 .theme-collapse-summary:hover {
-  background-color: rgb(var(--color-foreground) / .05);
+  /* background-color: rgb(var(--color-foreground) / .05); */
 }
 
 .theme-collapse-summary:focus-visible {
@@ -664,8 +668,8 @@ input[type="file"]::file-selector-button:hover {
 }
 
 .theme-collapse-details[open] .theme-collapse-summary {
-  background-color: rgb(var(--color-accent) / .1);
-  color: rgb(var(--color-accent));
+  background-color: rgb(var(--color-foreground) / .05);
+  color: rgb(var(--color-foreground));
 }
 
 .theme-collapse-icon {
@@ -680,6 +684,38 @@ input[type="file"]::file-selector-button:hover {
 
 .theme-collapse-content {
   padding: 1rem;
+}
+
+
+/*
+  Breadcrumb
+*/
+.breadcrumb-nav {
+  opacity: 1;
+}
+
+ol.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+ol.breadcrumb li+li {
+  padding-left: 0.75rem;
+}
+
+ol.breadcrumb li a {
+  color: currentColor;
+  text-decoration-color: currentColor;
+}
+
+ol.breadcrumb li+li::before {
+  float: left;
+  padding-right: 0.75rem;
+  content: "/";
 }
 
 
@@ -977,4 +1013,30 @@ shopify-accelerated-checkout {
 
 .qty-switcher .btn:focus-visible {
   outline-color: currentColor;
+}
+
+/*
+  Product trust icons
+*/
+.product-trust-icons {
+  margin: 0;
+  display: grid;
+  gap: .75rem;
+}
+
+.product-trust-icons-item {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+}
+
+.product-trust-icons-item img {
+  width: var(--product-trust-icon-size, 24px);
+  height: var(--product-trust-icon-size, 24px);
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.product-trust-icons-item .rte {
+  margin: 0;
 }

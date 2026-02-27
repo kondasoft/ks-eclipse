@@ -37,12 +37,12 @@
                 render 'product-block-richtext', block: block
               when 'liquid'
                 render 'product-block-liquid', block: block
+              when 'collapse'
+                render 'product-block-collapse', block: block
               when 'trust_icons'
                 render 'product-block-trust-icons', block: block
               when 'breadcrumb'
                 render 'product-block-breadcrumb', block: block
-              when 'separator'
-                render 'product-block-separator', block: block
               when '@app'
                 render block
             endcase
@@ -519,6 +519,63 @@
       ]
     },
     {
+      "type": "collapse",
+      "name": "Collapse",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "More details"
+        }, 
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Add custom text or inject a metafield to display product details.</p>"
+        }, 
+        {
+          "type": "select",
+          "id": "description_size",
+          "label": "Description text size",
+          "default": "fs-md",
+          "options": [
+            { "value": "fs-sm", "label": "Small" },
+            { "value": "fs-md", "label": "Medium" },
+            { "value": "fs-lg", "label": "Large" }
+          ]
+        },
+        {
+          "type": "checkbox",
+          "id": "default_open",
+          "label": "Default state open",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Spacing"
+        },
+        {
+          "type": "range",
+          "id": "pt",
+          "label": "Top",
+          "min": 0,
+          "max": 25,
+          "step": 1,
+          "default": 0
+          },
+        {
+          "type": "range",
+          "id": "pb",
+          "label": "Bottom",
+          "min": 0,
+          "max": 25,
+          "step": 1,
+          "default": 0
+          }
+      ]
+    },
+    {
       "type": "liquid",
       "name": "HTML/Liquid code",
       "settings": [
@@ -580,17 +637,6 @@
           "default": "500"
         },
         {
-          "type": "select",
-          "id": "description_size",
-          "label": "Description text size",
-          "default": "fs-md",
-          "options": [
-            { "value": "fs-sm", "label": "Small" },
-            { "value": "fs-md", "label": "Medium" },
-            { "value": "fs-lg", "label": "Large" }
-          ]
-        },
-        {
           "type": "range",
           "id": "img_size",
           "label": "Image (icon) size",
@@ -598,6 +644,17 @@
           "min": 16,
           "max": 64,
           "unit": "px"
+        },
+        {
+          "type": "select",
+          "id": "description_size",
+          "label": "Text size",
+          "default": "fs-sm",
+          "options": [
+            { "value": "fs-sm", "label": "Small" },
+            { "value": "fs-md", "label": "Medium" },
+            { "value": "fs-lg", "label": "Large" }
+          ] 
         },
         {
           "type": "text",
@@ -608,7 +665,7 @@
         },
         {
           "type": "header",
-          "content": "item 1"
+          "content": "items (1-5)"
         },
         {
           "type": "image_picker",

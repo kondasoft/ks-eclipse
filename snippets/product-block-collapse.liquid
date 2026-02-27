@@ -1,0 +1,26 @@
+<div
+  id="product-block-{{ block.id }}"
+  class="product-block section-spacing"
+  style="
+    --pt: {{ block.settings.pt }};
+    --pb: {{ block.settings.pb }};
+  "
+  data-type="{{ block.type }}"
+  {{ block.shopify_attributes }}
+>
+  <details class="theme-collapse-details" {% if block.settings.default_open %}open{% endif %}>
+    <summary class="theme-collapse-summary">
+      <span>{{ block.settings.heading }}</span>
+      <span class="theme-collapse-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </span>
+    </summary>
+    <div class="theme-collapse-content">
+      <div class="description rte {{ block.settings.description_size }}">
+        {{ block.settings.description | replace: '<ul>', '<ul class="list-check">' }}
+      </div>
+    </div>
+  </details>
+</div>

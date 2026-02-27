@@ -40,11 +40,6 @@
         {% else %}
           <ul class="cart-items-list">
             {% for line_item in cart.items %}
-              {% liquid 
-                if line_item.variant.inventory_management != null and line_item.variant.inventory_policy == 'deny'
-                  assign line_item_qty_max = line_item.variant.inventory_quantity
-                endif
-              %}
               <li class="cart-item">
                 <div class="cart-item-left">
                   <a href="{{ line_item.url }}" tabindex="-1">
@@ -145,7 +140,6 @@
                         type="number"
                         value="{{ line_item.quantity }}"
                         min="0"
-                        max="{{ line_item_qty_max }}"
                         aria-label="{{ 'product.quantity.label' | t }}"
                         data-line-item-key="{{ line_item.key }}"
                       >

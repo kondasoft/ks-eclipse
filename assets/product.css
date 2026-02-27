@@ -1,5 +1,4 @@
-.product {
-  
+.product { 
 }
 
 @media (max-width: 1199px) {
@@ -14,6 +13,9 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem
+  }
+  .product-left {
+    transition: all 0.3s ease-out;
   }
 }
 
@@ -449,6 +451,74 @@
 .product-block[data-type="buttons"] product-qty-switcher {
   flex-shrink: 0;
 }
+
+
+/*
+  Collapse block
+*/
+.product-block[data-type="collapse"]  {
+}
+
+
+/*
+  HTML/Liquid block
+*/
+.product-block[data-type="liquid"] {
+}
+
+/*
+  Trust icons block
+*/
+.product-block[data-type="trust_icons"] ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-width: var(--max-width);
+}
+
+.product-block[data-type="trust_icons"] ul[data-style="horizontal"] {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.product-block[data-type="trust_icons"] ul[data-style="horizontal"] li {
+  width: calc(100% / var(--total));
+}
+
+.product-block[data-type="trust_icons"] ul[data-style="horizontal"] img {
+  margin: 0 0 0.25rem;
+}
+
+.product-block[data-type="trust_icons"] ul[data-style="horizontal"] .description {
+  line-height: normal;
+}
+
+.product-block[data-type="trust_icons"] ul[data-style="vertical"] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  line-height: normal;
+}
+
+.product-block[data-type="trust_icons"] ul[data-style="vertical"] li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+
+/*
+  Breadcrumb block
+*/
+.product-block[data-type="breadcrumb"] ol.breadcrumb {
+  justify-content: center;
+}
+
 
 /*
   Gift card form

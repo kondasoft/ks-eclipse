@@ -1,0 +1,80 @@
+
+{% liquid
+  assign total = 5
+  if block.settings.text_5 == blank
+    assign total = 4
+  endif
+  if block.settings.text_4 == blank
+    assign total = 3
+  endif
+  if block.settings.text_3 == blank
+    assign total = 2
+  endif
+  if block.settings.text_2 == blank
+    assign total = 1
+  endif
+  if block.settings.text_1 == blank
+    assign total = 0
+  endif
+%}
+
+<div
+  id="product-block-{{ block.id }}"
+  class="product-block section-spacing"
+  style="
+    --pt: {{ block.settings.pt }};
+    --pb: {{ block.settings.pb }};
+  "
+  data-type="{{ block.type }}"
+  {{ block.shopify_attributes }}
+>
+  <ul
+    style="
+      --max-width: {{ block.settings.max_width | append: 'px' }};
+      --total: {{ total }};
+    "
+    data-style="{{ block.settings.style }}"
+    aria-label="{{ block.settings.label }}"
+  >
+    {% for count in (1..total) %}
+      {% liquid
+        assign img = null
+        assign text = null
+
+        case forloop.index
+          when 1
+            assign img = block.settings.img_1
+            assign text = block.settings.text_1
+          when 2
+            assign img = block.settings.img_2
+            assign text = block.settings.text_2
+          when 3
+            assign img = block.settings.img_3
+            assign text = block.settings.text_3
+          when 4
+            assign img = block.settings.img_4
+            assign text = block.settings.text_4
+          when 5
+            assign img = block.settings.img_5
+            assign text = block.settings.text_5
+        endcase
+      %}
+      <li>
+        {% if img %}
+          {% assign img_size_scaled = block.settings.img_size | times: 2 %}
+          <img
+            class="img-fluid"
+            src="{{ img | image_url: width: img_size_scaled }}"
+            alt="{{ img.alt | escape }}"
+            width="{{ block.settings.img_size }}"
+            height="{{ block.settings.img_size | divided_by: img.aspect_ratio | round }}"
+            loading="lazy"
+          >
+        {% endif %}
+        <div class="description rte {{ block.settings.description_size }}">
+          {{ text }}
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+</div>

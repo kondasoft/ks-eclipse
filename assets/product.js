@@ -735,6 +735,10 @@ class ProductGallery extends HTMLElement {
     this.touchDeltaY = 0;
     this.isTouchTracking = false;
     this.sectionId = null;
+    this.stickyHost = null;
+    this.desktopQuery = null;
+    this.headerGroup = null;
+    this.oldScroll = 0;
     this.onPrevClick = this.onPrevClick.bind(this);
     this.onNextClick = this.onNextClick.bind(this);
     this.onThumbClick = this.onThumbClick.bind(this);
@@ -742,6 +746,8 @@ class ProductGallery extends HTMLElement {
     this.onTouchMove = this.onTouchMove.bind(this);
     this.onTouchEnd = this.onTouchEnd.bind(this);
     this.onVariantChange = this.onVariantChange.bind(this);
+    this.onStickyScroll = this.onStickyScroll.bind(this);
+    this.onStickyMediaChange = this.onStickyMediaChange.bind(this);
   }
 
   connectedCallback() {
@@ -752,6 +758,7 @@ class ProductGallery extends HTMLElement {
     this.main = this.querySelector('.product-gallery-main');
     this.prevButton = this.querySelector('[data-gallery-prev]');
     this.nextButton = this.querySelector('[data-gallery-next]');
+    this.initStickyDesktop();
 
     if (!this.items.length) {
       return;
@@ -806,6 +813,72 @@ class ProductGallery extends HTMLElement {
     }
 
     document.removeEventListener('product:variant-change', this.onVariantChange);
+    this.destroyStickyDesktop();
+  }
+
+  getHeaderHeight() {
+    return this.headerGroup ? this.headerGroup.clientHeight : 0;
+  }
+
+  applyStickyDesktopState() {
+    if (!this.stickyHost) {
+      return;
+    }
+
+    if (!this.desktopQuery || !this.desktopQuery.matches) {
+      this.stickyHost.style.position = '';
+      this.stickyHost.style.alignSelf = '';
+      this.stickyHost.style.top = '';
+      return;
+    }
+
+    this.stickyHost.style.position = 'sticky';
+    this.stickyHost.style.alignSelf = 'start';
+    this.stickyHost.style.top = `${this.getHeaderHeight() + 20}px`;
+  }
+
+  onStickyMediaChange() {
+    this.oldScroll = Math.max(window.scrollY, 0);
+    this.applyStickyDesktopState();
+  }
+
+  onStickyScroll() {
+    const newScroll = window.scrollY;
+    if (!this.desktopQuery || !this.desktopQuery.matches || !this.stickyHost) {
+      return;
+    }
+
+    if (newScroll > this.oldScroll) {
+      if (newScroll > this.getHeaderHeight()) {
+        this.stickyHost.style.top = '20px';
+      }
+    } else if (newScroll < this.oldScroll) {
+      this.stickyHost.style.top = `${this.getHeaderHeight() + 20}px`;
+    }
+
+    this.oldScroll = Math.max(window.scrollY, 0);
+  }
+
+  initStickyDesktop() {
+    this.stickyHost = this.closest('.product-left');
+    if (!this.stickyHost) {
+      return;
+    }
+
+    this.headerGroup = document.querySelector('#header-group');
+    this.desktopQuery = window.matchMedia('(min-width: 1200px)');
+    this.oldScroll = Math.max(window.scrollY, 0);
+
+    this.applyStickyDesktopState();
+    this.desktopQuery.addEventListener('change', this.onStickyMediaChange);
+    window.addEventListener('scroll', this.onStickyScroll, { passive: true });
+  }
+
+  destroyStickyDesktop() {
+    if (this.desktopQuery) {
+      this.desktopQuery.removeEventListener('change', this.onStickyMediaChange);
+    }
+    window.removeEventListener('scroll', this.onStickyScroll);
   }
 
   onVariantChange(event) {
@@ -1047,7 +1120,4 @@ class ProductGallery extends HTMLElement {
     this.playMediaInItem(this.items[normalizedIndex]);
   }
 }
-
-if (!customElements.get('product-gallery')) {
-  customElements.define('product-gallery', ProductGallery);
-}
+customElements.define('product-gallery', ProductGallery);

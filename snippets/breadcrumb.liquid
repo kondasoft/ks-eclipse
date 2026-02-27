@@ -1,0 +1,180 @@
+ 
+<nav
+  class="breadcrumb-nav"
+  aria-label="{{ 'general.breadcrumbs.label' | t }}"
+>
+  <ol class="breadcrumb">
+    <li>
+      <a href="{{ routes.root_url }}">
+        {{ 'general.breadcrumbs.home' | t }}
+      </a>
+    </li>
+    {% case request.page_type %}
+      {% when 'list-collections' %}
+        <li aria-current="page">
+          {{ section.settings.title }}
+        </li>
+      {% when 'collection' %}
+        <li>
+          {{ 'general.breadcrumbs.collections' | t | link_to: routes.collections_url }}
+        </li>
+        {% if current_tags %}
+          <li>
+            {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+            {{ collection.title | link_to: url }}
+          </li>
+          <li aria-current="page">
+            {{ current_tags | join: ', ' | capitalize }}
+          </li>
+        {% else %}
+          <li aria-current="page">
+            {{ collection.title }}
+          </li>
+        {% endif %}
+      {% when 'product' %}
+        {% if collection %}
+          <li>
+            {{ collection.title | link_to: collection.url }}
+          </li>
+          <li aria-current="page">
+            {{ product.title }}
+          </li>
+        {% else %}
+          <li aria-current="page">
+            {{ product.title }}
+          </li>
+        {% endif %}
+      {% when 'blog' %}
+        {% if current_tags %}
+          <li>
+            {{ blog.title | link_to: blog.url }}
+          </li>
+          <li aria-current="page">
+            {{ current_tags | join: ', ' | capitalize }}
+          </li>
+        {% else %}
+          <li aria-current="page">
+            {{ blog.title }}
+          </li>
+        {% endif %}
+      {% when 'article' %}
+        <li>
+          {{ blog.title | link_to: blog.url }}
+        </li>
+        <li aria-current="page">
+          {{ article.title }}
+        </li>
+      {% when 'page' %}
+        <li aria-current="page">
+          {{ page.title }}
+        </li>
+    {% endcase %}
+  </ol>
+</nav>
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "{{ 'general.breadcrumbs.home' | t }}",
+        "item": "{{ request.origin | append: routes.root_url  }}"
+      },
+      {% case request.page_type %}
+        {% when 'list-collections' %}
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "{{ section.settings.title }}"
+          }
+        {% when 'collection' %}
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "{{ 'general.breadcrumbs.collections' | t }}",
+            "item": "{{ request.origin | append: routes.collections_url  }}"
+          },
+          {% if current_tags %}
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "{{ collection.title }}",
+              "item": "{{ request.origin | append: '/collections/' | append: collection.handle  }}"
+            },
+            {
+              "@type": "ListItem",
+              "position": 4,
+              "name": "{{ current_tags | join: ', ' | capitalize }}"
+            }
+          {% else %}
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "{{ collection.title | escape }}"
+            }
+          {% endif %}
+        {% when 'product' %}
+          {% if collection %}
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "{{ collection.title }}",
+              "item": "{{ request.origin | append: collection.url  }}"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "{{ product.title | escape }}"
+            }
+          {% else %}
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "{{ product.title | escape }}"
+            }
+          {% endif %}
+        {% when 'blog' %}
+          {% if current_tags %}
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "{{ blog.title }}",
+              "item": "{{ request.origin | append: blog.url }}"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "{{ current_tags | join: ', ' | capitalize }}"
+            }
+          {% else %}
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "{{ blog.title | escape }}"
+            }
+          {% endif %}
+        {% when 'article' %}
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "{{ blog.title }}",
+            "item": "{{ request.origin | append: blog.url  }}"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "{{ article.title | escape }}"
+          }
+        {% when 'page' %}
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "{{ page.title | escape }}"
+          }
+      {% endcase %}
+    ]
+  }
+</script>

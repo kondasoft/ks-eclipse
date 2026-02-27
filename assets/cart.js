@@ -3,18 +3,6 @@ class ThemeCart {
   static defaultSectionsUrl = `${window.location.pathname}${window.location.search}`;
   static loadingCount = 0;
 
-  static dispatchCartUpdated(action, result) {
-    document.dispatchEvent(
-      new CustomEvent('cart:updated', {
-        detail: {
-          action,
-          cart: result,
-          sections: result && result.sections ? result.sections : {}
-        }
-      })
-    );
-  }
-
   static openDrawer(focusReturnTarget) {
     const dialog = document.querySelector('#cart-dialog');
     if (!dialog) {
@@ -49,134 +37,113 @@ class ThemeCart {
     }
   }
 
-  static dispatchCartError(action, error) {
-    document.dispatchEvent(
-      new CustomEvent('cart:error', {
-        detail: {
-          action,
-          error
-        }
-      })
-    );
+  static buildRequestBody(payload) {
+    if (payload instanceof FormData) {
+      payload.set('sections', ThemeCart.sectionsToRender.join(','));
+      payload.set('sections_url', ThemeCart.defaultSectionsUrl);
+      return payload;
+    }
+    
+    return JSON.stringify({
+      ...(payload || {}),
+      sections: ThemeCart.sectionsToRender,
+      sections_url: ThemeCart.defaultSectionsUrl
+    });
   }
 
-  static async parseError(response) {
-    const errorText = await response.text();
+  static async mutate(action, fetchOptions = {}) {
+
+    const url = action === 'get' 
+      ? `${window.theme.routes.cart}.js` 
+      : `${window.theme.routes.cart[action]}.js`;
+
+    const options = { ...fetchOptions };
+    
+    if (typeof options.body === 'string' && !options.headers) {
+      options.headers = {
+        'Content-Type': 'application/json'
+      };
+    } else if (typeof options.body === 'string' && options.headers && !options.headers['Content-Type']) {
+      options.headers['Content-Type'] = 'application/json';
+    }
+
+    ThemeCart.setLoading(true);
 
     try {
-      const errorData = JSON.parse(errorText);
-      return errorData.description || errorData.message || 'Unable to update cart';
-    } catch (_error) {
-      return errorText || 'Unable to update cart';
+      const response = await fetch(url, options);
+
+      if (!response.ok) {
+        console.error(`Cart ${action} request failed with status ${response.status}`, response);
+        const errorText = await response.text();
+        let message;
+
+        try {
+          const errorData = JSON.parse(errorText);
+          message = errorData.description || errorData.message || 'Unable to update cart';
+        } catch (_error) {
+          message = errorText || 'Unable to update cart';
+        }
+
+        const error = new Error(message);
+        
+        document.dispatchEvent(
+          new CustomEvent('cart:error', {
+            detail: {
+              action,
+              error
+            }
+          })
+        );
+        throw error;
+      }
+
+      const result = await response.json();
+
+      document.dispatchEvent(
+        new CustomEvent('cart:updated', {
+          detail: {
+            action,
+            cart: result,
+            sections: result && result.sections ? result.sections : {}
+          }
+        })
+      );
+
+      return result;
+    } finally {
+      ThemeCart.setLoading(false);
     }
   }
 
   static async get() {
-    console.log('Getting cart');
+    return ThemeCart.mutate('get');
   }
 
   static async add(payload, options) {
-    let body;
     const config = options || {};
+    const body = ThemeCart.buildRequestBody(payload);
 
-    if (payload instanceof FormData) {
-      body = payload;
-      body.set('sections', ThemeCart.sectionsToRender.join(','));
-      body.set('sections_url', ThemeCart.defaultSectionsUrl);
-    } else {
-      body = JSON.stringify({
-        ...(payload || {}),
-        sections: ThemeCart.sectionsToRender,
-        sections_url: ThemeCart.defaultSectionsUrl
-      });
-    }
+    const result = await ThemeCart.mutate('add', {
+      method: 'POST',
+      body
+    });
 
-    ThemeCart.setLoading(true);
-    try {
-      const response = await fetch(`${window.theme.routes.cart.add}.js`, {
-        method: 'POST',
-        body
-      });
-
-      if (!response.ok) {
-        const message = await ThemeCart.parseError(response);
-        const error = new Error(message);
-        ThemeCart.dispatchCartError('add', error);
-        throw error;
-      }
-
-      const result = await response.json();
-      ThemeCart.dispatchCartUpdated('add', result);
-      ThemeCart.openDrawer(config.returnFocusTarget);
-
-      return result;
-    } finally {
-      ThemeCart.setLoading(false);
-    }
+    ThemeCart.openDrawer(config.returnFocusTarget);
+    return result;
   }
 
   static async update(payload) {
-    ThemeCart.setLoading(true);
-    try {
-      const response = await fetch(`${window.theme.routes.cart.update}.js`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          ...(payload || {}),
-          sections: ThemeCart.sectionsToRender,
-          sections_url: ThemeCart.defaultSectionsUrl
-        })
-      });
-
-      if (!response.ok) {
-        const message = await ThemeCart.parseError(response);
-        const error = new Error(message);
-        ThemeCart.dispatchCartError('update', error);
-        throw error;
-      }
-
-      const result = await response.json();
-      ThemeCart.dispatchCartUpdated('update', result);
-
-      return result;
-    } finally {
-      ThemeCart.setLoading(false);
-    }
+    return ThemeCart.mutate('update', {
+      method: 'POST',
+      body: ThemeCart.buildRequestBody(payload)
+    });
   }
 
   static async change(payload) {
-    ThemeCart.setLoading(true);
-    try {
-      const response = await fetch(`${window.theme.routes.cart.change}.js`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          ...(payload || {}),
-          sections: ThemeCart.sectionsToRender,
-          sections_url: ThemeCart.defaultSectionsUrl
-        })
-      });
-
-      if (!response.ok) {
-        const message = await ThemeCart.parseError(response);
-        const error = new Error(message);
-        ThemeCart.dispatchCartError('change', error);
-        throw error;
-      }
-
-      const result = await response.json();
-      ThemeCart.dispatchCartUpdated('change', result);
-
-      return result;
-    } finally {
-      ThemeCart.setLoading(false);
-    }
+    return ThemeCart.mutate('change', {
+      method: 'POST',
+      body: ThemeCart.buildRequestBody(payload)
+    });
   }
 
   static async remove(payload) {
@@ -186,8 +153,11 @@ class ThemeCart {
     });
   }
 
-  static async clear(payload) {
-    console.log('Clearing cart', payload);
+  static async clear() {
+    return ThemeCart.mutate('clear', {
+      method: 'POST',
+      body: ThemeCart.buildRequestBody({})
+    });
   }
 }
 
@@ -403,13 +373,7 @@ class CartItemQtySwitcher extends HTMLElement {
   }
 
   getMax() {
-    const rawMax = this.input?.getAttribute('max');
-    if (rawMax === null || rawMax === '') {
-      return null;
-    }
-
-    const max = Number(rawMax);
-    return Number.isFinite(max) && max >= this.getMin() ? max : null;
+    return null;
   }
 
   getStep() {
@@ -424,15 +388,10 @@ class CartItemQtySwitcher extends HTMLElement {
 
   normalizeValue(nextValue) {
     const min = this.getMin();
-    const max = this.getMax();
     let value = Number.isFinite(nextValue) ? nextValue : min;
 
     if (value < min) {
       value = min;
-    }
-
-    if (max !== null && value > max) {
-      value = max;
     }
 
     return value;
@@ -452,7 +411,6 @@ class CartItemQtySwitcher extends HTMLElement {
     }
 
     const min = this.getMin();
-    const max = this.getMax();
     const value = this.normalizeValue(this.getValue());
 
     if (String(value) !== this.input.value) {
@@ -460,7 +418,7 @@ class CartItemQtySwitcher extends HTMLElement {
     }
 
     this.decreaseButton.disabled = value <= min;
-    this.increaseButton.disabled = max !== null && value >= max;
+    this.increaseButton.disabled = false;
 
     if (this.isUpdating) {
       this.setAttribute('aria-busy', 'true');

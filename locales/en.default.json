@@ -38,7 +38,12 @@
       "light": "Light",
       "dark": "Dark",
       "system": "System"
-    }
+    },
+    "breadcrumbs": {
+      "label": "Breadcrumb navigation",
+      "home": "Home",
+      "collections": "Collections"
+    },
   },
   "product": {
     

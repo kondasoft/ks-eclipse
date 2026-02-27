@@ -1,0 +1,14 @@
+{%- if product.metafields.reviews.rating.value != blank -%}
+  <div
+    id="product-block-{{ block.id }}"
+    class="product-block section-spacing"
+    style="
+      --pt: {{ block.settings.pt }};
+      --pb: {{ block.settings.pb }};
+    "
+    data-type="{{ block.type }}"
+    {{ block.shopify_attributes }}
+  >
+    {% render 'breadcrumb' %}
+  </div>
+{%- endif -%}
