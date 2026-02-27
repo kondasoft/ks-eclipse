@@ -285,15 +285,19 @@ class CartItemQtySwitcher extends HTMLElement {
     this.isUpdating = false;
     this.queuedQuantity = null;
     this.lastCommittedQuantity = null;
-    this.onDecreaseClick = this.onDecreaseClick.bind(this);
-    this.onIncreaseClick = this.onIncreaseClick.bind(this);
-    this.onInputChange = this.onInputChange.bind(this);
-    this.onInputCommit = this.onInputCommit.bind(this);
-    this.onFocusIn = this.onFocusIn.bind(this);
+
+    this.boundHandlers = {
+      decreaseClick: (e) => this.handleDecreaseClick(e),
+      increaseClick: (e) => this.handleIncreaseClick(e),
+      inputChange: () => this.syncState(),
+      inputCommit: () => this.requestQuantity(this.getValue()),
+      focusIn: () => this.handleFocusIn()
+    };
   }
 
   connectedCallback() {
     CartItemQtySwitcher.bindCartUpdatedListener();
+    
     this.input = this.querySelector('input[name="updates[]"]');
     this.decreaseButton = this.querySelector('button[name="decrease"]');
     this.increaseButton = this.querySelector('button[name="increase"]');
@@ -303,30 +307,30 @@ class CartItemQtySwitcher extends HTMLElement {
     }
 
     this.lastCommittedQuantity = this.getValue();
-
-    this.decreaseButton.addEventListener('click', this.onDecreaseClick);
-    this.increaseButton.addEventListener('click', this.onIncreaseClick);
-    this.input.addEventListener('input', this.onInputChange);
-    this.input.addEventListener('change', this.onInputCommit);
-    this.input.addEventListener('blur', this.onInputCommit);
-    this.addEventListener('focusin', this.onFocusIn);
-
+    this.setupEventListeners();
     this.syncState();
   }
 
   disconnectedCallback() {
-    if (this.decreaseButton) {
-      this.decreaseButton.removeEventListener('click', this.onDecreaseClick);
-    }
-    if (this.increaseButton) {
-      this.increaseButton.removeEventListener('click', this.onIncreaseClick);
-    }
-    if (this.input) {
-      this.input.removeEventListener('input', this.onInputChange);
-      this.input.removeEventListener('change', this.onInputCommit);
-      this.input.removeEventListener('blur', this.onInputCommit);
-    }
-    this.removeEventListener('focusin', this.onFocusIn);
+    this.removeEventListeners();
+  }
+
+  setupEventListeners() {
+    this.decreaseButton.addEventListener('click', this.boundHandlers.decreaseClick);
+    this.increaseButton.addEventListener('click', this.boundHandlers.increaseClick);
+    this.input.addEventListener('input', this.boundHandlers.inputChange);
+    this.input.addEventListener('change', this.boundHandlers.inputCommit);
+    this.input.addEventListener('blur', this.boundHandlers.inputCommit);
+    this.addEventListener('focusin', this.boundHandlers.focusIn);
+  }
+
+  removeEventListeners() {
+    this.decreaseButton?.removeEventListener('click', this.boundHandlers.decreaseClick);
+    this.increaseButton?.removeEventListener('click', this.boundHandlers.increaseClick);
+    this.input?.removeEventListener('input', this.boundHandlers.inputChange);
+    this.input?.removeEventListener('change', this.boundHandlers.inputCommit);
+    this.input?.removeEventListener('blur', this.boundHandlers.inputCommit);
+    this.removeEventListener('focusin', this.boundHandlers.focusIn);
   }
 
   static bindCartUpdatedListener() {
@@ -334,75 +338,43 @@ class CartItemQtySwitcher extends HTMLElement {
       return;
     }
 
-    document.addEventListener('cart:updated', () => {
-      if (!CartItemQtySwitcher.shouldRestoreFocusOnNextUpdate) {
-        return;
-      }
-
-      CartItemQtySwitcher.shouldRestoreFocusOnNextUpdate = false;
-      const activeSwitcherIndex = CartItemQtySwitcher.activeSwitcherIndex;
-      if (!Number.isInteger(activeSwitcherIndex) || activeSwitcherIndex < 0) {
-        return;
-      }
-
-      window.requestAnimationFrame(() => {
-        const switchers = Array.from(document.querySelectorAll('cart-items cart-item-qty-switcher'));
-        if (!switchers.length) {
-          return;
-        }
-
-        const nextIndex = Math.min(activeSwitcherIndex, switchers.length - 1);
-        const nextSwitcher = switchers[nextIndex];
-        const nextInput = nextSwitcher ? nextSwitcher.querySelector('input[name="updates[]"]') : null;
-        if (nextInput) {
-          nextInput.focus({ preventScroll: true });
-        }
-      });
-    });
-
+    document.addEventListener('cart:updated', () => this.onCartUpdated());
     CartItemQtySwitcher.isCartUpdatedListenerBound = true;
+  }
+
+  static onCartUpdated() {
+    if (!CartItemQtySwitcher.shouldRestoreFocusOnNextUpdate) {
+      return;
+    }
+
+    CartItemQtySwitcher.shouldRestoreFocusOnNextUpdate = false;
+    const activeSwitcherIndex = CartItemQtySwitcher.activeSwitcherIndex;
+    
+    if (!Number.isInteger(activeSwitcherIndex) || activeSwitcherIndex < 0) {
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      const switchers = Array.from(document.querySelectorAll('cart-items cart-item-qty-switcher'));
+      const nextSwitcher = switchers[Math.min(activeSwitcherIndex, switchers.length - 1)];
+      nextSwitcher?.querySelector('input[name="updates[]"]')?.focus({ preventScroll: true });
+    });
   }
 
   getLineItemKey() {
     return this.getAttribute('data-line-item-key') || this.input?.dataset?.lineItemKey || null;
   }
 
-  getMin() {
-    const min = Number(this.input?.min);
-    return Number.isFinite(min) ? min : 0;
-  }
-
-  getMax() {
-    return null;
-  }
-
-  getStep() {
-    const step = Number(this.input?.step);
-    return Number.isFinite(step) && step > 0 ? step : 1;
-  }
-
   getValue() {
     const value = Number(this.input?.value);
-    return Number.isFinite(value) ? value : this.getMin();
+    const min = Number.isFinite(this.input?.min) ? Number(this.input.min) : 0;
+    return Number.isFinite(value) ? value : min;
   }
 
   normalizeValue(nextValue) {
-    const min = this.getMin();
+    const min = Number.isFinite(this.input?.min) ? Number(this.input.min) : 0;
     let value = Number.isFinite(nextValue) ? nextValue : min;
-
-    if (value < min) {
-      value = min;
-    }
-
-    return value;
-  }
-
-  setValue(nextValue) {
-    if (!this.input) {
-      return;
-    }
-
-    this.input.value = String(this.normalizeValue(nextValue));
+    return Math.max(value, min);
   }
 
   syncState() {
@@ -410,33 +382,22 @@ class CartItemQtySwitcher extends HTMLElement {
       return;
     }
 
-    const min = this.getMin();
     const value = this.normalizeValue(this.getValue());
+    const min = Number.isFinite(this.input?.min) ? Number(this.input.min) : 0;
 
-    if (String(value) !== this.input.value) {
-      this.input.value = String(value);
-    }
-
+    this.input.value = String(value);
     this.decreaseButton.disabled = value <= min;
     this.increaseButton.disabled = false;
-
-    if (this.isUpdating) {
-      this.setAttribute('aria-busy', 'true');
-    } else {
-      this.removeAttribute('aria-busy');
-    }
+    this.toggleAttribute('aria-busy', this.isUpdating);
   }
 
   async requestQuantity(nextQuantity) {
     const lineItemKey = this.getLineItemKey();
-    if (!lineItemKey) {
-      return;
-    }
+    if (!lineItemKey) return;
 
     const quantity = this.normalizeValue(nextQuantity);
 
     if (!this.isUpdating && quantity === this.lastCommittedQuantity) {
-      this.setValue(quantity);
       this.syncState();
       return;
     }
@@ -446,25 +407,8 @@ class CartItemQtySwitcher extends HTMLElement {
       return;
     }
 
-    CartItemQtySwitcher.shouldRestoreFocusOnNextUpdate = true;
-    this.isUpdating = true;
-    this.queuedQuantity = null;
-    this.syncState();
-
-    try {
-      await ThemeCart.change({
-        id: lineItemKey,
-        quantity
-      });
-      this.lastCommittedQuantity = quantity;
-    } catch (_error) {
-      CartItemQtySwitcher.shouldRestoreFocusOnNextUpdate = false;
-      this.setValue(this.lastCommittedQuantity);
-    } finally {
-      this.isUpdating = false;
-      this.syncState();
-    }
-
+    await this.updateCartQuantity(quantity, lineItemKey);
+    
     if (this.queuedQuantity !== null && this.queuedQuantity !== this.lastCommittedQuantity) {
       const queuedQuantity = this.queuedQuantity;
       this.queuedQuantity = null;
@@ -472,31 +416,42 @@ class CartItemQtySwitcher extends HTMLElement {
     }
   }
 
-  onDecreaseClick(event) {
+  async updateCartQuantity(quantity, lineItemKey) {
+    CartItemQtySwitcher.shouldRestoreFocusOnNextUpdate = true;
+    this.isUpdating = true;
+    this.queuedQuantity = null;
+    this.syncState();
+
+    try {
+      await ThemeCart.change({ id: lineItemKey, quantity });
+      this.lastCommittedQuantity = quantity;
+    } catch (_error) {
+      CartItemQtySwitcher.shouldRestoreFocusOnNextUpdate = false;
+      this.input.value = String(this.lastCommittedQuantity);
+    } finally {
+      this.isUpdating = false;
+      this.syncState();
+    }
+  }
+
+  handleDecreaseClick(event) {
     event.preventDefault();
-    const quantity = this.getValue() - this.getStep();
-    this.setValue(quantity);
+    this.changeQuantity(-this.getStep());
+  }
+
+  handleIncreaseClick(event) {
+    event.preventDefault();
+    this.changeQuantity(this.getStep());
+  }
+
+  changeQuantity(delta) {
+    const quantity = this.getValue() + delta;
+    this.input.value = String(this.normalizeValue(quantity));
     this.syncState();
     this.requestQuantity(quantity);
   }
 
-  onIncreaseClick(event) {
-    event.preventDefault();
-    const quantity = this.getValue() + this.getStep();
-    this.setValue(quantity);
-    this.syncState();
-    this.requestQuantity(quantity);
-  }
-
-  onInputChange() {
-    this.syncState();
-  }
-
-  onInputCommit() {
-    this.requestQuantity(this.getValue());
-  }
-
-  onFocusIn() {
+  handleFocusIn() {
     const cartItems = this.closest('cart-items');
     if (!cartItems) {
       CartItemQtySwitcher.activeSwitcherIndex = null;
@@ -504,8 +459,12 @@ class CartItemQtySwitcher extends HTMLElement {
     }
 
     const switchers = Array.from(cartItems.querySelectorAll('cart-item-qty-switcher'));
-    const index = switchers.indexOf(this);
-    CartItemQtySwitcher.activeSwitcherIndex = index >= 0 ? index : null;
+    CartItemQtySwitcher.activeSwitcherIndex = switchers.indexOf(this);
+  }
+
+  getStep() {
+    const step = Number(this.input?.step);
+    return Number.isFinite(step) && step > 0 ? step : 1;
   }
 }
 customElements.define('cart-item-qty-switcher', CartItemQtySwitcher);
@@ -520,9 +479,12 @@ class CartNote extends HTMLElement {
     this.savedTimeoutId = null;
     this.defaultButtonText = '';
     this.savedButtonText = '';
-    this.onSubmit = this.onSubmit.bind(this);
-    this.onInput = this.onInput.bind(this);
-    this.onCartUpdated = this.onCartUpdated.bind(this);
+    
+    this.boundHandlers = {
+      submit: (e) => this.handleSubmit(e),
+      input: () => this.handleInput(),
+      cartUpdated: (e) => this.handleCartUpdated(e)
+    };
   }
 
   connectedCallback() {
@@ -533,75 +495,28 @@ class CartNote extends HTMLElement {
     this.defaultButtonText = this.submitButton.dataset.textBtnSave || this.submitButton.querySelector('span').textContent.trim();
     this.savedButtonText = this.submitButton.dataset.textNoteSaved || this.defaultButtonText;
 
-    this.form.addEventListener('submit', this.onSubmit);
-    this.input.addEventListener('input', this.onInput);
-    document.addEventListener('cart:updated', this.onCartUpdated);
+    this.form.addEventListener('submit', this.boundHandlers.submit);
+    this.input.addEventListener('input', this.boundHandlers.input);
+    document.addEventListener('cart:updated', this.boundHandlers.cartUpdated);
   }
 
   disconnectedCallback() {
-    this.form.removeEventListener('submit', this.onSubmit);
-    this.input.removeEventListener('input', this.onInput);
-    document.removeEventListener('cart:updated', this.onCartUpdated);
-
-    if (this.savedTimeoutId) {
-      window.clearTimeout(this.savedTimeoutId);
-      this.savedTimeoutId = null;
-    }
+    this.form.removeEventListener('submit', this.boundHandlers.submit);
+    this.input.removeEventListener('input', this.boundHandlers.input);
+    document.removeEventListener('cart:updated', this.boundHandlers.cartUpdated);
+    this.clearSavedTimeout();
   }
 
-  setButtonState(text, isBusy) {
-    if (!this.submitButton) {
-      return;
-    }
-
-    this.submitButton.querySelector('span').textContent = text;
-    this.submitButton.disabled = isBusy;
-
-    if (isBusy) {
-      this.submitButton.classList.add('is-loading');
-      this.submitButton.setAttribute('aria-busy', 'true');
-    } else {
-      this.submitButton.classList.remove('is-loading');
-      this.submitButton.removeAttribute('aria-busy');
-    }
-  }
-
-  showDefaultButtonText() {
-    if (this.savedTimeoutId) {
-      window.clearTimeout(this.savedTimeoutId);
-      this.savedTimeoutId = null;
-    }
-
-    this.setButtonState(this.defaultButtonText, false);
-  }
-
-  showSavedButtonText() {
-    this.setButtonState(this.savedButtonText, false);
-
-    if (this.savedTimeoutId) {
-      window.clearTimeout(this.savedTimeoutId);
-    }
-
-    this.savedTimeoutId = window.setTimeout(() => {
-      this.savedTimeoutId = null;
-      this.setButtonState(this.defaultButtonText, false);
-    }, 2000);
-  }
-
-  async onSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
 
-    if (!this.input || this.isSaving) {
-      return;
-    }
+    if (!this.input || this.isSaving) return;
 
     this.isSaving = true;
     this.setButtonState(this.defaultButtonText, true);
 
     try {
-      await ThemeCart.update({
-        note: this.input.value
-      });
+      await ThemeCart.update({ note: this.input.value });
       this.showSavedButtonText();
     } finally {
       this.isSaving = false;
@@ -611,28 +526,21 @@ class CartNote extends HTMLElement {
     }
   }
 
-  onInput() {
-    if (this.isSaving) {
-      return;
+  handleInput() {
+    if (!this.isSaving) {
+      this.showDefaultButtonText();
     }
-
-    this.showDefaultButtonText();
   }
 
-  onCartUpdated(event) {
-    const detail = event.detail || {};
-    const sections = detail.sections || {};
-    const sectionHtml = sections['cart-dialog'];
-    if (!sectionHtml) {
-      return;
-    }
+  handleCartUpdated(event) {
+    const sectionHtml = event.detail?.sections?.['cart-dialog'];
+    if (!sectionHtml) return;
 
     const parsedHtml = new DOMParser().parseFromString(sectionHtml, 'text/html');
     const currentNoteDetails = document.querySelector('#cart-dialog-note-details');
     const nextNoteDetails = parsedHtml.querySelector('#cart-dialog-note-details');
-    if (!currentNoteDetails || !nextNoteDetails) {
-      return;
-    }
+    
+    if (!currentNoteDetails || !nextNoteDetails) return;
 
     const shouldHide = nextNoteDetails.hasAttribute('hidden');
     currentNoteDetails.toggleAttribute('hidden', shouldHide);
@@ -640,38 +548,79 @@ class CartNote extends HTMLElement {
       currentNoteDetails.removeAttribute('open');
     }
   }
+
+  setButtonState(text, isBusy) {
+    this.submitButton.querySelector('span').textContent = text;
+    this.submitButton.disabled = isBusy;
+    this.submitButton.classList.toggle('is-loading', isBusy);
+    this.submitButton.toggleAttribute('aria-busy', isBusy);
+  }
+
+  showDefaultButtonText() {
+    this.clearSavedTimeout();
+    this.setButtonState(this.defaultButtonText, false);
+  }
+
+  showSavedButtonText() {
+    this.setButtonState(this.savedButtonText, false);
+    this.clearSavedTimeout();
+    
+    this.savedTimeoutId = window.setTimeout(() => {
+      this.savedTimeoutId = null;
+      this.setButtonState(this.defaultButtonText, false);
+    }, 2000);
+  }
+
+  clearSavedTimeout() {
+    if (this.savedTimeoutId) {
+      window.clearTimeout(this.savedTimeoutId);
+      this.savedTimeoutId = null;
+    }
+  }
 }
 customElements.define('cart-note', CartNote);
+
+function updateSectionContent(element, event, sectionSelector, sectionNames = ['cart-dialog']) {
+  const detail = event.detail || {};
+  const sections = detail.sections || {};
+  
+  let sectionHtml = null;
+  for (const sectionName of sectionNames) {
+    sectionHtml = sections[sectionName];
+    if (sectionHtml) break;
+  }
+  
+  if (!sectionHtml) {
+    return;
+  }
+
+  const parsedHtml = new DOMParser().parseFromString(sectionHtml, 'text/html');
+  const nextElement = parsedHtml.querySelector(sectionSelector);
+  if (!nextElement) {
+    return;
+  }
+
+  element.innerHTML = nextElement.innerHTML;
+}
 
 class CartSubtotal extends HTMLElement {
   constructor() {
     super();
-    this.onCartUpdated = this.onCartUpdated.bind(this);
+    this.boundHandlers = {
+      cartUpdated: (e) => this.handleCartUpdated(e)
+    };
   }
 
   connectedCallback() {
-    document.addEventListener('cart:updated', this.onCartUpdated);
+    document.addEventListener('cart:updated', this.boundHandlers.cartUpdated);
   }
 
   disconnectedCallback() {
-    document.removeEventListener('cart:updated', this.onCartUpdated);
+    document.removeEventListener('cart:updated', this.boundHandlers.cartUpdated);
   }
 
-  onCartUpdated(event) {
-    const detail = event.detail || {};
-    const sections = detail.sections || {};
-    const sectionHtml = sections['cart-dialog'];
-    if (!sectionHtml) {
-      return;
-    }
-
-    const parsedHtml = new DOMParser().parseFromString(sectionHtml, 'text/html');
-    const nextSubtotal = parsedHtml.querySelector('cart-subtotal');
-    if (!nextSubtotal) {
-      return;
-    }
-
-    this.innerHTML = nextSubtotal.innerHTML;
+  handleCartUpdated(event) {
+    updateSectionContent(this, event, 'cart-subtotal');
   }
 }
 customElements.define('cart-subtotal', CartSubtotal);
@@ -679,32 +628,21 @@ customElements.define('cart-subtotal', CartSubtotal);
 class CartAppliedDiscounts extends HTMLElement {
   constructor() {
     super();
-    this.onCartUpdated = this.onCartUpdated.bind(this);
+    this.boundHandlers = {
+      cartUpdated: (e) => this.handleCartUpdated(e)
+    };
   }
 
   connectedCallback() {
-    document.addEventListener('cart:updated', this.onCartUpdated);
+    document.addEventListener('cart:updated', this.boundHandlers.cartUpdated);
   }
 
   disconnectedCallback() {
-    document.removeEventListener('cart:updated', this.onCartUpdated);
+    document.removeEventListener('cart:updated', this.boundHandlers.cartUpdated);
   }
 
-  onCartUpdated(event) {
-    const detail = event.detail || {};
-    const sections = detail.sections || {};
-    const sectionHtml = sections['cart-dialog'] || sections['cart-drawer'];
-    if (!sectionHtml) {
-      return;
-    }
-
-    const parsedHtml = new DOMParser().parseFromString(sectionHtml, 'text/html');
-    const nextAppliedDiscounts = parsedHtml.querySelector('cart-applied-discounts');
-    if (!nextAppliedDiscounts) {
-      return;
-    }
-
-    this.innerHTML = nextAppliedDiscounts.innerHTML;
+  handleCartUpdated(event) {
+    updateSectionContent(this, event, 'cart-applied-discounts', ['cart-dialog', 'cart-drawer']);
   }
 }
 customElements.define('cart-applied-discounts', CartAppliedDiscounts);
@@ -743,250 +681,3 @@ function initCartCheckoutLoadingState() {
   });
 }
 initCartCheckoutLoadingState();
-
-// class CartError extends Error {
-//   constructor(message, context) {
-//     super(message);
-//     this.name = 'CartError';
-//     this.status = context && context.status ? context.status : null;
-//     this.response = context && context.response ? context.response : null;
-//   }
-// }
-
-// class Cart {
-//   constructor(options) {
-//     var config = options || {};
-//     var routeConfig = config.routes || (window.themeRoutes && window.themeRoutes.cart) || {};
-//     var root = config.baseUrl || (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '';
-
-//     this.baseUrl = root;
-//     this.defaultSectionsUrl = config.sectionsUrl || window.location.pathname;
-//     this.routes = {
-//       get: this.toAjaxPath(routeConfig.get || root + 'cart'),
-//       add: this.toAjaxPath(routeConfig.add || root + 'cart/add'),
-//       update: this.toAjaxPath(routeConfig.update || root + 'cart/update'),
-//       change: this.toAjaxPath(routeConfig.change || root + 'cart/change'),
-//       clear: this.toAjaxPath(routeConfig.clear || root + 'cart/clear')
-//     };
-//   }
-
-//   async get() {
-//     return this.request(this.routes.get, { method: 'GET' });
-//   }
-
-//   async add(payload) {
-//     var data = payload || {};
-//     var quantity = Number(data.quantity || 1);
-
-//     if (!data.id) {
-//       throw new CartError('Cart.add requires an id');
-//     }
-
-//     return this.mutate('add', {
-//       id: data.id,
-//       quantity: Number.isNaN(quantity) || quantity < 1 ? 1 : quantity,
-//       properties: data.properties,
-//       selling_plan: data.selling_plan,
-//       sections: data.sections,
-//       sections_url: data.sections_url || this.defaultSectionsUrl
-//     });
-//   }
-
-//   async update(input) {
-//     var data = input || {};
-
-//     if (!data.updates || typeof data.updates !== 'object') {
-//       throw new CartError('Cart.update requires an updates object');
-//     }
-
-//     return this.mutate('update', {
-//       updates: data.updates,
-//       note: data.note,
-//       attributes: data.attributes,
-//       sections: data.sections,
-//       sections_url: data.sections_url || this.defaultSectionsUrl
-//     });
-//   }
-
-//   async change(input) {
-//     var data = input || {};
-//     var quantity = Number(data.quantity);
-
-//     if (!Number.isFinite(quantity) || quantity < 0) {
-//       throw new CartError('Cart.change requires a quantity >= 0');
-//     }
-
-//     if (!data.line && !data.id) {
-//       throw new CartError('Cart.change requires line or id');
-//     }
-
-//     return this.mutate('change', {
-//       line: data.line,
-//       id: data.id,
-//       quantity: quantity,
-//       properties: data.properties,
-//       selling_plan: data.selling_plan,
-//       sections: data.sections,
-//       sections_url: data.sections_url || this.defaultSectionsUrl
-//     });
-//   }
-
-//   async remove(input) {
-//     var data = input || {};
-
-//     return this.change({
-//       line: data.line,
-//       id: data.id,
-//       quantity: 0,
-//       sections: data.sections,
-//       sections_url: data.sections_url || this.defaultSectionsUrl
-//     });
-//   }
-
-//   async clear(input) {
-//     var data = input || {};
-
-//     return this.mutate('clear', {
-//       sections: data.sections,
-//       sections_url: data.sections_url || this.defaultSectionsUrl
-//     });
-//   }
-
-//   async mutate(routeKey, body) {
-//     var path = this.routes[routeKey];
-
-//     if (!path) {
-//       throw new CartError('Unknown cart route: ' + routeKey);
-//     }
-
-//     var result = await this.request(path, {
-//       method: 'POST',
-//       body: body
-//     });
-
-//     document.dispatchEvent(new CustomEvent('cart:updated', {
-//       detail: {
-//         path: routeKey,
-//         cart: result
-//       }
-//     }));
-
-//     return result;
-//   }
-
-//   async request(path, options) {
-//     var requestOptions = options || {};
-//     var method = requestOptions.method || 'POST';
-//     var endpoint = this.resolveUrl(path);
-//     var fetchOptions = {
-//       method: method,
-//       headers: {
-//         Accept: 'application/json'
-//       },
-//       credentials: 'same-origin'
-//     };
-
-//     if (requestOptions.body && method !== 'GET') {
-//       fetchOptions.headers['Content-Type'] = 'application/json';
-//       fetchOptions.body = JSON.stringify(this.compact(requestOptions.body));
-//     }
-
-//     var response = await fetch(endpoint, fetchOptions);
-//     var payload = await this.parseResponse(response);
-
-//     if (!response.ok) {
-//       throw new CartError(this.getErrorMessage(payload), {
-//         status: response.status,
-//         response: payload
-//       });
-//     }
-
-//     return payload;
-//   }
-
-//   async parseResponse(response) {
-//     var text = await response.text();
-
-//     if (!text) {
-//       return {};
-//     }
-
-//     try {
-//       return JSON.parse(text);
-//     } catch (error) {
-//       return text;
-//     }
-//   }
-
-//   compact(value) {
-//     var output = {};
-
-//     Object.keys(value || {}).forEach(function (key) {
-//       var current = value[key];
-//       if (current === undefined || current === null || current === '') {
-//         return;
-//       }
-
-//       output[key] = current;
-//     });
-
-//     return output;
-//   }
-
-//   resolveUrl(path) {
-//     if (!path) {
-//       return '';
-//     }
-
-//     if (path.indexOf('http://') === 0 || path.indexOf('https://') === 0) {
-//       return path;
-//     }
-
-//     if (path.charAt(0) === '/') {
-//       return path;
-//     }
-
-//     return this.baseUrl + path;
-//   }
-
-//   toAjaxPath(path) {
-//     var value = path || '';
-//     var queryIndex = value.indexOf('?');
-//     var hashIndex = value.indexOf('#');
-//     var splitIndex = -1;
-//     var suffix = '';
-//     var base = value;
-
-//     if (queryIndex >= 0 && hashIndex >= 0) {
-//       splitIndex = Math.min(queryIndex, hashIndex);
-//     } else {
-//       splitIndex = queryIndex >= 0 ? queryIndex : hashIndex;
-//     }
-
-//     if (splitIndex >= 0) {
-//       base = value.slice(0, splitIndex);
-//       suffix = value.slice(splitIndex);
-//     }
-
-//     if (base.slice(-3) === '.js') {
-//       return base + suffix;
-//     }
-
-//     return base + '.js' + suffix;
-//   }
-
-//   getErrorMessage(payload) {
-//     if (!payload) {
-//       return 'Cart request failed';
-//     }
-
-//     if (typeof payload === 'string') {
-//       return payload;
-//     }
-
-//     return payload.description || payload.message || 'Cart request failed';
-//   }
-// }
-
-// window.Cart = Cart;
-// window.themeCart = window.themeCart || new Cart();
