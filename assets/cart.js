@@ -165,10 +165,15 @@ class CartItemRemove extends HTMLElement {
   constructor() {
     super();
     this.isRemoving = false;
+    this.handleClick = (e) => this.handleRemove(e);
   }
 
   connectedCallback() {
-    this.addEventListener('click', (e) => this.handleRemove(e));
+    this.addEventListener('click', this.handleClick);
+  }
+
+  disconnectedCallback() {
+    this.removeEventListener('click', this.handleClick);
   }
 
   async handleRemove(event) {
