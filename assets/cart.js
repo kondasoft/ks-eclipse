@@ -159,6 +159,31 @@ class ThemeCart {
       body: ThemeCart.buildRequestBody({})
     });
   }
+
+  static updateElements(event, elementConfigs) {
+    const detail = event.detail || {};
+    const sections = detail.sections || {};
+
+    elementConfigs.forEach(({ selector, sectionNames = ['cart-dialog'] }) => {
+      let sectionHtml = null;
+      for (const sectionName of sectionNames) {
+        sectionHtml = sections[sectionName];
+        if (sectionHtml) break;
+      }
+
+      if (!sectionHtml) {
+        return;
+      }
+
+      const parsedHtml = new DOMParser().parseFromString(sectionHtml, 'text/html');
+      document.querySelectorAll(selector).forEach((element) => {
+        const nextElement = parsedHtml.querySelector(selector);
+        if (nextElement) {
+          element.innerHTML = nextElement.innerHTML;
+        }
+      });
+    });
+  }
 }
 
 class CartBadge extends HTMLElement {
@@ -580,34 +605,12 @@ class CartNote extends HTMLElement {
 }
 customElements.define('cart-note', CartNote);
 
-function updateSectionContent(element, event, sectionSelector, sectionNames = ['cart-dialog']) {
-  const detail = event.detail || {};
-  const sections = detail.sections || {};
-  
-  let sectionHtml = null;
-  for (const sectionName of sectionNames) {
-    sectionHtml = sections[sectionName];
-    if (sectionHtml) break;
-  }
-  
-  if (!sectionHtml) {
-    return;
-  }
-
-  const parsedHtml = new DOMParser().parseFromString(sectionHtml, 'text/html');
-  const nextElement = parsedHtml.querySelector(sectionSelector);
-  if (!nextElement) {
-    return;
-  }
-
-  element.innerHTML = nextElement.innerHTML;
-}
 
 class CartSubtotal extends HTMLElement {
   constructor() {
     super();
     this.boundHandlers = {
-      cartUpdated: (e) => this.handleCartUpdated(e)
+      cartUpdated: (e) => ThemeCart.updateElements(e, [{ selector: 'cart-subtotal' }])
     };
   }
 
@@ -617,10 +620,6 @@ class CartSubtotal extends HTMLElement {
 
   disconnectedCallback() {
     document.removeEventListener('cart:updated', this.boundHandlers.cartUpdated);
-  }
-
-  handleCartUpdated(event) {
-    updateSectionContent(this, event, 'cart-subtotal');
   }
 }
 customElements.define('cart-subtotal', CartSubtotal);
@@ -629,7 +628,7 @@ class CartAppliedDiscounts extends HTMLElement {
   constructor() {
     super();
     this.boundHandlers = {
-      cartUpdated: (e) => this.handleCartUpdated(e)
+      cartUpdated: (e) => ThemeCart.updateElements(e, [{ selector: 'cart-applied-discounts', sectionNames: ['cart-dialog', 'cart-drawer'] }])
     };
   }
 
@@ -639,10 +638,6 @@ class CartAppliedDiscounts extends HTMLElement {
 
   disconnectedCallback() {
     document.removeEventListener('cart:updated', this.boundHandlers.cartUpdated);
-  }
-
-  handleCartUpdated(event) {
-    updateSectionContent(this, event, 'cart-applied-discounts', ['cart-dialog', 'cart-drawer']);
   }
 }
 customElements.define('cart-applied-discounts', CartAppliedDiscounts);
