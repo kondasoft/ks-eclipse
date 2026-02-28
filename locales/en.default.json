@@ -54,14 +54,14 @@
   },
   "collection": {
     "empty_html": "No products found, please adjust your filters or <a href=\"\/collections\/all\">browse all products<\/a>.",
-    "sort_by": "Sort by",
     "count_products": {
       "one": "{{ count }} product",
       "other": "{{ count }} products"
     },
-    "filters": {
-      "btn_text": "Filters",
-      "title": "Filters",
+    "filters_sort": {
+      "filter_and_sort": "Filter and sort",
+      "filters": "Filters",
+      "sort_by": "Sort by",
       "reset": "Reset",
       "from": "From",
       "to": "To",

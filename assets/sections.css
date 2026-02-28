@@ -359,12 +359,6 @@ html[data-cart-item-count="0"] #header .count-badge[data-cart-badge] {
 .faq {
 }
 
-.faq-list {
-  display: flex;
-  flex-direction: column;
-  gap: .75rem;
-}
-
 
 /*
   Rich text
