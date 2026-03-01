@@ -202,17 +202,6 @@ class CartAlert extends HTMLElement {
 
   handleCartUpdated() {
     this.hide();
-    
-    const message = window.theme?.strings?.accessibility?.cart_updated;
-    if (message && this.a11yElement) {
-      this.a11yElement.textContent = message;
-      
-      window.setTimeout(() => {
-        if (this.a11yElement) {
-          this.a11yElement.textContent = '';
-        }
-      }, 3000);
-    }
   }
 
   show(message) {
