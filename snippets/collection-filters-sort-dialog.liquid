@@ -5,8 +5,10 @@
   if section.settings.show_filters and collection.filters.size > 0
     assign show_filters = true
   endif
+
+  assign sort_by = collection.sort_by | default: 'manual'
 %}
- 
+
 {% if show_filters or show_sorting %}
   <theme-dialog>
     <dialog 
@@ -32,17 +34,179 @@
         </button>
       </div>
       <div class="dialog-body">
-        <div class="theme-collapse-list">
-          {% if show_filters %}
-            {% for filter in collection.filters %}
+        <collection-filters-form
+          class="collection-filters-form">
+         <div class="theme-collapse-list">
+            {% if show_filters %}
+              {% for filter in collection.filters %}
+                <details 
+                  class="theme-collapse-details"
+                  {% if section.settings.filters_open_by_default %}
+                    open
+                  {% endif %}
+                  >
+                  <summary class="theme-collapse-summary">
+                    <span>{{ filter.label }}</span>
+                    <span class="theme-collapse-icon" aria-hidden="true">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </span>
+                  </summary>
+                  <div 
+                    class="theme-collapse-content"
+                    data-filter="{{ filter.param_name }}">
+                    {% case filter.type %}
+                      {% when 'boolean' %}
+                        <ul 
+                          class="collection-filters-list"
+                          data-filter-type="{{ filter.type }}">
+                          <li>
+                            <label
+                              class="
+                                check-label
+                                {% if filter.true_value.count == 0 and filter.true_value.active == false -%}
+                                  disabled
+                                {%- endif -%}
+                              "
+                            >
+                              <input
+                                type="checkbox"
+                                name="{{ filter.param_name }}"
+                                value="{{ filter.true_value.value }}"
+                                {% if filter.true_value.active %}
+                                  checked
+                                {% endif %}
+                                {% if filter.true_value.count == 0 and filter.true_value.active == false %}
+                                  disabled
+                                {% endif %}
+                              >
+                              {{ filter.true_value.label }} ({{ filter.true_value.count }})
+                            </label>
+                          </li>
+                          <li>
+                            <label
+                              class="
+                                check-label
+                                {% if filter.false_value.count == 0 and filter.false_value.active == false -%}
+                                  disabled
+                                {%- endif -%}
+                              "
+                            >
+                              <input
+                                type="checkbox"
+                                name="{{ filter.param_name }}"
+                                value="{{ filter.false_value.value }}"
+                                {% if filter.false_value.active %}
+                                  checked
+                                {% endif %}
+                                {% if filter.false_value.count == 0 and filter.false_value.active == false %}
+                                  disabled
+                                {% endif %}
+                              >
+                              {{ filter.false_value.label }} ({{ filter.false_value.count }})
+                            </label>
+                          </li>
+                        </ul>
+                      {% when 'list' %}
+                        <ul 
+                          class="collection-filters-list"
+                          data-filter-type="{{ filter.type }}">
+                          {% for filter_value in filter.values %}
+                            <li>
+                              <label
+                                class="
+                                  check-label
+                                  {% if filter_value.count == 0 and filter_value.active == false -%}
+                                    disabled
+                                  {%- endif -%}
+                                "
+                              >
+                                <input
+                                  type="checkbox"
+                                  name="{{ filter_value.param_name }}"
+                                  value="{{ filter_value.value }}"
+                                  {% if filter_value.active -%}
+                                    checked
+                                  {%- endif %}
+                                  {% if filter_value.count == 0 and filter_value.active == false -%}
+                                    disabled
+                                  {%- endif %}
+                                >
+                                {% if filter.presentation == 'swatch' %}
+                                  <span 
+                                    class="collection-filters-swatch" 
+                                    style="background-color: {{ filter_value.swatch.color }};">
+                                    {% if filter_value.swatch.image %}
+                                      <img
+                                        class="img-fluid"
+                                        src="{{ filter_value.swatch.image | image_url: width: 32, height: 32, crop: 'center' }}"
+                                        alt=""
+                                        width="18"
+                                        height="18"
+                                        loading="lazy"
+                                        aria-hidden="true"
+                                      >
+                                    {% endif %}
+                                  </span>
+                                {% endif %}
+                                {{ filter_value.label | escape | split: '|' | first }}
+                                ({{ filter_value.count }})
+                              </label>
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      {% when 'price_range' %}
+                        <div 
+                          class="collection-filter-price-range"
+                          data-filter-type="{{ filter.type }}">
+                          <div class="input-group">
+                            <span class="input-group-text">
+                              {{ cart.currency.symbol }}
+                            </span>
+                            <input
+                              class="input"
+                              name="{{ filter.min_value.param_name }}"
+                              {% if filter.min_value.value %}
+                                value="{{ filter.min_value.value | money_without_currency }}"
+                              {% endif %}
+                              type="text"
+                              inputmode="decimal"
+                              placeholder="{{ 'collection.filters_sort.from' | t }}"
+                              aria-label=" {{ 'collection.filters_sort.from' | t }}"
+                            >
+                          </div>
+                          <div class="input-group">
+                            <span class="input-group-text">
+                              {{ cart.currency.symbol }}
+                            </span>
+                            <input
+                              class="input"
+                              name="{{ filter.max_value.param_name }}"
+                              {% if filter.max_value.value %}
+                                value="{{ filter.max_value.value | money_without_currency }}"
+                              {% endif %}
+                              type="text"
+                              inputmode="decimal"
+                              placeholder="{{ 'collection.filters_sort.to' | t }}"
+                              aria-label="{{ 'collection.filters_sort.to' | t }}"
+                            >
+                          </div>
+                        </div>
+                    {% endcase %}
+                  </div>
+                </details>
+              {% endfor %}
+            {% endif %}
+            {% if show_sorting %}
               <details 
                 class="theme-collapse-details"
                 {% if section.settings.filters_open_by_default %}
                   open
                 {% endif %}
-                >
+              >
                 <summary class="theme-collapse-summary">
-                  <span>{{ filter.label }}</span>
+                  <span>{{ 'collection.filters_sort.sort_by' | t }}</span>
                   <span class="theme-collapse-icon" aria-hidden="true">
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
                       <polyline points="6 9 12 15 18 9"></polyline>
@@ -50,190 +214,34 @@
                   </span>
                 </summary>
                 <div class="theme-collapse-content">
-                  {% case filter.type %}
-                    {% when 'boolean' %}
-                      <ul 
-                        class="collection-filters-list"
-                        data-filter-type="{{ filter.type }}">
-                        <li>
-                          <label
-                            class="
-                              check-label
-                              {% if filter.true_value.count == 0 and filter.true_value.active == false -%}
-                                disabled
-                              {%- endif -%}
-                            "
-                          >
-                            <input
-                              type="checkbox"
-                              name="{{ filter.param_name }}"
-                              value="{{ filter.true_value.value }}"
-                              {% if filter.true_value.active %}
-                                checked
-                              {% endif %}
-                              {% if filter.true_value.count == 0 and filter.true_value.active == false %}
-                                disabled
-                              {% endif %}
-                            >
-                            {{ filter.true_value.label }} ({{ filter.true_value.count }})
-                          </label>
-                        </li>
-                        <li>
-                          <label
-                            class="
-                              check-label
-                              {% if filter.false_value.count == 0 and filter.false_value.active == false -%}
-                                disabled
-                              {%- endif -%}
-                            "
-                          >
-                            <input
-                              type="checkbox"
-                              name="{{ filter.param_name }}"
-                              value="{{ filter.false_value.value }}"
-                              {% if filter.false_value.active %}
-                                checked
-                              {% endif %}
-                              {% if filter.false_value.count == 0 and filter.false_value.active == false %}
-                                disabled
-                              {% endif %}
-                            >
-                            {{ filter.false_value.label }} ({{ filter.false_value.count }})
-                          </label>
-                        </li>
-                      </ul>
-                    {% when 'list' %}
-                      <ul 
-                        class="collection-filters-list"
-                        data-filter-type="{{ filter.type }}">
-                        {% for filter_value in filter.values %}
-                          <li>
-                            <label
-                              class="
-                                check-label
-                                {% if filter_value.count == 0 and filter_value.active == false -%}
-                                  disabled
-                                {%- endif -%}
-                              "
-                            >
-                              <input
-                                type="checkbox"
-                                name="{{ filter_value.param_name }}"
-                                value="{{ filter_value.value }}"
-                                {% if filter_value.active -%}
-                                  checked
-                                {%- endif %}
-                                {% if filter_value.count == 0 and filter_value.active == false -%}
-                                  disabled
-                                {%- endif %}
-                              >
-                              {% if filter.presentation == 'swatch' %}
-                                <span 
-                                  class="collection-filters-swatch" 
-                                  style="background-color: {{ filter_value.swatch.color }};">
-                                  {% if filter_value.swatch.image %}
-                                    <img
-                                      class="img-fluid"
-                                      src="{{ filter_value.swatch.image | image_url: width: 32, height: 32, crop: 'center' }}"
-                                      alt=""
-                                      width="18"
-                                      height="18"
-                                      loading="lazy"
-                                      aria-hidden="true"
-                                    >
-                                  {% endif %}
-                                </span>
-                              {% endif %}
-                              {{ filter_value.label | escape | split: '|' | first }}
-                              ({{ filter_value.count }})
-                            </label>
-                          </li>
-                        {% endfor %}
-                      </ul>
-                    {% when 'price_range' %}
-                      <div 
-                        class="collection-filter-price-range"
-                        data-filter-type="{{ filter.type }}">
-                        <div class="input-group">
-                          <span class="input-group-text">
-                            {{ cart.currency.symbol }}
-                          </span>
+                  <ul class="collection-filters-sorting collection-filters-list">
+                    {% for option in collection.sort_options %}
+                      <li>
+                        <label class="check-label">
                           <input
-                            class="input"
-                            name="{{ filter.min_value.param_name }}"
-                            {% if filter.min_value.value %}
-                              value="{{ filter.min_value.value | money_without_currency }}"
+                            type="radio"
+                            name="sort_by"
+                            value="{{ option.value }}"
+                            {% if option.value == sort_by %}
+                              checked
                             {% endif %}
-                            type="text"
-                            inputmode="decimal"
-                            placeholder="{{ 'collection.filters_sort.from' | t }}"
-                            aria-label=" {{ 'collection.filters_sort.from' | t }}"
                           >
-                        </div>
-                        <div class="input-group">
-                          <span class="input-group-text">
-                            {{ cart.currency.symbol }}
-                          </span>
-                          <input
-                            class="input"
-                            name="{{ filter.max_value.param_name }}"
-                            {% if filter.max_value.value %}
-                              value="{{ filter.max_value.value | money_without_currency }}"
-                            {% endif %}
-                            type="text"
-                            inputmode="decimal"
-                            placeholder="{{ 'collection.filters_sort.to' | t }}"
-                            aria-label="{{ 'collection.filters_sort.to' | t }}"
-                          >
-                        </div>
-                      </div>
-                  {% endcase %}
+                          {{ option.name }}
+                        </label>
+                      </li>
+                    {% endfor %}
+                  </ul>
                 </div>
               </details>
-            {% endfor %}
-          {% endif %}
-          {% if show_sorting %}
-            <details 
-              class="theme-collapse-details"
-              {% if section.settings.filters_open_by_default %}
-                open
-              {% endif %}
-            >
-              <summary class="theme-collapse-summary">
-                <span>{{ 'collection.filters_sort.sort_by' | t }}</span>
-                <span class="theme-collapse-icon" aria-hidden="true">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                </span>
-              </summary>
-              <div class="theme-collapse-content">
-                <ul class="collection-filters-sorting collection-filters-list">
-                  {% for option in collection.sort_options %}
-                    <li>
-                      <label class="check-label">
-                        <input
-                          type="radio"
-                          name="sort_by"
-                          value="{{ option.value }}"
-                          {% if option.value == sort_by %}
-                            checked
-                          {% endif %}
-                        >
-                        {{ option.name }}
-                      </label>
-                    </li>
-                  {% endfor %}
-                </ul>
-              </div>
-            </details>
-          {% endif %}
-        </div>
+            {% endif %}
+          </div>
+        </collection-filters-form>
       </div>
       <div class="dialog-footer">
         <button 
           type="button" 
           class="btn btn-secondary btn-full" 
+          data-btn-view-results
           data-dialog-close>
           {{ 'collection.filters_sort.view_results' | t: count: collection.products_count }}
         </button>
