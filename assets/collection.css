@@ -112,6 +112,12 @@
   border-radius: 50rem;
 }
 
+#collection-filters-dialog .dialog-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 @media (min-width: 600px) and (max-width: 1199px) {
   .collection-grid {
     grid-template-columns: repeat(3, 1fr);

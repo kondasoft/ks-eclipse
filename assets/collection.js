@@ -2,39 +2,52 @@ class CollectionFiltersForm extends HTMLElement {
   constructor() {
     super();
     this.priceDebounceTimer = null;
+    this.announcementTimer = null;
+    this.clearAnnouncementTimer = null;
+    this.handleFormChange = this.handleFormChange.bind(this);
+    this.handleFormInput = this.handleFormInput.bind(this);
+    this.handleClearFiltersClick = this.handleClearFiltersClick.bind(this);
   }
 
   connectedCallback() {
-    this.form = this;
-    this.filterInputs = this.querySelectorAll('input[type="checkbox"], input[type="radio"]');
-    this.priceInputs = this.querySelectorAll('.collection-filter-price-range input');
-    
-    this.initializeEventListeners();
+    this.addEventListener('change', this.handleFormChange);
+    this.addEventListener('input', this.handleFormInput);
+    this.clearFiltersButton = document.querySelector('button[data-btn-clear-filters]');
+    if (this.clearFiltersButton) {
+      this.clearFiltersButton.addEventListener('click', this.handleClearFiltersClick);
+    }
   }
 
-  initializeEventListeners() {
-    this.filterInputs.forEach(input => {
-      const clone = input.cloneNode(true);
-      input.parentNode.replaceChild(clone, input);
-    });
-
-    this.filterInputs = this.querySelectorAll('input[type="checkbox"], input[type="radio"]');
-    this.priceInputs = this.querySelectorAll('.collection-filter-price-range input');
-
-    this.filterInputs.forEach(input => {
-      input.addEventListener('change', () => this.handleChange());
-    });
-
-    this.priceInputs.forEach(input => {
-      input.addEventListener('input', () => this.handlePriceChange());
-    });
+  disconnectedCallback() {
+    this.removeEventListener('change', this.handleFormChange);
+    this.removeEventListener('input', this.handleFormInput);
+    if (this.clearFiltersButton) {
+      this.clearFiltersButton.removeEventListener('click', this.handleClearFiltersClick);
+    }
+    clearTimeout(this.priceDebounceTimer);
+    clearTimeout(this.announcementTimer);
+    clearTimeout(this.clearAnnouncementTimer);
   }
 
-  handleChange() {
-    this.submitFilters();
+  handleClearFiltersClick() {
+    this.clearFilters();
   }
 
-  handlePriceChange() {
+  handleFormChange(event) {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement)) return;
+    if (target.matches('.collection-filter-price-range input')) return;
+
+    if (target.type === 'checkbox' || target.type === 'radio') {
+      this.submitFilters();
+    }
+  }
+
+  handleFormInput(event) {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement)) return;
+    if (!target.matches('.collection-filter-price-range input')) return;
+
     clearTimeout(this.priceDebounceTimer);
     this.priceDebounceTimer = setTimeout(() => {
       this.submitFilters();
@@ -43,24 +56,21 @@ class CollectionFiltersForm extends HTMLElement {
 
   submitFilters() {
     const url = new URL(window.location);
+    url.search = '';
     const searchParams = url.searchParams;
 
-    // Clear all existing params
-    for (const [key] of searchParams.entries()) {
-      searchParams.delete(key);
-    }
-
     // Collect all active filters
+    const filterInputs = this.querySelectorAll('input[type="checkbox"], input[type="radio"]');
     const activeFilters = {};
-    this.filterInputs.forEach(input => {
+    filterInputs.forEach(input => {
       if (input.checked) {
         const paramName = input.name;
         const value = input.value;
         
         if (!activeFilters[paramName]) {
-          activeFilters[paramName] = [];
+          activeFilters[paramName] = new Set();
         }
-        activeFilters[paramName].push(value);
+        activeFilters[paramName].add(value);
       }
     });
 
@@ -72,15 +82,12 @@ class CollectionFiltersForm extends HTMLElement {
     });
 
     // Handle price range
-    const priceRangeDiv = this.querySelector('.collection-filter-price-range');
-    if (priceRangeDiv) {
-      const priceInputs = priceRangeDiv.querySelectorAll('input');
-      priceInputs.forEach((input, index) => {
-        if (input.value) {
-          searchParams.set(input.name, input.value);
-        }
-      });
-    }
+    const priceInputs = this.querySelectorAll('.collection-filter-price-range input');
+    priceInputs.forEach(input => {
+      if (input.value) {
+        searchParams.set(input.name, input.value);
+      }
+    });
 
     // Handle sorting
     const sortInput = this.querySelector('input[type="radio"][name="sort_by"]:checked');
@@ -92,12 +99,41 @@ class CollectionFiltersForm extends HTMLElement {
     this.fetchFilteredResults(url.toString());
   }
 
+  clearFilters() {
+    this.querySelectorAll('input[type="checkbox"]:checked').forEach(input => {
+      input.checked = false;
+    });
+
+    this.querySelectorAll('.collection-filter-price-range input').forEach(input => {
+      input.value = '';
+    });
+
+    this.submitFilters();
+  }
+
+  announceFilterResults(countText, delay = 300) {
+    if (!countText) return;
+
+    const liveRegion = this.querySelector('[data-collection-live-region]');
+    if (!liveRegion) return;
+
+    const template = liveRegion.dataset.text || 'Filters updated. [count]';
+    const message = template.replace('[count]', countText.trim());
+    clearTimeout(this.announcementTimer);
+    clearTimeout(this.clearAnnouncementTimer);
+    liveRegion.textContent = '';
+
+    this.announcementTimer = window.setTimeout(() => {
+      liveRegion.textContent = message;
+
+      this.clearAnnouncementTimer = window.setTimeout(() => {
+        liveRegion.textContent = '';
+      }, 2000);
+    }, delay);
+  }
+
   async fetchFilteredResults(urlString) {
-    const currentCount = document.querySelector('.collection-bar-count');
     const currentProductGrid = document.querySelector('.collection-grid');
-    const currentEmptyMessage = document.querySelector('.collection-grid-empty');
-    const currentPagination = document.querySelector('.pagination-wrapper');
-    const currentViewResultsButton = document.querySelector('button[data-btn-view-results]');
 
     // Add loading state
     if (currentProductGrid) {
@@ -106,52 +142,76 @@ class CollectionFiltersForm extends HTMLElement {
 
     try {
       const response = await fetch(urlString);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch collection filters: ${response.status}`);
+      }
+
       const html = await response.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
+
+      const newLiveRegion = doc.querySelector('[data-collection-live-region]');
+      const announcementCountText = newLiveRegion?.dataset.countText || '';
       
       // Update the collection bar count
+      const currentCount = document.querySelector('.collection-bar-count');
       const newCount = doc.querySelector('.collection-bar-count');
       if (newCount && currentCount) {
         currentCount.textContent = newCount.textContent;
       }
 
-      // Update the product grid // empty meessage
+      // Update the product grid
       const newProductGrid = doc.querySelector('.collection-grid');
-      const newEmptyMessage = doc.querySelector('.collection-grid-empty');
       if (newProductGrid && currentProductGrid) {
         currentProductGrid.outerHTML = newProductGrid.outerHTML;
-        currentProductGrid.style.opacity = '1';
       }
+
+      const updatedProductGrid = document.querySelector('.collection-grid');
+      if (updatedProductGrid) {
+        updatedProductGrid.style.opacity = '1';
+      }
+
+      // Update the empty message
+      const currentEmptyMessage = document.querySelector('.collection-grid-empty');
+      const newEmptyMessage = doc.querySelector('.collection-grid-empty');
       if (newEmptyMessage && currentEmptyMessage) {
         currentEmptyMessage.outerHTML = newEmptyMessage.outerHTML;
-        if (newProductGrid.children.length === 0) {
-          currentEmptyMessage.hidden = false;
-          currentProductGrid.hidden = true;
-        }
+      }
+
+      // Update product grid and empty message visibility
+      const updatedEmptyMessage = document.querySelector('.collection-grid-empty');
+      const hasProducts = Boolean(newProductGrid && newProductGrid.children.length > 0);
+      if (updatedProductGrid) {
+        updatedProductGrid.hidden = !hasProducts;
+      }
+      if (updatedEmptyMessage) {
+        updatedEmptyMessage.hidden = hasProducts;
       }
 
       // Update pagination
+      const currentPagination = document.querySelector('.pagination-wrapper');
       const newPagination = doc.querySelector('.pagination-wrapper');
       if (newPagination && currentPagination) {
         currentPagination.innerHTML = newPagination.innerHTML;
       }
 
-      document.querySelectorAll('.collection-filters-form .theme-collapse-content').forEach(content => {
+      // Update filter contents
+      this.querySelectorAll('.theme-collapse-content').forEach(content => {
         const newContent = doc.querySelector(`.collection-filters-form .theme-collapse-content[data-filter="${content.dataset.filter}"]`);
         if (newContent) {
           content.innerHTML = newContent.innerHTML;
         }
       });
 
-      // Update the "View results button"
+      // Update the "View results" button
+      const currentViewResultsButton = document.querySelector('button[data-btn-view-results]');
       const newViewResultsButton = doc.querySelector('button[data-btn-view-results]');
       if (newViewResultsButton && currentViewResultsButton) {
         currentViewResultsButton.innerHTML = newViewResultsButton.innerHTML;
       }
 
-      // Reinitialize event listeners on updated inputs
-      this.initializeEventListeners();
+      // Announce the number of results (screen readers)
+      this.announceFilterResults(announcementCountText, 400);
 
       // Update browser history
       window.history.pushState({}, '', urlString);

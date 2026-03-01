@@ -36,6 +36,15 @@
       <div class="dialog-body">
         <collection-filters-form
           class="collection-filters-form">
+          <span
+          class="visually-hidden"
+            data-collection-live-region
+            data-text="{{ 'collection.filters_sort.results_updated' | t: count: '[count]' | escape }}"
+            data-count-text="{{ 'collection.count_products' | t: count: collection.products_count | escape }}"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          ></span>
          <div class="theme-collapse-list">
             {% if show_filters %}
               {% for filter in collection.filters %}
@@ -240,10 +249,16 @@
       <div class="dialog-footer">
         <button 
           type="button" 
-          class="btn btn-secondary btn-full" 
+          class="btn btn-primary btn-full" 
           data-btn-view-results
           data-dialog-close>
           {{ 'collection.filters_sort.view_results' | t: count: collection.products_count }}
+        </button>
+         <button 
+          type="button" 
+          class="btn btn-secondary btn-full btn-sm" 
+          data-btn-clear-filters>
+          {{ 'collection.filters_sort.clear_all' | t }}
         </button>
       </div>
     </dialog>

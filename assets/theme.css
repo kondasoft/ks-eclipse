@@ -445,6 +445,10 @@ select.input + svg {
   margin: 0;
 }
 
+.check-label.disabled {
+  opacity: 0.5;
+}
+
 input[type="checkbox"],
 input[type="radio"] {
   appearance: none;
