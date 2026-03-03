@@ -350,6 +350,29 @@ html[data-cart-item-count="0"] #header .count-badge[data-cart-badge] {
 .featured-collection {
 }
 
+.featured-collection .theme-carousel-controls button[data-prev] {
+  left: -.5rem;
+}
+
+.featured-collection .theme-carousel-controls button[data-next] {
+  right: -.5rem;
+}
+
+@media (max-width: 599px) {
+  .featured-collection .theme-carousel-controls button {
+    display: none;
+  }
+}
+
+@media (min-width: 1600px) {
+  .featured-collection .theme-carousel-controls button[data-prev] {
+    left: -1rem;
+  }
+  .featured-collection .theme-carousel-controls button[data-next] {
+    right: -1rem;
+  }
+}
+
 
 /*
   Contact form

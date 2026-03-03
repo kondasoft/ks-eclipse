@@ -781,6 +781,33 @@ class ThemeCarousel extends HTMLElement {
     if (this.nextBtn) {
       this.nextBtn.addEventListener('click', this.boundHandlers.next);
     }
+
+    this.positionButtons();
+    window.addEventListener('resize', () => this.positionButtons());
+  }
+
+  positionButtons() {
+    if (!this.items.length || !this.prevBtn || !this.nextBtn) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      const firstItem = this.items[0];
+      const imgWrapper = firstItem.querySelector('.img-wrapper');
+      
+      if (imgWrapper) {
+        const imgHeight = imgWrapper.offsetHeight;
+        const buttonTop = imgHeight / 2;
+        
+        this.prevBtn.style.top = `${buttonTop}px`;
+        this.nextBtn.style.top = `${buttonTop}px`;
+      }
+
+      const img = firstItem.querySelector('img');
+      if (img && !img.complete) {
+        img.addEventListener('load', () => this.positionButtons(), { once: true });
+      }
+    });
   }
 
   getGapValue() {

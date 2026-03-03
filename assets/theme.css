@@ -1101,8 +1101,8 @@ shopify-accelerated-checkout {
   top: 50%;
   transform: translateY(-50%);
   background: rgba(var(--color-background) / 0.75);
+  border: 1px solid rgb(var(--color-foreground) / var(--border-opacity));
   backdrop-filter: blur(4px);
-  border: none;
   padding: 0.5rem;
   cursor: pointer;
   border-radius: var(--border-radius);
@@ -1119,11 +1119,11 @@ shopify-accelerated-checkout {
 }
 
 .theme-carousel-controls button[data-prev] {
-  left: 1rem;
+  left: 0;
 }
 
 .theme-carousel-controls button[data-next] {
-  right: 1rem;
+  right: 0;
 }
 
 @media (min-width: 600px) and (max-width: 1199px) {
@@ -1220,6 +1220,7 @@ shopify-accelerated-checkout {
 
 .product-card .heading a:focus-visible::after {
   outline-color: currentColor;
+  z-index: 2;
 }
 
 .theme-carousel .product-card .heading a:after {
