@@ -67,6 +67,66 @@
             "buy_btn_size": "fs-md",
             "show_dynamic_buttons": false,
             "pt": 0,
+            "pb": 14
+          }
+        },
+        "trust_icons_dWKk9F": {
+          "type": "trust_icons",
+          "settings": {
+            "style": "horizontal",
+            "max_width": "500",
+            "img_size": 22,
+            "description_size": "fs-sm",
+            "label": "What we promise",
+            "img_1": "shopify:\/\/shop_images\/icon-trophy.svg",
+            "text_1": "<p>Commitment to<br\/>Excellence<\/p>",
+            "img_2": "shopify:\/\/shop_images\/icon-rocket-takeoff.svg",
+            "text_2": "<p>100% Satisfaction<br\/>Guarantee<\/p>",
+            "img_3": "shopify:\/\/shop_images\/icon-truck.svg",
+            "text_3": "<p>Free Shipping<br\/>Over $90<\/p>",
+            "text_4": "",
+            "text_5": "",
+            "pt": 0,
+            "pb": 12
+          }
+        },
+        "collapse_M434Tw": {
+          "type": "collapse",
+          "settings": {
+            "heading": "Details",
+            "description": "{{ product.description }}",
+            "description_size": "fs-md",
+            "default_open": false,
+            "pt": 0,
+            "pb": 6
+          }
+        },
+        "collapse_R9KiJD": {
+          "type": "collapse",
+          "settings": {
+            "heading": "Materials",
+            "description": "<p><strong>Materials & Details: <\/strong>Premium vegan leather; soft microfiber lining; reinforced stitching; polished metal hardware; smooth zip closure; adjustable shoulder strap.<\/p><p><strong>Alternative (more luxury-leaning): <\/strong>Genuine leather exterior; suede interior lining; hand-finished edges; gold-tone hardware; durable zipper fastening.<\/p><p><strong>Minimal \/ modern version: <\/strong>High-quality faux leather; lightweight inner lining; sturdy metal accents; secure magnetic closure.<\/p>",
+            "description_size": "fs-md",
+            "default_open": false,
+            "pt": 0,
+            "pb": 6
+          }
+        },
+        "collapse_jj4MH7": {
+          "type": "collapse",
+          "settings": {
+            "heading": "More details",
+            "description": "<p>Feel free to create additional blocks like this for <strong>Shipping, Payments, etc, <\/strong>through the Shopify Theme editor. <\/p><p>Also, you may easily adjust their order by dragging and dropping.<\/p>",
+            "description_size": "fs-md",
+            "default_open": false,
+            "pt": 0,
+            "pb": 6
+          }
+        },
+        "breadcrumb_yC8N4i": {
+          "type": "breadcrumb",
+          "settings": {
+            "pt": 4,
             "pb": 0
           }
         }
@@ -78,7 +138,12 @@
         "price_QGmfij",
         "richtext_CT6caE",
         "options_kc3JAp",
-        "buttons_Mm7gyc"
+        "buttons_Mm7gyc",
+        "trust_icons_dWKk9F",
+        "collapse_M434Tw",
+        "collapse_R9KiJD",
+        "collapse_jj4MH7",
+        "breadcrumb_yC8N4i"
       ],
       "name": "Product",
       "settings": {

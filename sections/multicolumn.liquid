@@ -1,0 +1,440 @@
+<div 
+  id="multicolumn-{{ section.id }}"
+  class="multicolumn section-styling section-spacing"
+  style="
+    --pt: {{ section.settings.pt }};
+    --pb: {{ section.settings.pb }};
+  "
+  {% if section.settings.custom_color_schemes %}
+    data-light-color-scheme="{{ section.settings.light_color_scheme }}"
+    data-dark-color-scheme="{{ section.settings.dark_color_scheme }}"
+  {% endif %}
+>
+  <div 
+    class="container"
+    style="{% if section.settings.container_width == 'custom' %} --container-max-width: {{ section.settings.custom_container_width | append: 'px' }}; {% endif %}">
+    {% if section.settings.heading != blank or section.settings.description != blank %}
+      <header class="section-header text-{{ section.settings.header_align }}">
+        {% if section.settings.heading != blank %}
+          <h2 class="{{ section.settings.heading_size }}">
+            {{ section.settings.heading }}
+          </h2>
+        {% endif %}
+        {% if section.settings.description != blank %}
+          <div class="description rte {{ section.settings.description_size }}">
+            {{ section.settings.description }}
+          </div>
+        {% endif %}
+      </header>
+    {% endif %}
+    <div 
+      class="multicolumn-inner" 
+      style="
+        --mobile-cols: {{ section.settings.mobile_cols }};
+        --tablet-cols: {{ section.settings.tablet_cols }};
+        --desktop-cols: {{ section.settings.desktop_cols }};
+      ">
+      {% for block in section.blocks %}
+        <div class="multicolumn-item {{ block.settings.text_alignment | prepend: 'text-' }}" {{ block.shopify_attributes }}>
+          {% if block.settings.img_type == 'icon' and block.settings.icon != blank %}
+            {% assign icon_size_scaled = block.settings.icon_size | times: 2 %}
+            <div class="icon-wrapper">
+              <img
+                src="{{ block.settings.icon | image_url: width: icon_size_scaled }}"
+                alt="{{ block.settings.icon.alt | escape }}"
+                width="{{ block.settings.icon_size }}"
+                height="{{ block.settings.icon_size }}"
+                loading="lazy"
+                data-transform-svg-inline
+              >
+            </div>
+          {% elsif block.settings.img_type == 'image' and block.settings.img != blank %}
+            <div class="img-wrapper">
+              <img 
+                src="{{ block.settings.img | image_url: width: 1800 }}"
+                alt="{{ block.settings.img.alt | escape }}"
+                class="img-fluid {{ block.settings.img_ratio }}"
+                width="{{ block.settings.img.width }}"
+                height="{{ block.settings.img.height }}"
+                srcset="
+                  {{ block.settings.img | image_url: width: 600 }} 600w,
+                  {{ block.settings.img | image_url: width: 1200 }} 1200w,
+                  {{ block.settings.img | image_url: width: 1800 }} 1800w"
+                sizes="(min-width: 1200px) 40vw, 100vw"
+                loading="lazy"
+              >
+            </div>
+          {% endif %}
+          {% if block.settings.heading != blank %}
+            <h3 class="heading {{ block.settings.heading_size }}">
+              {{ block.settings.heading }}
+            </h3>
+          {% endif %}
+          {% if block.settings.description != blank %}
+            <div class="description rte {{ block.settings.description_size }}">
+              {{ block.settings.description }}
+            </div>
+          {% endif %}
+          {% if block.settings.btn_label != blank %}
+            <div class="btn-group">
+              <a 
+                href="{{ block.settings.btn_link | default: '#' }}"
+                class="btn {{ block.settings.btn_style }} {{ block.settings.btn_size }}">
+                {{ block.settings.btn_label }}
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Multicolumn",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_schemes",
+      "label": "Custom color schemes",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "light_color_scheme",
+      "label": "Light color scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "dark_color_scheme",
+      "label": "Dark color scheme",
+      "default": "scheme-3",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "Number of columns",
+      "default": "4",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "container_width",
+      "label": "Container width",
+      "options": [
+        { "value": "theme", "label": "Theme" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "theme"
+    },
+    {
+      "type": "range",
+      "id": "custom_container_width",
+      "label": "Custom container width",
+      "default": 1200,
+      "min": 500,
+      "max": 2000,
+      "step": 50,
+      "unit": "px",
+      "visible_if": "{{ section.settings.container_width == 'custom' }}"
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text_alignment",
+      "id": "header_align",
+      "label": "Header alignment",
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Multicolumn"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" }
+      ],
+      "visible_if": "{{ section.settings.heading != blank }}"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Add a short description of your multicolumn section here.</p>"
+    },
+    {
+      "type": "select",
+      "id": "description_size",
+      "label": "Description size",
+      "default": "fs-md",
+      "options": [
+        { "value": "fs-sm", "label": "Small" },
+        { "value": "fs-md", "label": "Medium" },
+        { "value": "fs-lg", "label": "Large" }
+      ],
+      "visible_if": "{{ section.settings.description != blank }}"
+    },
+    {
+      "type": "header",
+      "content": "Columns",
+      "info": "Customize the number of columns for different screen sizes."
+    },
+    {
+      "type": "range",
+      "id": "mobile_cols",
+      "label": "Mobile columns",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "tablet_cols",
+      "label": "Tablet columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "desktop_cols",
+      "label": "Desktop columns",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pt",
+      "label": "Top",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "pb",
+      "label": "Bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 25
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Column",
+      "type": "column",
+      "settings": [
+        {
+          "type": "text_alignment",
+          "id": "text_alignment",
+          "label": "Text alignment",
+          "default": "center"
+        },
+        {
+          "type": "header",
+          "content": "Icon"
+        },
+        {
+          "type": "select",
+          "id": "img_type",
+          "label": "Image type",
+          "default": "icon",
+          "options": [
+            { "value": "icon", "label": "Icon" },
+            { "value": "image", "label": "Image" }
+          ]
+        },
+         {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon",
+          "visible_if": "{{ block.settings.img_type == 'icon' }}"
+        },
+        {
+          "type": "range",
+          "id": "icon_size",
+          "label": "Icon size",
+          "min": 16,
+          "max": 64,
+          "step": 2,
+          "default": 24,
+          "unit": "px",
+          "visible_if": "{{ block.settings.img_type == 'icon' }}"
+        },
+        {
+          "type": "image_picker",
+          "id": "img",
+          "label": "Image",
+          "visible_if": "{{ block.settings.img_type == 'image' }}"
+        },
+        {
+          "type": "select",
+          "id": "img_ratio",
+          "label": "Image ratio",
+          "options": [
+            { "value": "ratio-adapt", "label": "Adapt to image" },
+            { "value": "ratio-1x1", "label": "Square (1:1)" },
+            { "value": "ratio-4x3", "label": "Landscape (4:3)" },
+            { "value": "ratio-16x9", "label": "Widescreen (16:9)" },
+            { "value": "ratio-3x4", "label": "Portrait (3:4)" },
+            { "value": "ratio-9x16", "label": "Tall (9:16)" }
+          ],
+          "default": "ratio-adapt",
+          "visible_if": "{{ block.settings.img_type == 'image' }}"
+        },
+        {
+          "type": "header",
+          "content": "Text"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Column heading"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "label": "Heading size",
+          "options": [
+            { "value": "fs-sm", "label": "Small" },
+            { "value": "fs-md", "label": "Medium" },
+            { "value": "fs-lg", "label": "Large" }
+          ],
+          "default": "fs-md",
+          "visible_if": "{{ block.settings.heading != blank }}"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Add a short description here.</p>"
+        },
+        {
+          "type": "select",
+          "id": "description_size",
+          "label": "Description size",
+          "options": [
+            { "value": "fs-sm", "label": "Small" },
+            { "value": "fs-md", "label": "Medium" },
+            { "value": "fs-lg", "label": "Large" }
+          ],
+          "default": "fs-md",
+          "visible_if": "{{ block.settings.description != blank }}"
+        },
+        {
+          "type": "header",
+          "content": "Button"
+        },
+        {
+          "type": "text",
+          "id": "btn_label",
+          "label": "Button label",
+          "info": "Leave empty to hide"
+        },
+        {
+          "type": "url",
+          "id": "btn_link",
+          "label": "Button link",
+          "visible_if": "{{ block.settings.btn_label != blank }}"
+        },
+        {
+          "type": "select",
+          "id": "btn_style",
+          "label": "Button style",
+          "options": [
+            { "value": "btn-primary", "label": "Primary" },
+            { "value": "btn-secondary", "label": "Secondary" }
+          ],
+          "default": "btn-primary",
+          "visible_if": "{{ block.settings.btn_label != blank }}"
+        },
+        {
+          "type": "select",
+          "id": "btn_size",
+          "label": "Button size",
+          "options": [
+            { "value": "btn-sm", "label": "Small" },
+            { "value": "btn-md", "label": "Medium" },
+            { "value": "btn-lg", "label": "Large" }
+          ],
+          "default": "btn-sm",
+          "visible_if": "{{ block.settings.btn_label != blank }}"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Multicolumn",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "column",
+          "settings": {
+            "heading": "Feature 1",
+            "description": "<p>Add a short description for this feature.</p>"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "heading": "Feature 2",
+            "description": "<p>Add a short description for this feature.</p>"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "heading": "Feature 3",
+            "description": "<p>Add a short description for this feature.</p>"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "heading": "Feature 4",
+            "description": "<p>Add a short description for this feature.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

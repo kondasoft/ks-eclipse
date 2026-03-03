@@ -30,6 +30,33 @@
         "secondary_btn_link": "https:\/\/www.kondasoft.com\/collections\/shopify-themes\/products\/ks-eclipse"
       }
     },
+    "featured_collection_GTzdhN": {
+      "type": "featured-collection",
+      "name": "Featured Collection",
+      "settings": {
+        "collection": "latest-arrivals",
+        "limit": 8,
+        "custom_color_schemes": false,
+        "light_color_scheme": "",
+        "dark_color_scheme": "",
+        "style": "carousel",
+        "header_align": "center",
+        "heading": "Featured Collection",
+        "heading_size": "h2",
+        "description": "<p>Showcase products from a collection with custom styling and layout options.<\/p>",
+        "description_size": "fs-md",
+        "mobile_cols": 2,
+        "desktop_cols": 4,
+        "card_text_alignment": "center",
+        "card_heading_size": "fs-md",
+        "card_show_vendor": true,
+        "card_show_rating": true,
+        "card_show_form": true,
+        "card_atc_btn_style": "btn-secondary",
+        "pt": 25,
+        "pb": 25
+      }
+    },
     "richtext_FUFaAX": {
       "type": "richtext",
       "name": "Rich Text",
@@ -39,7 +66,6 @@
         "dark_color_scheme": "scheme-3",
         "container_width": 600,
         "text_alignment": "center",
-        "content": "",
         "subheading": "Optional subheading",
         "subheading_size": "fs-sm",
         "heading": "Rich Text",
@@ -56,6 +82,48 @@
       }
     },
     "separator_1": {
+      "type": "separator",
+      "name": "Separator",
+      "settings": {
+        "wrap_container": true,
+        "pt": 0,
+        "pb": 0
+      }
+    },
+    "media_with_text_w9AxEE": {
+      "type": "media-with-text",
+      "name": "Media with text",
+      "settings": {
+        "custom_color_schemes": false,
+        "light_color_scheme": "",
+        "dark_color_scheme": "",
+        "media_alignment_desktop": "left",
+        "type": "video",
+        "img": "shopify:\/\/shop_images\/farid-askerov-cX6ra6dCtAM-unsplash.jpg",
+        "video": "shopify:\/\/files\/videos\/4991088-hd_1920_1080_30fps.mp4",
+        "external_video": "",
+        "video_autoplay": true,
+        "video_muted": true,
+        "video_controls": true,
+        "video_loop": true,
+        "text_alignment_mobile": "left",
+        "text_alignment_desktop": "left",
+        "subheading": "Optional subheading",
+        "subheading_size": "fs-sm",
+        "heading": "Media With Text",
+        "heading_size": "h2",
+        "description": "<p>This is a media with text section. Use this section to add images, videos, or external videos from YouTube and Vimeo to your store.<\/p>",
+        "description_size": "fs-md",
+        "btn_size": "fs-md",
+        "primary_btn_label": "Latest arrivals",
+        "primary_btn_link": "shopify:\/\/collections\/latest-arrivals",
+        "secondary_btn_label": "Best sellers",
+        "secondary_btn_link": "shopify:\/\/collections\/best-selling",
+        "pt": 25,
+        "pb": 26
+      }
+    },
+    "separator_UJwDht": {
       "type": "separator",
       "name": "Separator",
       "settings": {
@@ -117,14 +185,77 @@
         "pt": 25,
         "pb": 25
       }
+    },
+    "multicolumn_tAY9aH": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_z7twCH": {
+          "type": "column",
+          "settings": {
+            "heading": "Feature 1",
+            "heading_size": "fs-md",
+            "text": "<p>Fast shipping<\/p>"
+          }
+        },
+        "column_Efrb3B": {
+          "type": "column",
+          "settings": {
+            "heading": "Feature 2",
+            "heading_size": "fs-md",
+            "text": "<p>Quality guaranteed<\/p>"
+          }
+        },
+        "column_gAQ8rH": {
+          "type": "column",
+          "settings": {
+            "heading": "Feature 3",
+            "heading_size": "fs-md",
+            "text": "<p>Expert support<\/p>"
+          }
+        },
+        "column_L6x6jF": {
+          "type": "column",
+          "settings": {
+            "heading": "Feature 4",
+            "heading_size": "fs-md",
+            "text": "<p>Free returns<\/p>"
+          }
+        }
+      },
+      "block_order": [
+        "column_z7twCH",
+        "column_Efrb3B",
+        "column_gAQ8rH",
+        "column_L6x6jF"
+      ],
+      "name": "Multicolumn",
+      "settings": {
+        "custom_color_schemes": false,
+        "light_color_scheme": "",
+        "dark_color_scheme": "",
+        "columns": "4",
+        "container_width": "theme",
+        "custom_container_width": 1200,
+        "header_align": "center",
+        "heading": "Multicolumn",
+        "heading_size": "h2",
+        "description": "<p>Add a short description of your multicolumn section here.<\/p>",
+        "description_size": "fs-md",
+        "pt": 25,
+        "pb": 25
+      }
     }
   },
   "order": [
     "hero_media_M4Xdyq",
+    "featured_collection_GTzdhN",
     "richtext_FUFaAX",
     "separator_1",
+    "media_with_text_w9AxEE",
+    "separator_UJwDht",
     "html_9n2q8X",
     "separator_mgmCDL",
-    "basic_media_QjjY66"
+    "basic_media_QjjY66",
+    "multicolumn_tAY9aH"
   ]
 }

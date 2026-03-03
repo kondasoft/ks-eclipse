@@ -14,7 +14,7 @@
     "next_media": "Next media",
     "go_to_media": "Go to media {{ index }}",
     "close": "Close",
-    "cart_updated": "Cart updated.",
+    "cart_updated": "Cart updated."
   },
   "general": {
     "menu": "Menu",
@@ -51,8 +51,8 @@
       "title": "Pagination",
       "previous": "Previous",
       "next": "Next",
-      "page_of": "{{ page_start }} - {{ page_end }} of {{ total }} items",
-    },
+      "page_of": "{{ page_start }} - {{ page_end }} of {{ total }} items"
+    }
   },
   "collection": {
     "empty_html": "No products found, please adjust your filters or <a href=\"\/collections\/all\">browse all products<\/a>.",
@@ -97,7 +97,7 @@
       "regular": "Regular price",
       "sale": "Sale price",
       "unit": "Unit price",
-      "from": "From",
+      "from": "From"
     },
     "quantity": {
       "label": "Quantity",

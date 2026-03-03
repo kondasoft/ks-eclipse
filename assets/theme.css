@@ -585,6 +585,38 @@ input[type="file"]::file-selector-button:hover {
 
 
 /*
+  Aspect ratio
+*/
+[class*="ratio-"] {
+  object-fit: cover;
+}
+
+.ratio-1x1 {
+  aspect-ratio: 1 / 1;
+}
+
+.ratio-4x3 {
+  aspect-ratio: 4 / 3;
+}
+
+.ratio-16x9 {
+  aspect-ratio: 16 / 9;
+}
+
+.ratio-3x4 {
+  aspect-ratio: 3 / 4;
+}
+
+.ratio-9x16 {
+  aspect-ratio: 9 / 16;
+}
+
+.ratio-adapt {
+  aspect-ratio: auto;
+}
+
+
+/*
   Alerts
 */
 .alert {

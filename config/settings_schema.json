@@ -164,7 +164,7 @@
         "max": 100,
         "step": 5,
         "unit": "%"
-      },
+      }
     ]
   },
   {
@@ -288,7 +288,7 @@
         "id": "cart_taxes_and_shipping",
         "label": "Show taxes and shipping text",
         "default": true
-      }, 
+      },
       {
         "type": "checkbox",
         "id": "cart_dynamic_checkout",

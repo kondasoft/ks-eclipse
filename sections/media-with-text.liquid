@@ -26,15 +26,15 @@
             endif
           %}
           <img
-            src="{{ section.settings.img | image_url: width: 2400 }}"
+            src="{{ section.settings.img | image_url: width: 1800 }}"
             alt="{{ section.settings.img.alt | escape }}"
             width="{{ section.settings.img.width }}"
             height="{{ section.settings.img.height }}"
             srcset="
-              {{ section.settings.img | image_url: width: 800 }} 800w,
-              {{ section.settings.img | image_url: width: 1600 }} 1600w,
-              {{ section.settings.img | image_url: width: 2400 }} 2400w"
-            sizes="100vw"
+              {{ section.settings.img | image_url: width: 600 }} 600w,
+              {{ section.settings.img | image_url: width: 1200 }} 1200w,
+              {{ section.settings.img | image_url: width: 1800 }} 1800w"
+            sizes="(min-width: 1200px) 50vw, 100vw"
             loading="{{ img_loading }}"
             fetchpriority="{{ img_fetchpriority }}"
           >
@@ -375,11 +375,11 @@
       "id": "btn_size",
       "label": "Button size",
       "options": [
-        { "value": "fs-sm", "label": "Small" },
-        { "value": "fs-md", "label": "Medium" },
-        { "value": "fs-lg", "label": "Large" }
+        { "value": "btn-sm", "label": "Small" },
+        { "value": "btn-md", "label": "Medium" },
+        { "value": "btn-lg", "label": "Large" }
       ],
-      "default": "fs-md"
+      "default": "btn-md"
     },
     {
       "type": "text",

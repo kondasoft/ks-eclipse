@@ -464,6 +464,65 @@ html[data-cart-item-count="0"] #header .count-badge[data-cart-badge] {
 
 
 /*
+  Multicolumn
+*/
+.multicolumn {
+}
+
+.multicolumn-inner {
+  --cols: var(--mobile-cols, 1);
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 1), 1fr);
+  gap: 1.5rem 1rem;
+}
+
+.multicolumn-item {
+}
+
+.multicolumn-item .icon-wrapper {
+  display: inline-flex;
+  margin-bottom: 1rem;
+}
+
+.multicolumn-item .icon-wrapper svg {
+  display: block;
+}
+
+.multicolumn-item .img-wrapper {
+  margin-bottom: 1rem;
+}
+
+.multicolumn-item .img-wrapper img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+}
+
+.multicolumn-item .heading {
+}
+
+.multicolumn-item .description {
+}
+
+.multicolumn-item .description + .btn-group {
+  margin-top: 1em;
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+  .multicolumn-inner {
+    --cols: var(--tablet-cols, 2);
+  }
+}
+
+@media (min-width: 1200px) {
+  .multicolumn-inner {
+    --cols: var(--desktop-cols, 4);
+  }
+}
+
+
+/*
   Newsletter
 */
 .newsletter {
