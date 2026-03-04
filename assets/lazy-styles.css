@@ -659,7 +659,7 @@ html[data-cart-item-count="0"] #cart-dialog .dialog-footer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0;
+  padding: 2rem 0 .5rem;
 }
 
 .pagination-counter {

@@ -1,0 +1,31 @@
+{
+  "sections": {
+    "main": {
+      "type": "collections-list",
+      "settings": {
+        "display": "all",
+        "limit": 40,
+        "custom_color_schemes": false,
+        "light_color_scheme": "scheme-1",
+        "dark_color_scheme": "scheme-3",
+        "text_align": "center",
+        "show_breadcrumb": true,
+        "title": "Collections",
+        "heading_size": "h1",
+        "description": "<p>Explore our curated selection of collections featuring unique products and styles tailored to your preferences.</p>",
+        "description_size": "fs-md",
+        "card_show_img": true,
+        "card_img_ratio": "ratio-16x9",
+        "card_heading_size": "fs-md",
+        "card_show_product_count": true,
+        "mobile_cols": 2,
+        "desktop_cols": 3,
+        "pt": 25,
+        "pb": 25
+      } 
+    }
+  },
+  "order": [
+    "main"
+  ]
+} 

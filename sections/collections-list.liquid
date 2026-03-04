@@ -1,0 +1,296 @@
+{% liquid 
+  assign heading_tag = 'h2'
+
+  if template.name == 'list-collections'
+    assign heading_tag = 'h1'
+  endif
+
+  assign limit = section.settings.limit
+
+  if shop.domain contains 'ks-'
+    assign limit = 6
+  endif
+  
+%}
+
+<div
+  id="collections-list-{{ section.id }}"
+  class="collections-list section-styling section-spacing"
+  style="
+    --pt: {{ section.settings.pt }};
+    --pb: {{ section.settings.pb }};
+  "
+  {% if section.settings.custom_color_schemes %}
+    data-light-color-scheme="{{ section.settings.light_color_scheme }}"
+    data-dark-color-scheme="{{ section.settings.dark_color_scheme }}"
+  {% endif %}
+>
+  <div class="container">
+    <header class="section-header text-{{ section.settings.text_align }}">
+      {% if section.settings.show_breadcrumb %}
+        {% render 'breadcrumb' %}
+      {% endif %}
+      {% if section.settings.title != blank %}
+        <{{ heading_tag }} class="heading {{ section.settings.heading_size }}">
+          {{ section.settings.title }}
+        </{{ heading_tag }}>
+      {% endif %}
+      {% if section.settings.description != blank %}
+        <div class="description rte {{ section.settings.description_size }}">
+          {{ section.settings.description }}
+        </div>
+      {% endif %}
+    </header>
+    {% if section.settings.display == 'all' %}
+      {% paginate collections by limit %}
+        <ul
+          class="collection-grid" 
+          style="
+            --mobile-cols: {{ section.settings.mobile_cols }};
+            --desktop-cols: {{ section.settings.desktop_cols }};
+          "
+        >
+        {% for collection in collections %}
+          <li class="collection-item">
+            {% render 'collection-card', collection: collection %}
+          </li>
+        {% endfor %}
+      </ul>
+      {% render 'pagination', paginate: paginate %}
+      {% endpaginate %}
+    {% else %}
+      <ul
+        class="collection-grid"
+        style="
+          --mobile-cols: {{ section.settings.mobile_cols }};
+          --desktop-cols: {{ section.settings.desktop_cols }};
+        "
+      >
+        {% for block in section.blocks %}
+          <li class="collection-item">
+            {% render 'collection-card', collection: block.settings.collection, index: forloop.index %}
+          </li> 
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collections list",
+  "tag": "section",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "select",
+      "id": "display",
+      "label": "Collections to display",
+      "options": [
+        { "value": "all", "label": "All" },
+        { "value": "selected", "label": "Selected" }
+      ],
+      "default": "all",
+      "info": "Choose \"All\" to automatically display all collections. Choose \"Selected\" to select specific collections to display using section blocks."
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "Collections per page",
+      "min": 2,
+      "max": 50,
+      "default": 40,
+      "step": 1,
+      "visible_if": "{{ section.settings.display == 'all' }}"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_schemes",
+      "label": "Custom color schemes",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "light_color_scheme",
+      "label": "Light color scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "dark_color_scheme",
+      "label": "Dark color scheme",
+      "default": "scheme-3",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text_alignment",
+      "id": "text_align",
+      "label": "Text alignment",
+      "default": "center"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_breadcrumb",
+      "label": "Show breadcrumb",
+      "default": true
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Heading",
+      "default": "Collections"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" }
+      ],
+      "visible_if": "{{ section.settings.title != blank }}"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Explore our curated selection of collections featuring unique products and styles tailored to your preferences.</p>"
+    },
+    {
+      "type": "select",
+      "id": "description_size",
+      "label": "Description size",
+      "default": "fs-md",
+      "options": [
+        { "value": "fs-sm", "label": "Small" },
+        { "value": "fs-md", "label": "Medium" },
+        { "value": "fs-lg", "label": "Large" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Collection card"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_img",
+      "label": "Show collection image",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "card_img_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "ratio-adapt", "label": "Adapt to image" },
+        { "value": "ratio-1x1", "label": "Square (1:1)" },
+        { "value": "ratio-4x3", "label": "Landscape (4:3)" },
+        { "value": "ratio-16x9", "label": "Widescreen (16:9)" },
+        { "value": "ratio-3x4", "label": "Portrait (3:4)" },
+        { "value": "ratio-9x16", "label": "Tall (9:16)" }
+      ],
+      "default": "ratio-16x9",
+      "visible_if": "{{ section.settings.card_show_img == true }}"
+    },
+    {
+      "type": "select",
+      "id": "card_heading_size",
+      "label": "Collection title size",
+      "options": [
+        { "value": "fs-sm", "label": "Small" },
+        { "value": "fs-md", "label": "Medium" },
+        { "value": "fs-lg", "label": "Large" },
+        { "value": "fs-xl", "label": "Extra Large" }
+      ],
+      "default": "fs-md"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_product_count",
+      "label": "Show product count",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Columns",
+      "info": "Customize the number of collections displayed per row on mobile and desktop devices."
+    },
+    {
+      "type": "range",
+      "id": "mobile_cols",
+      "label": "Mobile columns",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "desktop_cols",
+      "label": "Desktop columns",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pt",
+      "label": "Top",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "pb",
+      "label": "Bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 25
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Select collection"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": [ "header", "footer"]
+  },
+  "presets": [
+    {
+      "name": "Collections list",
+      "category": "Collections"
+    }
+  ]
+}
+{% endschema %}

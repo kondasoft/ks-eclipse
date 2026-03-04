@@ -40,7 +40,7 @@
         "card_show_vendor": true,
         "card_show_rating": true,
         "card_show_form": true,
-        "card_atc_btn_style": "btn-secondary",
+        "card_atc_btn_style": "btn-primary",
         "pt": 25,
         "pb": 25
       }

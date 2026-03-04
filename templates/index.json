@@ -52,7 +52,7 @@
         "card_show_vendor": true,
         "card_show_rating": true,
         "card_show_form": true,
-        "card_atc_btn_style": "btn-secondary",
+        "card_atc_btn_style": "btn-primary",
         "pt": 25,
         "pb": 25
       }
@@ -186,39 +186,88 @@
         "pb": 25
       }
     },
+    "separator_HmjUHF": {
+      "type": "separator",
+      "name": "Separator",
+      "settings": {
+        "wrap_container": true,
+        "pt": 0,
+        "pb": 0
+      }
+    },
     "multicolumn_tAY9aH": {
       "type": "multicolumn",
       "blocks": {
         "column_z7twCH": {
           "type": "column",
           "settings": {
+            "text_alignment": "center",
+            "img_type": "icon",
+            "icon": "shopify:\/\/shop_images\/icon-rocket-takeoff.svg",
+            "icon_size": 24,
+            "img_ratio": "ratio-adapt",
             "heading": "Feature 1",
             "heading_size": "fs-md",
-            "text": "<p>Fast shipping<\/p>"
+            "description": "<p>Add a short description for this feature<\/p>",
+            "description_size": "fs-md",
+            "btn_label": "",
+            "btn_link": "shopify:\/\/collections\/latest-arrivals",
+            "btn_style": "btn-primary",
+            "btn_size": "btn-md"
           }
         },
         "column_Efrb3B": {
           "type": "column",
           "settings": {
+            "text_alignment": "center",
+            "img_type": "icon",
+            "icon": "shopify:\/\/shop_images\/icon-trophy.svg",
+            "icon_size": 24,
+            "img_ratio": "ratio-adapt",
             "heading": "Feature 2",
             "heading_size": "fs-md",
-            "text": "<p>Quality guaranteed<\/p>"
+            "description": "<p>Add a short description for this feature<\/p>",
+            "description_size": "fs-md",
+            "btn_label": "",
+            "btn_link": "",
+            "btn_style": "btn-primary",
+            "btn_size": "fs-sm"
           }
         },
         "column_gAQ8rH": {
           "type": "column",
           "settings": {
+            "text_alignment": "center",
+            "img_type": "icon",
+            "icon": "shopify:\/\/shop_images\/icon-truck.svg",
+            "icon_size": 24,
+            "img_ratio": "ratio-adapt",
             "heading": "Feature 3",
             "heading_size": "fs-md",
-            "text": "<p>Expert support<\/p>"
+            "description": "<p>Add a short description for this feature<\/p>",
+            "description_size": "fs-md",
+            "btn_label": "",
+            "btn_link": "",
+            "btn_style": "btn-primary",
+            "btn_size": "fs-sm"
           }
         },
         "column_L6x6jF": {
           "type": "column",
           "settings": {
+            "text_alignment": "center",
+            "img_type": "icon",
+            "icon": "shopify:\/\/shop_images\/icon-credit-card.svg",
+            "icon_size": 24,
+            "img_ratio": "ratio-adapt",
             "heading": "Feature 4",
             "heading_size": "fs-md",
-            "text": "<p>Free returns<\/p>"
+            "description": "<p>Add a short description for this feature<\/p>",
+            "description_size": "fs-md",
+            "btn_label": "",
+            "btn_link": "",
+            "btn_style": "btn-primary",
+            "btn_size": "fs-sm"
           }
         }
       },
@@ -241,6 +290,9 @@
         "heading_size": "h2",
         "description": "<p>Add a short description of your multicolumn section here.<\/p>",
         "description_size": "fs-md",
+        "mobile_cols": 2,
+        "tablet_cols": 2,
+        "desktop_cols": 4,
         "pt": 25,
         "pb": 25
       }
@@ -256,6 +308,7 @@
     "html_9n2q8X",
     "separator_mgmCDL",
     "basic_media_QjjY66",
+    "separator_HmjUHF",
     "multicolumn_tAY9aH"
   ]
 }

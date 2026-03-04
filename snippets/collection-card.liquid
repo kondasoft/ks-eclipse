@@ -1,0 +1,43 @@
+{% if collection != blank %}
+  <article class="collection-card {{ section.settings.text_align | prepend: 'text-' }}">
+    <a href="{{ collection.url }}" class="collection-card-link">
+      {% if section.settings.card_show_img %}
+        <div class="img-wrapper">
+          <img 
+            src="{{ collection.featured_image | image_url: width: 1800 }}"
+            alt="{{ collection.featured_image.alt | escape }}"
+            class="img-fluid {{ section.settings.card_img_ratio }}"
+            width="{{ collection.featured_image.width }}"
+            height="{{ collection.featured_image.height }}"
+            srcset="
+              {{ collection.featured_image | image_url: width: 600 }} 600w,
+              {{ collection.featured_image | image_url: width: 1200 }} 1200w,
+              {{ collection.featured_image | image_url: width: 1800 }} 1800w"
+            sizes="(min-width: 1200px) 40vw, 100vw"
+            loading="lazy"
+          >
+        </div>
+      {% endif %}
+      <h3 class="heading {{ section.settings.card_heading_size }}">
+        {{ collection.title }}
+      </h3>
+      {% if section.settings.card_show_product_count %}
+        <p class="collection-card-count fs-sm">
+          {{ 'collection.count_products' | t: count: collection.all_products_count }}
+        </p>
+      {% endif %}
+    </a>
+  </article> 
+{% else  %}
+  {% assign placeholder_index = index | modulo: 4 | plus: 1 %}
+  <article class="collection-card {{ section.settings.text_align | prepend: 'text-' }}">
+    <a href="#" class="collection-card-link">
+      <div class="img-wrapper">
+        {{ 'collection-apparel-' | append: placeholder_index | placeholder_svg_tag: 'placeholder-svg img-fluid' }}
+      </div>
+      <h3 class="heading {{ section.settings.card_heading_size }}">
+        Collection {{ index }}
+      </h3>
+    </a>
+  </article>
+{% endif %}
