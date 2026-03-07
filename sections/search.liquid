@@ -1,0 +1,292 @@
+{% liquid
+  if shop.domain contains 'ks-'
+    assign limit = 12
+  endif
+%}
+
+<div
+  id="search-page"
+  class="search-page section-styling section-spacing"
+  style="
+    --pt: {{ section.settings.pt }};
+    --pb: {{ section.settings.pb }};
+  "
+  {% if section.settings.custom_color_schemes %}
+    data-light-color-scheme="{{ section.settings.light_color_scheme }}"
+    data-dark-color-scheme="{{ section.settings.dark_color_scheme }}"
+  {% endif %}
+>
+
+  <header class="section-header {{ section.settings.header_align | prepend: 'text-' }}">
+    <h1 class="heading {{ section.settings.heading_size }}">
+      {% if search.performed %}
+        {{ 'search.results_for' | t: terms: search.terms }}
+      {% else %}
+        {{ 'search.title' | t }}
+      {% endif %}
+    </h1>
+    {% if section.settings.show_result_count and search.performed %}
+      <div class="description rte">
+        <p>
+          {% case search.results_count %}
+            {% when 0 %}
+              {{ 'search.no_results' | t: terms: search.terms }}
+            {% when 1 %}
+              {{ 'search.results_one' | t }}
+            {% else %}
+              {{ 'search.results_other' | t: count: search.results_count }}
+          {% endcase %}
+        </p>
+      </div>
+    {% endif %}
+    <form 
+      action="{{ routes.search_url }}" 
+      method="get" 
+      role="search" 
+      class="search-form">
+      <input type="hidden" name="options[prefix]" value="last" /> 
+      <input type="hidden" name="type" value="product,collection,page,article" />
+      <label for="search-input" class="visually-hidden">
+        {{ 'search.label' | t }}
+      </label>
+      <input 
+        id="search-input"
+        class="search-input input"
+        type="search"
+        placeholder="{{ 'search.label' | t }}"
+        name="q"
+        value="{{ search.terms | escape }}"
+        autocorrect="off" 
+        autocomplete="off" 
+        autocapitalize="off"
+        spellcheck="false">
+      <button type="submit" class="btn btn-primary">
+        {{ 'search.button_label' | t }}
+      </button>
+    </form>
+  </header>
+  
+  {% if search.performed %}
+    <div class="container">
+      {% if search.results_count == 0 %}
+        <div class="search-page-empty alert alert-warning" role="alert">
+          {{ 'search.no_results_message' | t: terms: search.terms }}
+        </div>
+      {% else %}
+        {% paginate search.results by limit %}
+          {% if search.results_count > 0 %}
+            <ul
+              class="product-grid"
+              style="
+                --mobile-cols: {{ section.settings.mobile_cols }};
+                --desktop-cols: {{ section.settings.desktop_cols }};
+              ">
+              {% for result in search.results %}
+                {% if result.object_type == 'product' %}
+                  <li class="search-result-item">
+                    {% render 'product-card', product: result %}
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+            {% if search.results_count > limit %}
+              {% render 'pagination', paginate: paginate %}
+            {% endif %}
+          {% endif %}
+        {% endpaginate %}
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Search",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_schemes",
+      "default": false,
+      "label": "Override color scheme"
+    },
+    {
+      "type": "color_scheme",
+      "id": "light_color_scheme",
+      "label": "Light color scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "dark_color_scheme",
+      "label": "Dark color scheme",
+      "default": "scheme-3",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text_alignment",
+      "id": "header_align",
+      "label": "Header alignment",
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "Results per page",
+      "min": 2,
+      "max": 50,
+      "default": 40,
+      "step": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "show_result_count",
+      "default": true,
+      "label": "Show result count"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "Show filters",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sorting",
+      "default": true,
+      "label": "Show sorting"
+    },
+    {
+      "type": "header",
+      "content": "Columns",
+      "info": "Customize the number of products displayed per row on mobile and desktop devices."
+    },
+    {
+      "type": "range",
+      "id": "mobile_cols",
+      "label": "Mobile columns",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "desktop_cols",
+      "label": "Desktop columns",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Product card"
+    },
+    {
+      "type": "text_alignment",
+      "id": "card_text_alignment",
+      "label": "Text alignment",
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "card_heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "fs-sm", "label": "Small" },
+        { "value": "fs-md", "label": "Medium" },
+        { "value": "fs-lg", "label": "Large" },
+        { "value": "fs-xl", "label": "Extra Large" }
+
+      ],
+      "default": "fs-md"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_vendor",
+      "label": "Show vendor",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_rating",
+      "label": "Show rating",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_form",
+      "label": "Show \"Add to cart\" form",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "card_atc_btn_style",
+      "label": "\"Add to cart\" button style",
+      "options": [
+        { "value": "btn-primary", "label": "Primary" },
+        { "value": "btn-secondary", "label": "Secondary" }
+      ],
+      "default": "btn-primary"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range", 
+      "id": "pt",
+      "label": "Top",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "pb",
+      "label": "Bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 0
+    }
+  ],
+  "enabled_on": {
+    "templates": ["search"]
+  },
+  "presets": [
+    {
+      "name": "Search",
+      "category": "Search"
+    }
+  ]
+}
+{% endschema %}

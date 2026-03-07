@@ -32,6 +32,18 @@ class PredictiveSearch extends HTMLElement {
         this.highlightOption(option);
       }
     }, true);
+
+    const dialog = this.closest('dialog');
+    if (dialog) {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.attributeName === 'open' && dialog.open) {
+            setTimeout(() => this.input.focus(), 100);
+          }
+        });
+      });
+      observer.observe(dialog, { attributes: true });
+    }
   }
 
   onChange() {
@@ -47,7 +59,7 @@ class PredictiveSearch extends HTMLElement {
   }
 
   getSearchResults(searchTerm) {
-    fetch(`${window.theme.routes.predictiveSearch}${searchTerm}&section_id=predictive-search&resources[type]=product,collection,page,article,query`)
+    fetch(`${window.theme.routes.predictiveSearch}${searchTerm}&section_id=predictive-search&resources[type]=product,collection,page,article,query&resources[limit]=10`)
       .then((response) => {
         if (!response.ok) {
           var error = new Error(response.status);

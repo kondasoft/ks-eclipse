@@ -1,3 +1,6 @@
+/*
+  Predictive search
+*/
 .predictive-search {
   display: block;
 }
@@ -85,3 +88,23 @@
   display: block;
 }
 
+
+/*
+  Search page
+*/
+.search-page {
+}
+
+.search-page .section-header {
+  margin-bottom: 2.5rem;
+}
+
+.search-page .search-form {
+  display: flex;
+  gap: .5rem;
+  margin-top: 1.5rem;
+}
+
+.search-page-empty {
+  text-align: center;
+}
