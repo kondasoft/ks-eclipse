@@ -98,6 +98,19 @@
 
 {% render 'collection-filters-sort-dialog' %}
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "{{ collection.title | escape }}",
+  "description": "{{ collection.description | escape }}"
+  {%- if collection.image %},
+  "image": "{{ collection.image | image_url: width: 600 | escape }}"
+  {%- endif %},
+  "url": "{{ collection.url | escape }}"
+}
+</script>
+
 {% schema %}
 {
   "name": "Collection",

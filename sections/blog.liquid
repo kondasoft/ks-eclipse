@@ -55,6 +55,19 @@
   </div>
 </div>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "{{ blog.title | escape }}",
+  "description": "{{ section.settings.description | escape }}"
+  {%- if section.settings.description == blank %},
+  "description": "{{ blog.title | escape }} articles"
+  {%- endif %},
+  "url": "{{ blog.url | escape }}"
+}
+</script>
+
 {% schema %}
 {
   "name": "Blog",
