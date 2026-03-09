@@ -1,7 +1,7 @@
 {
   "sections": {
     "page_main_A1b2C3": {
-      "type": "page",
+      "type": "page", 
       "settings": {
         "custom_color_schemes": false,
         "light_color_scheme": "scheme-1",

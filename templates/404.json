@@ -1,0 +1,30 @@
+{
+  "sections": {
+    "not_found_main_A1b2C3": {
+      "type": "404",
+      "settings": {
+        "custom_color_schemes": false,
+        "light_color_scheme": "scheme-1",
+        "dark_color_scheme": "scheme-3",
+        "container_width": 700,
+        "text_alignment": "center",
+        "subheading": "404 error",
+        "subheading_size": "fs-sm",
+        "heading": "Page not found",
+        "heading_size": "h1",
+        "description": "<p>The page you were looking for does not exist. Please return to the homepage and continue browsing.</p>",
+        "description_size": "fs-md",
+        "btn_size": "btn-md",
+        "primary_btn_label": "Go to homepage",
+        "primary_btn_link": "\/",
+        "secondary_btn_label": "Continue shopping",
+        "secondary_btn_link": "\/collections\/all",
+        "pt": 25,
+        "pb": 25
+      }
+    }
+  },
+  "order": [
+    "not_found_main_A1b2C3"
+  ]
+}

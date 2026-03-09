@@ -69,13 +69,15 @@
         "type": "color_scheme",
         "id": "light_color_scheme",
         "label": "Light color scheme",
-        "default": "scheme-1"
+        "default": "scheme-1",
+        "visible_if": "{{ section.settings.custom_color_schemes == true }}"
       },
       {
         "type": "color_scheme",
         "id": "dark_color_scheme",
         "label": "Dark color scheme",
-        "default": "scheme-3"
+        "default": "scheme-3",
+        "visible_if": "{{ section.settings.custom_color_schemes == true }}"
       },
       {
         "type": "range",
@@ -84,7 +86,7 @@
         "min": 500,
         "max": 1600,
         "step": 50,
-        "default": 1000,
+        "default": 900,
         "unit": "px"
       },
       {
@@ -151,6 +153,9 @@
         "default": 25
       }
     ],
+    "enabled_on": {
+      "templates": [ "page" ]
+    },
     "presets": [
       {
         "name": "Page",
