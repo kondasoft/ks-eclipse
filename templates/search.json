@@ -8,7 +8,6 @@
         "light_color_scheme": "scheme-1",
         "dark_color_scheme": "",
         "limit": 40,
-        "show_product_count": true,
         "show_sorting": true,
         "mobile_cols": 2,
         "desktop_cols": 4,

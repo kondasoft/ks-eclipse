@@ -1,0 +1,22 @@
+{
+  "sections": {
+    "page_main_A1b2C3": {
+      "type": "page",
+      "settings": {
+        "custom_color_schemes": false,
+        "light_color_scheme": "scheme-1",
+        "dark_color_scheme": "scheme-3",
+        "container_width": 1000,
+        "text_alignment": "left",
+        "show_title": true,
+        "heading_size": "h1",
+        "content_size": "fs-md",
+        "pt": 25,
+        "pb": 25
+      }
+    }
+  },
+  "order": [
+    "page_main_A1b2C3"
+  ]
+}

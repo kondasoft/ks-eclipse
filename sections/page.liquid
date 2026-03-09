@@ -1,0 +1,161 @@
+<article 
+  id="page-{{ section.id }}"
+  class="page section-styling section-spacing"
+  style="
+    --pt: {{ section.settings.pt }};
+    --pb: {{ section.settings.pb }};
+  "
+  {% if section.settings.custom_color_schemes %}
+    data-light-color-scheme="{{ section.settings.light_color_scheme }}"
+    data-dark-color-scheme="{{ section.settings.dark_color_scheme }}"
+  {% endif %}
+>
+  <div 
+    class="container" 
+    style="--container-max-width: {{ section.settings.container_width | append: 'px' }};">
+    <div class="page-content-wrapper {{ section.settings.text_alignment | prepend: 'text-' }}">
+      {% if section.settings.show_title %}
+        <header class="page-header">
+          <h1 class="page-title {{ section.settings.heading_size }}">
+            {{ page.title }}
+          </h1>
+        </header>
+      {% endif %}
+      <div class="page-content rte {{ section.settings.content_size }}">
+        {{ page.content }}
+      </div>
+    </div>
+  </div>
+</article>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": {{ page.title | json }},
+  "url": "{{ request.origin }}{{ page.url }}",
+  "description": {{ page.metafields.meta.description_tag | default: page.excerpt_or_content | strip_html | truncate: 200 | json }},
+  {%- if page.image %}
+  "image": {
+    "@type": "ImageObject",
+    "url": {{ page.image | image_url: width: 1200 | json }}
+  },
+  {%- endif %}
+  "inLanguage": "{{ request.locale.iso_code }}",
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    "url": "{{ request.origin }}"
+  }
+}
+</script>
+
+{% schema %}
+  {
+    "name": "Page",
+    "tag": "section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Appearance"
+      },
+      {
+        "type": "checkbox",
+        "id": "custom_color_schemes",
+        "label": "Custom color schemes",
+        "default": false
+      },
+      {
+        "type": "color_scheme",
+        "id": "light_color_scheme",
+        "label": "Light color scheme",
+        "default": "scheme-1"
+      },
+      {
+        "type": "color_scheme",
+        "id": "dark_color_scheme",
+        "label": "Dark color scheme",
+        "default": "scheme-3"
+      },
+      {
+        "type": "range",
+        "id": "container_width",
+        "label": "Container width",
+        "min": 500,
+        "max": 1600,
+        "step": 50,
+        "default": 1000,
+        "unit": "px"
+      },
+      {
+        "type": "text_alignment",
+        "id": "text_alignment",
+        "label": "Text alignment",
+        "default": "left"
+      },
+      {
+        "type": "header",
+        "content": "Content"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_title",
+        "label": "Show page title",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "heading_size",
+        "label": "Heading size",
+        "options": [
+          { "value": "h1", "label": "H1" },
+          { "value": "h2", "label": "H2" },
+          { "value": "h3", "label": "H3" },
+          { "value": "h4", "label": "H4" },
+          { "value": "h5", "label": "H5" },
+          { "value": "h6", "label": "H6" }
+        ],
+        "default": "h1"
+      },
+      {
+        "type": "select",
+        "id": "content_size",
+        "label": "Content size",
+        "options": [
+          { "value": "fs-sm", "label": "Small" },
+          { "value": "fs-md", "label": "Medium" },
+          { "value": "fs-lg", "label": "Large" }
+        ],
+        "default": "fs-md"
+      },
+      {
+        "type": "header",
+        "content": "Spacing"
+      },
+      {
+        "type": "range",
+        "id": "pt",
+        "label": "Padding top",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "default": 25
+      },
+      {
+        "type": "range",
+        "id": "pb",
+        "label": "Padding bottom",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "default": 25
+      }
+    ],
+    "presets": [
+      {
+        "name": "Page",
+        "category": "Template"
+      }
+    ]
+  }
+{% endschema %}
