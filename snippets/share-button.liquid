@@ -1,0 +1,58 @@
+ 
+{% capture title %}
+  {{ page_title }}
+  {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+  {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+  {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+{% endcapture %}
+
+<share-component class="share-component">
+  <button
+    class="btn-share btn btn-sm btn-with-icon {{ button_style | default: 'btn-secondary' }}"
+    type="button"
+    data-title="{{ title }}"
+    data-toggle="share-dialog"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share-2">
+      <circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+    </svg>
+    {{ 'general.share.share' | t }}
+  </button>
+
+  <theme-dialog>
+    <dialog 
+      id="share-dialog" 
+      class="modal dialog" 
+      aria-labelledby="share-dialog-title">
+      <div class="dialog-header">
+        <h2 id="share-dialog-title" class="dialog-title">
+          {{ 'general.share.share' | t }}
+        </h2>
+        <button type="button" class="btn-icon dialog-close" data-dialog-close>
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
+            <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="dialog-body">
+        <div class="form-group" style="margin-bottom: 0.75rem;">
+          <input
+            type="text"
+            class="input share-url-input"
+            readonly
+            value="https://{{ shop.domain | append: request.path }}"
+          >
+        </div>
+        <button
+          class="btn btn-primary btn-copy-link btn-full"
+          type="button"
+          aria-live="polite"
+          data-text-copy="{{ 'general.share.copy' | t }}"
+          data-text-copied="{{ 'general.share.copied' | t }}"
+        >
+          {{ 'general.share.copy' | t }}
+        </button>
+      </div>
+    </dialog>
+  </theme-dialog>
+</share-component>

@@ -1366,3 +1366,49 @@ class ProductCardForm extends HTMLElement {
   }
 }
 customElements.define('product-card-form', ProductCardForm);
+
+class ShareComponent extends HTMLElement {
+  constructor() {
+    super();
+
+    this.shareButton = this.querySelector(".btn-share");
+    this.themeDialog = this.querySelector("theme-dialog");
+
+    if (navigator.share) {
+      // Use native share API if available
+      this.shareButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        navigator.share({
+          title: this.shareButton.dataset.title,
+          url: window.location.href,
+        });
+      });
+      // Remove dialog since we don't need it
+      if (this.themeDialog) {
+        this.themeDialog.remove();
+      }
+    } else {
+      // Move dialog to document body for proper animations
+      if (this.themeDialog) {
+        document.body.appendChild(this.themeDialog);
+      }
+
+      // Set up copy button functionality
+      const copyButton = document.querySelector("#share-dialog .btn-copy-link");
+      if (copyButton) {
+        copyButton.addEventListener("click", () => {
+          const input = document.querySelector("#share-dialog .share-url-input");
+          if (input) {
+            navigator.clipboard.writeText(input.value).then(() => {
+              copyButton.textContent = copyButton.dataset.textCopied;
+              setTimeout(() => {
+                copyButton.textContent = copyButton.dataset.textCopy;
+              }, 2000);
+            });
+          }
+        });
+      }
+    }
+  }
+}
+customElements.define("share-component", ShareComponent);

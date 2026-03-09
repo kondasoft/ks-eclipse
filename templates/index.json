@@ -57,6 +57,33 @@
         "pb": 25
       }
     },
+    "latest_articles_Jx9kP2": {
+      "type": "latest-articles",
+      "name": "Latest Articles",
+      "settings": {
+        "blog": "news",
+        "limit": 3,
+        "custom_color_schemes": false,
+        "light_color_scheme": "",
+        "dark_color_scheme": "",
+        "header_align": "center",
+        "heading": "Latest Articles",
+        "heading_size": "h2",
+        "description": "<p>Catch up on recent stories, updates, and announcements.<\/p>",
+        "description_size": "fs-md",
+        "mobile_cols": 1,
+        "desktop_cols": 3,
+        "card_text_alignment": "left",
+        "card_heading_size": "fs-lg",
+        "card_img_ratio": "ratio-16x9",
+        "show_image": true,
+        "show_date": true,
+        "show_author": false,
+        "show_excerpt": true,
+        "pt": 25,
+        "pb": 25
+      }
+    },
     "collections_list_neHdek": {
       "type": "collections-list",
       "blocks": {
@@ -372,6 +399,7 @@
   "order": [
     "hero_media_M4Xdyq",
     "featured_collection_GTzdhN",
+    "latest_articles_Jx9kP2",
     "collections_list_neHdek",
     "richtext_FUFaAX",
     "separator_1",

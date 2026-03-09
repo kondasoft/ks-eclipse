@@ -1,0 +1,55 @@
+<article class="article-card {{ section.settings.card_text_alignment | prepend: 'text-' }}">
+  {% if article.image %}
+    <div class="img-wrapper">
+      <img
+        src="{{ article.image | image_url: width: 800 }}"
+        srcset="
+          {{ article.image | image_url: width: 400 }} 400w,
+          {{ article.image | image_url: width: 800 }} 800w
+        "      
+        sizes="(max-width: 599px) 400px, 800px"
+        alt="{{ article.image.alt | escape }}"
+        width="{{ article.image.width }}"
+        height="{{ article.image.height }}"
+        class="article-card-img img-fluid {{ section.settings.card_img_ratio }}"
+        loading="lazy"
+      >
+    </div>
+  {% endif %}
+  <div class="article-card-content">
+    <h3 class="heading {{ section.settings.card_heading_size }}">
+      <a href="{{ article.url }}">
+        {{ article.title }}
+      </a>
+    </h3>
+    {% if section.settings.card_show_date or section.settings.card_show_author %}
+      <p class="article-card-meta fs-sm">
+        {% if section.settings.card_show_date %}
+          <span>{{ article.published_at | date: "%b %d, %Y" }}</span>
+        {% endif %}
+        {% if section.settings.card_show_author %}
+          {% if section.settings.card_show_date %}
+            <span aria-hidden="true">&middot;</span>
+          {% endif %}
+          <span>{{ article.author }}</span>
+        {% endif %}
+      </p>
+    {% endif %}
+    {% if section.settings.card_show_excerpt and article.excerpt != blank %}
+      <div class="article-card-excerpt rte">
+        {{ article.excerpt }}
+      </div>
+    {% endif %}
+    {% if section.settings.card_show_tags and article.tags.size > 0 %}
+      <div class="article-card-tags" role="list">
+        {% for tag in article.tags %}
+          <a 
+            href="{{ blog.url }}/tagged/{{ tag | handle }}" 
+            class="badge article-card-tag">
+            {{ tag }}
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</article>

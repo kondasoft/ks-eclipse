@@ -400,6 +400,11 @@ button:disabled,
   font-size: 1.125em;
 }
 
+.input[readonly] {
+  background-color: rgb(var(--color-foreground) / .05);
+  cursor: not-allowed;
+}
+
 .form-group {
   margin-bottom: 1.5em;
 }
@@ -660,10 +665,54 @@ input[type="file"]::file-selector-button:hover {
   font-size: 0.625em;
   font-weight: 600;
   letter-spacing: calc(var(--letter-spacing) * 2);
-  color: rgb(var(--color-background));
+  color: rgb(var(--color-accent));
   background-color: rgb(var(--color-accent) / .1);
   border-radius: var(--border-radius);
   text-transform: uppercase;
+  text-decoration: none;
+}
+
+a.badge {
+  transition: all .2s ease-out;
+}
+
+a.badge:hover,
+a.badge:focus-visible {
+  background-color: rgb(var(--color-accent) / .15);
+  color: rgb(var(--color-accent));
+}
+
+
+/*
+  Blockquotes
+*/
+blockquote {
+  margin: 1.5rem 0;
+  padding: 1em 1.5em;
+  border-left: 4px solid rgb(var(--color-accent));
+  background-color: rgb(var(--color-foreground) / .05);
+  font-style: italic;
+  position: relative;
+}
+
+blockquote p {
+  margin: 0 0 1rem 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+blockquote cite {
+  display: block;
+  font-style: normal;
+  font-size: .875em;
+  margin-top: .75rem;
+  opacity: .75;
+}
+
+blockquote cite::before {
+  content: "— ";
 }
 
 
@@ -895,6 +944,8 @@ iframe[data-src*="vimeo.com"] {
   width: 100%;
   height: auto;
   aspect-ratio: 16 / 9;
+  border: none;
+  border-radius: var(--border-radius);
 }
 
 .shopify-challenge__container {

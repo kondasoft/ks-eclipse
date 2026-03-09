@@ -52,6 +52,11 @@
       "previous": "Previous",
       "next": "Next",
       "page_of": "{{ page_start }} - {{ page_end }} of {{ total }} items"
+    },
+    "share": {
+      "share": "Share",
+      "copy": "Copy link",
+      "copied": "Copied"
     }
   },
   "collection": {
@@ -157,6 +162,15 @@
     "results_one": "1 result found",
     "results_other": "{{ count }} results found",
     "results_count": "{{ count }} results",
-    "no_results_message": "No results found for \"{{ terms }}\"",
+    "no_results_message": "No results found for \"{{ terms }}\""
+  },
+  "blog": {
+    "empty_html": "No articles found yet. Please check back later.",
+    "posted_in": "Posted in",
+    "article_navigation": {
+      "label": "Article navigation",
+      "previous": "← Previous",
+      "next": "Next →"
+    }
   }
 }

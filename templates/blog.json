@@ -1,0 +1,31 @@
+{
+  "sections": {
+    "blog_listing_a1B2c3": {
+      "type": "blog",
+      "name": "Blog",
+      "settings": {
+        "custom_color_schemes": false,
+        "light_color_scheme": "scheme-1",
+        "dark_color_scheme": "",  
+        "heading_size": "h1",
+        "header_align": "center",
+        "show_blog_description": true,
+        "limit": 12,
+        "mobile_cols": 1,
+        "desktop_cols": 3,
+        "show_featured_image": true, 
+        "show_date": true,
+        "show_author": false,
+        "show_excerpt": true,
+        "excerpt_words": 24,
+        "card_heading_size": "fs-md",
+        "card_text_alignment": "left",
+        "pt": 25,
+        "pb": 25
+      }
+    }
+  },
+  "order": [
+    "blog_listing_a1B2c3"
+  ]
+}

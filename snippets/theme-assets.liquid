@@ -204,6 +204,8 @@
 {% elsif template.name == 'product' %}
   <link rel="stylesheet" href="{{ 'product.css' | asset_url }}">
   <script src="{{ 'product.js' | asset_url }}" defer></script>
+{% elsif template.name == 'blog' or template.name == 'article' %}
+  <link rel="stylesheet" href="{{ 'blog.css' | asset_url }}">
 {% endif %}
 
 <link rel="stylesheet" href="{{ 'lazy-styles.css' | asset_url }}" media="print" onload="this.media='all'">

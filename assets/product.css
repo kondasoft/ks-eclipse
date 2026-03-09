@@ -257,11 +257,11 @@
 }
 
 .product-block[data-type="price"] .badge-sale {
-  background-color: rgb(var(--color-accent));
+  /* background-color: rgb(var(--color-accent)); */
 }
 
 .product-block[data-type="price"] .badge-sold-out {
-  background-color: rgb(var(--color-foreground) / 0.75);
+  background-color: rgb(var(--color-foreground) / 0.1);
 }
 
 .product-block[data-type="price"] [data-has-price-compare="true"] .price-regular,

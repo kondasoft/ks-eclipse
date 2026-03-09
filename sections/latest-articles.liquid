@@ -1,0 +1,256 @@
+<link rel="stylesheet" href="{{ 'blog.css' | asset_url }}">
+
+<div 
+  id="latest-articles-{{ section.id }}"
+  class="latest-articles section-styling section-spacing"
+  style="
+    --pt: {{ section.settings.pt }};
+    --pb: {{ section.settings.pb }};
+  "
+  {% if section.settings.custom_color_schemes %}
+    data-light-color-scheme="{{ section.settings.light_color_scheme }}"
+    data-dark-color-scheme="{{ section.settings.dark_color_scheme }}"
+  {% endif %}
+>
+  <div class="container">
+    {% if section.settings.heading != blank or section.settings.description != blank %}
+      <header class="section-header text-{{ section.settings.header_align }}">
+        {% if section.settings.heading != blank %}
+          <h2 class="{{ section.settings.heading_size }}">
+            {{ section.settings.heading }}
+          </h2>
+        {% endif %}
+        {% if section.settings.description != blank %}
+          <div class="description rte {{ section.settings.description_size }}">
+            {{ section.settings.description }}
+          </div>
+        {% endif %}
+      </header>
+    {% endif %}
+    <ul
+      class="blog-grid"
+      style="
+        --mobile-cols: {{ section.settings.mobile_cols }};
+        --desktop-cols: {{ section.settings.desktop_cols }};
+      "
+    >
+      {% for article in section.settings.blog.articles limit: section.settings.limit %}
+        <li class="blog-item">
+          {% render 'article-card', article: article %}
+        </li>
+      {% else %}
+        {% for index in (1..8) %}
+          <li class="blog-item">
+            {% render 'article-card-placeholder', index: index %} 
+          </li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Latest Articles",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Blog"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "Number of articles",
+      "min": 2,
+      "max": 24,
+      "default": 8,
+      "step": 1
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_schemes",
+      "label": "Custom color schemes",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "light_color_scheme",
+      "label": "Light color scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "dark_color_scheme",
+      "label": "Dark color scheme",
+      "default": "scheme-3",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text_alignment",
+      "id": "header_align",
+      "label": "Header alignment",
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Latest Articles"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" }
+      ]
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Highlight recent posts from your blog.<\/p>"
+    },
+    {
+      "type": "select",
+      "id": "description_size",
+      "label": "Description size",
+      "default": "fs-md",
+      "options": [
+        { "value": "fs-sm", "label": "Small" },
+        { "value": "fs-md", "label": "Medium" },
+        { "value": "fs-lg", "label": "Large" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Columns",
+      "info": "Customize the number of articles displayed per row on mobile and desktop devices."
+    },
+    {
+      "type": "range",
+      "id": "mobile_cols",
+      "label": "Mobile columns",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "desktop_cols",
+      "label": "Desktop columns",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Article card"
+    },
+    {
+      "type": "text_alignment",
+      "id": "card_text_alignment",
+      "label": "Text alignment",
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "card_img_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "ratio-adapt", "label": "Adapt to image" },
+        { "value": "ratio-1x1", "label": "Square (1:1)" },
+        { "value": "ratio-4x3", "label": "Landscape (4:3)" },
+        { "value": "ratio-16x9", "label": "Widescreen (16:9)" },
+        { "value": "ratio-3x4", "label": "Portrait (3:4)" },
+        { "value": "ratio-9x16", "label": "Tall (9:16)" }
+      ],
+      "default": "ratio-16x9"
+    },
+    {
+      "type": "select",
+      "id": "card_heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "fs-sm", "label": "Small" },
+        { "value": "fs-md", "label": "Medium" },
+        { "value": "fs-lg", "label": "Large" },
+        { "value": "fs-xl", "label": "Extra Large" }
+      ],
+      "default": "fs-lg"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_date",
+      "label": "Show publish date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_author",
+      "label": "Show author",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_excerpt",
+      "label": "Show excerpt",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_tags",
+      "label": "Show tags",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pt",
+      "label": "Top",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "pb",
+      "label": "Bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 25
+    }
+  ],
+  "presets": [
+    {
+      "name": "Latest Articles",
+      "category": "Blog"
+    }
+  ]
+}
+{% endschema %}
+ 

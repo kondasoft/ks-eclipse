@@ -1,0 +1,497 @@
+<div
+  id="article-{{ article.id }}"
+  class="article section-styling section-spacing"
+  style="
+    --pt: {{ section.settings.pt }};
+    --pb: {{ section.settings.pb }};
+  "
+  {% if section.settings.custom_color_schemes %}
+    data-light-color-scheme="{{ section.settings.light_color_scheme }}"
+    data-dark-color-scheme="{{ section.settings.dark_color_scheme }}"
+  {% endif %}
+>
+  <div class="container">
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'image' %}
+          {% if article.image %}
+            <div
+              class="article-block article-block-image section-spacing"
+              style="
+                --pt: {{ block.settings.pt }};
+                --pb: {{ block.settings.pb }};
+              "
+              {{ block.shopify_attributes }}
+            >
+              <div class="img-wrapper">
+                <img
+                  src="{{ article.image | image_url: width: 1400 }}"
+                  srcset="
+                    {{ article.image | image_url: width: 600 }} 600w,
+                    {{ article.image | image_url: width: 1000 }} 1000w,
+                    {{ article.image | image_url: width: 1400 }} 1400w
+                  "
+                  sizes="100vw"
+                  alt="{{ article.image.alt | escape }}"
+                  width="{{ article.image.width }}"
+                  height="{{ article.image.height }}"
+                  class="img-fluid {{ block.settings.img_ratio }}"
+                  loading="eager"
+                >
+              </div>
+            </div>
+          {% endif %}
+        {% when 'title' %}
+          <div
+            class="article-block article-block-title section-spacing"
+            style="
+              --pt: {{ block.settings.pt }};
+              --pb: {{ block.settings.pb }};
+              --max-width: {{ section.settings.max_width | append: 'px' }};
+            "
+            {{ block.shopify_attributes }}
+          >
+            <h1 class="heading {{ block.settings.heading_size }}">
+              {{ article.title }}
+            </h1>
+          </div>
+        {% when 'meta' %}
+          {% if block.settings.show_date or block.settings.show_author %}
+            <div
+              class="article-block article-block-meta section-spacing"
+              style="
+                --pt: {{ block.settings.pt }};
+                --pb: {{ block.settings.pb }};
+                --max-width: {{ section.settings.max_width | append: 'px' }};
+              "
+              {{ block.shopify_attributes }}
+            >
+              <p class="article-meta {{ block.settings.text_size }}">
+                {% if block.settings.show_date %}
+                  <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                    {{ article.published_at | date: '%B %d, %Y' }}
+                  </time>
+                {% endif %}
+                {% if block.settings.show_author %}
+                  {% if block.settings.show_date %}
+                    <span aria-hidden="true">&middot;</span>
+                  {% endif %}
+                  <span>{{ article.author }}</span>
+                {% endif %}
+              </p>
+            </div>
+          {% endif %}
+        {% when 'tags' %}
+          {% if article.tags.size > 0 %}
+            <div
+              class="article-block article-block-tags section-spacing"
+              style="
+                --pt: {{ block.settings.pt }};
+                --pb: {{ block.settings.pb }};
+                --max-width: {{ section.settings.max_width | append: 'px' }};
+              "
+              {{ block.shopify_attributes }}
+            >
+              <div class="article-tags-wrapper">
+                <p class="article-tags-label fs-sm">
+                  {{ 'blog.posted_in' | t }}
+                </p>
+                <div class="article-tags" role="list">
+                  {% for tag in article.tags %}
+                    <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="badge article-tag">
+                      {{ tag }}
+                    </a>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        {% when 'content' %}
+          <div
+            class="article-block article-block-content section-spacing"
+            style="
+              --pt: {{ block.settings.pt }};
+              --pb: {{ block.settings.pb }};
+              --max-width: {{ section.settings.max_width | append: 'px' }};
+            "
+            {{ block.shopify_attributes }}
+          >
+            <div class="article-content description rte {{ block.settings.text_size }}">
+              {{ article.content }}
+            </div>
+          </div>
+        {% when 'share' %}
+          <div
+            class="article-block article-block-share section-spacing"
+            style="
+              --pt: {{ block.settings.pt }};
+              --pb: {{ block.settings.pb }};
+              --max-width: {{ section.settings.max_width | append: 'px' }};
+            "
+            {{ block.shopify_attributes }}
+          >
+            <div class="article-share">
+              {% render 'share-button' %}
+            </div>
+          </div>
+        {% when 'navigation' %}
+          <div
+            class="article-block article-block-navigation section-spacing"
+            style="
+              --pt: {{ block.settings.pt }};
+              --pb: {{ block.settings.pb }};
+              --max-width: {{ section.settings.max_width | append: 'px' }};
+            "
+            {{ block.shopify_attributes }}
+          >
+            <nav 
+              class="article-navigation" 
+              aria-label="{{ 'blog.article_navigation.label' | t }}">
+              {% if blog.previous_article %}
+                <a 
+                  href="{{ blog.previous_article.url }}" 
+                  class="article-nav-link article-nav-prev">
+                  <span class="article-nav-label fs-sm">
+                    {{ 'blog.article_navigation.previous' | t }}
+                  </span>
+                  <span class="article-nav-title">{{ blog.previous_article.title }}</span>
+                </a>
+              {% endif %}
+              {% if blog.next_article %}
+                <a 
+                  href="{{ blog.next_article.url }}" 
+                  class="article-nav-link article-nav-next">
+                  <span class="article-nav-label fs-sm">
+                    {{ 'blog.article_navigation.next' | t }}
+                  </span>
+                  <span class="article-nav-title">{{ blog.next_article.title }}</span>
+                </a>
+              {% endif %}
+            </nav>
+          </div>
+
+        {% when '@app' %}
+          <div class="article-block article-block-app" {{ block.shopify_attributes }}>
+            {% render block %}
+          </div>
+      {% endcase %}
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Article",
+  "tag": "section",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_schemes",
+      "label": "Custom color schemes",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "light_color_scheme",
+      "label": "Light color scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "dark_color_scheme",
+      "label": "Dark color scheme",
+      "default": "scheme-3",
+      "visible_if": "{{ section.settings.custom_color_schemes == true }}"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Content max width",
+      "min": 600,
+      "max": 1200,
+      "step": 20,
+      "default": 720,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pt",
+      "label": "Top",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "pb",
+      "label": "Bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "img_ratio",
+          "label": "Image ratio",
+          "options": [
+            { "value": "ratio-adapt", "label": "Adapt to image" },
+            { "value": "ratio-1x1", "label": "Square (1:1)" },
+            { "value": "ratio-4x3", "label": "Landscape (4:3)" },
+            { "value": "ratio-16x9", "label": "Widescreen (16:9)" },
+            { "value": "ratio-3x4", "label": "Portrait (3:4)" },
+            { "value": "ratio-9x16", "label": "Tall (9:16)" }
+          ],
+          "default": "ratio-adapt"
+        },
+        {
+          "type": "range",
+          "id": "pt",
+          "label": "Padding top",
+          "min": 0,
+          "max": 25,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "pb",
+          "label": "Padding bottom",
+          "min": 0,
+          "max": 25,
+          "step": 1,
+          "default": 10
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "name": "Title",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "heading_size",
+          "label": "Heading size",
+          "default": "h1",
+          "options": [
+            { "value": "h1", "label": "H1" },
+            { "value": "h2", "label": "H2" },
+            { "value": "h3", "label": "H3" },
+            { "value": "h4", "label": "H4" },
+            { "value": "h5", "label": "H5" },
+            { "value": "h6", "label": "H6" }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "pt",
+          "label": "Padding top",
+          "min": 0,
+          "max": 25,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "pb",
+          "label": "Padding bottom",
+          "min": 0,
+          "max": 25,
+          "step": 1,
+          "default": 10
+        }
+      ]
+    },
+    {
+      "type": "meta",
+      "name": "Meta info",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_date",
+          "label": "Show publish date",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_author",
+          "label": "Show author",
+          "default": true
+        },
+        {
+          "type": "select",
+          "id": "text_size",
+          "label": "Text size",
+          "default": "fs-md",
+          "options": [
+            { "value": "fs-sm", "label": "Small" },
+            { "value": "fs-md", "label": "Medium" },
+            { "value": "fs-lg", "label": "Large" }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "pt",
+          "label": "Padding top",
+          "min": 0,
+          "max": 25,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "pb",
+          "label": "Padding bottom",
+          "min": 0,
+          "max": 25,
+          "step": 1,
+          "default": 10
+        }
+      ]
+    },
+    {
+      "type": "tags",
+      "name": "Tags",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "range",
+          "id": "pt",
+          "label": "Padding top",
+          "min": 0,
+          "max": 25,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "pb",
+          "label": "Padding bottom",
+          "min": 0,
+          "max": 25,
+          "step": 1,
+          "default": 10
+        }
+      ]
+    },
+    {
+      "type": "content",
+      "name": "Content",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "text_size",
+          "label": "Text size",
+          "default": "fs-md",
+          "options": [
+            { "value": "fs-sm", "label": "Small" },
+            { "value": "fs-md", "label": "Medium" },
+            { "value": "fs-lg", "label": "Large" }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "pt",
+          "label": "Padding top",
+          "min": 0,
+          "max": 25,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "pb",
+          "label": "Padding bottom",
+          "min": 0,
+          "max": 25,
+          "step": 1,
+          "default": 10
+        }
+      ]
+    },
+    {
+      "type": "share",
+      "name": "Share button",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "range",
+          "id": "pt",
+          "label": "Padding top",
+          "min": 0,
+          "max": 25,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "pb",
+          "label": "Padding bottom",
+          "min": 0,
+          "max": 25,
+          "step": 1,
+          "default": 0
+        }
+      ]
+    },
+    {
+      "type": "navigation",
+      "name": "Article navigation",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "range",
+          "id": "pt",
+          "label": "Padding top",
+          "min": 0,
+          "max": 25,
+          "step": 1,
+          "default": 10
+        },
+        {
+          "type": "range",
+          "id": "pb",
+          "label": "Padding bottom",
+          "min": 0,
+          "max": 25,
+          "step": 1,
+          "default": 0
+        }
+      ]
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "enabled_on": {
+    "templates": ["article"]
+  },
+  "presets": [
+    {
+      "name": "Article",
+      "category": "Blog"
+    }
+  ]
+}
+{% endschema %}

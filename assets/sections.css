@@ -437,17 +437,6 @@ html[data-cart-item-count="0"] #header .count-badge[data-cart-badge] {
   padding: 2rem 0 .5rem;
 }
 
-@media (min-width: 600px) and (max-width: 1199px) {
-  .collection-grid {
-    grid-template-columns: repeat(var(--tablet-cols, 3), 1fr);
-  }
-}
-
-@media (min-width: 1200px) {
-  .collection-grid {
-    grid-template-columns: repeat(var(--desktop-cols, 4), 1fr);
-  }
-}
 
 /*
   Media with text
@@ -612,4 +601,93 @@ html[data-cart-item-count="0"] #header .count-badge[data-cart-badge] {
 
 .separator hr {
   margin: 0;
+}
+
+
+/*
+  Latest articles
+*/
+.latest-articles {
+}
+
+.latest-articles-grid {
+  display: grid;
+  gap: 1.5rem 1rem;
+  grid-template-columns: repeat(var(--mobile-cols, 1), 1fr);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.latest-article-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.latest-article-card-link {
+  display: block;
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.latest-article-card .img-wrapper {
+  margin-bottom: .75rem;
+}
+
+.latest-article-card-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+  transition: transform .25s ease-out, opacity .25s ease-out;
+}
+
+.latest-article-card-link:hover .latest-article-card-img,
+.latest-article-card-link:focus-visible .latest-article-card-img {
+  transform: scale(1.02);
+  opacity: .9;
+}
+
+.latest-article-card .heading {
+  margin-bottom: .45em;
+}
+
+.latest-article-card .heading a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.latest-article-card .heading a:hover,
+.latest-article-card .heading a:focus-visible {
+  text-decoration: underline;
+}
+
+.latest-article-card-meta {
+  margin: 0 0 .5rem 0;
+  opacity: .75;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.latest-article-card-excerpt > *:first-child {
+  margin-top: 0;
+}
+
+.latest-article-card-excerpt > *:last-child {
+  margin-bottom: 0;
+}
+
+@media (min-width: 600px) {
+  .latest-articles-grid {
+    grid-template-columns: repeat(min(var(--desktop-cols, 3), 2), 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .latest-articles-grid {
+    grid-template-columns: repeat(var(--desktop-cols, 3), 1fr);
+  }
 }

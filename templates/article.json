@@ -1,0 +1,71 @@
+{
+  "sections": {
+    "article_main_x9Y7z8": {
+      "type": "article",
+      "blocks": { 
+        "title_a1B2c3": {
+          "type": "title",
+          "settings": {
+            "heading_size": "h1",
+            "pt": 0, 
+            "pb": 3
+          }
+        },
+        "meta_d4E5f6": {
+          "type": "meta",
+          "settings": {
+            "show_date": true,
+            "show_author": true,
+            "show_tags": true,
+            "pt": 0,
+            "pb": 8
+          }
+        },
+        "featured_image_g7H8i9": {
+          "type": "featured_image",
+          "settings": {
+            "img_ratio": "natural",
+            "pt": 0,
+            "pb": 8
+          }
+        },
+        "content_j1K2l3": {
+          "type": "content",
+          "settings": {
+            "content_size": "fs-md",
+            "pt": 0,
+            "pb": 8
+          }
+        },
+        "share_m4N5o6": {
+          "type": "share",
+          "settings": {
+            "show_facebook": true,
+            "show_twitter": true,
+            "show_pinterest": false,
+            "show_linkedin": false,
+            "pt": 0,
+            "pb": 0
+          }
+        }
+      },
+      "block_order": [
+        "title_a1B2c3",
+        "meta_d4E5f6",
+        "featured_image_g7H8i9",
+        "content_j1K2l3",
+        "share_m4N5o6"
+      ],
+      "settings": {
+        "custom_color_schemes": false,
+        "light_color_scheme": "scheme-1",
+        "dark_color_scheme": "scheme-3",
+        "pt": 25,
+        "pb": 25
+      }
+    }
+  },
+  "order": [
+    "article_main_x9Y7z8"
+  ]
+}

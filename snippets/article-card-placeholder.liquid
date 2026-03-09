@@ -1,0 +1,25 @@
+{% liquid 
+ assign placeholder_index = index | modulo: 4 | plus: 1
+%}
+
+<div class="article-card {{ section.settings.card_text_alignment | prepend: 'text-' }}">
+  <div class="img-wrapper">
+    {{ 'collection-apparel-' | append: placeholder_index | placeholder_svg_tag: 'placeholder-svg img-fluid' }}
+  </div>
+  <div class="article-card-content">
+    <h3 class="heading {{ section.settings.card_heading_size }}">
+      <a href="#">Article {{ index }}</a>
+    </h3>
+    <p class="article-card-meta fs-sm">
+      {% if section.settings.card_show_date %}
+        <span>{{ 'now' | date: "%b %d, %Y" }}</span>
+      {% endif %}
+      {% if section.settings.card_show_author %}
+        {% if section.settings.card_show_date %}
+          <span aria-hidden="true">&middot;</span>
+        {% endif %}
+        <span>{{ 'Author Name' }}</span>
+      {% endif %}
+    </p>
+  </div>
+</div>
