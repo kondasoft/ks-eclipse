@@ -40,7 +40,7 @@ https://kondasoft.com/themes/eclipse
 https://eclipse-demo.kondasoft.com (Password: ks)
 
 ## Download
-https://www.kondasoft.com/themes/eclipse/
+https://github.com/kondasoft/eclipse/releases
 
 ## Support
 For support, [open an issue on GitHub](https://github.com/kondasoft/ks-eclipse/issues/new) or [contact us directly](https://www.kondasoft.com/pages/contact).
