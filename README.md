@@ -1,6 +1,6 @@
-# Eclipse
+# KS Eclipse
 
-Eclipse is a modern, performance-first Shopify theme designed for speed, flexibility, and a clean user experience. Built from scratch, it avoids heavy frameworks and unnecessary code, resulting in a fast, efficient storefront.
+KS Eclipse is a modern, performance-first Shopify theme designed for speed, flexibility, and a clean user experience. Built from scratch, it avoids heavy frameworks and unnecessary code, resulting in a fast, efficient storefront.
 
 The theme includes a refined Light and Dark mode system, allowing customers to manually switch between modes or automatically sync with their device preferences for a seamless browsing experience.
 
@@ -40,7 +40,7 @@ https://kondasoft.com/themes/eclipse
 https://eclipse-demo.kondasoft.com (Password: ks)
 
 ## Download
-https://github.com/kondasoft/eclipse/releases
+https://www.kondasoft.com/products/ks-eclipse
 
 ## Support
 For support, [open an issue on GitHub](https://github.com/kondasoft/ks-eclipse/issues/new) or [contact us directly](https://www.kondasoft.com/pages/contact).
