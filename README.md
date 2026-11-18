@@ -4,7 +4,7 @@ KS Eclipse is a modern, performance-first Shopify theme designed for speed, flex
 
 The theme includes a refined Light and Dark mode system, allowing customers to manually switch between modes or automatically sync with their device preferences for a seamless browsing experience.
 
-This free edition provides a strong core foundation for modern Shopify stores. Premium and advanced features are available in our paid themes for merchants who need more advanced functionality and customization.
+This free edition provides a strong core foundation for modern Shopify stores. For more advanced features, see our [premium Shopify themes](https://www.kondasoft.com/collections/shopify-themes).
 
 <img width="1200" height="1600" alt="image" src="https://github.com/user-attachments/assets/0d71de7c-5e97-49d7-bf47-8418780cda65" />
 
@@ -33,14 +33,23 @@ This free edition provides a strong core foundation for modern Shopify stores. P
 - Latest articles
 - Separator
 
-## Details
-https://kondasoft.com/themes/eclipse
-
 ## Demo
 https://eclipse-demo.kondasoft.com (Password: ks)
 
-## Download
-https://www.kondasoft.com/products/ks-eclipse
+## Download and install
+Download the Shopify-ready package from the [latest release](https://github.com/kondasoft/ks-eclipse/releases/latest):
+
+1. [Download `ks-eclipse.zip`](https://github.com/kondasoft/ks-eclipse/releases/latest/download/ks-eclipse.zip). Don't extract it, and don't use the release's Source code archives.
+2. In your Shopify admin, go to **Online Store → Themes**.
+3. Choose **Add theme → Upload zip file**, then select the downloaded package.
+4. Open the theme editor to customize and preview the theme before publishing it.
+
+Developers can also clone this repository and work on it with [Shopify CLI](https://shopify.dev/docs/api/shopify-cli).
+
+This theme is no longer actively developed. It is free to use under the MIT License.
+
+## Premium Shopify themes
+Looking for more? Our [premium Shopify themes](https://www.kondasoft.com/collections/shopify-themes) are each designed for a specific kind of store, with updates, support, and an option to have us set up your store.
 
 ## Support
 For support, [open an issue on GitHub](https://github.com/kondasoft/ks-eclipse/issues/new) or [contact us directly](https://www.kondasoft.com/pages/contact).
